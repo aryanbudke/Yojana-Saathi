@@ -12,20 +12,24 @@ from email.message import Message
 from io import BytesIO
 from pathlib import Path
 from typing import Any
+from unittest.mock import Mock
 from urllib.error import HTTPError
 from urllib.request import Request
+from uuid import uuid4
 
 import pytest
+from fastapi import FastAPI
 from fastapi.testclient import TestClient
 from pydantic import SecretStr
-from sqlalchemy import Engine, create_engine, text
+from sqlalchemy import Engine, Table, create_engine, text
+from sqlalchemy.dialects.postgresql.base import PGDialect
+from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
 from app.core.config import Settings
-from app.db.base import Base
 from app.db.models import StagingScheme
 from app.main import create_app
-from app.modules.ai import staging_search
+from app.modules.ai import routes, staging_search
 from app.modules.ai.notebook_import import stage_notebook_export
 from app.modules.ai.settings import AISettings
 from app.modules.ai.staging_search import get_ai_settings
@@ -67,7 +71,7 @@ def sqlite_client() -> Generator[TestClient]:
     app.dependency_overrides[get_ai_settings] = lambda: AISettings(
         _env_file=None, api_key=None, model=None, embedding_model=None
     )
-    with TestClient(app) as client:
+    with TestClient(app, raise_server_exceptions=False) as client:
         yield client
 
 
@@ -322,24 +326,236 @@ def test_answer_timeout_is_sanitized(monkeypatch: pytest.MonkeyPatch) -> None:
         staging_search.answer(configured(), "synthetic question", [hit("synthetic-farm")])
 
 
+@pytest.mark.parametrize("path", [SEARCH, ASK])
+def test_database_outage_returns_sanitized_unavailable_response(
+    sqlite_client: TestClient, monkeypatch: pytest.MonkeyPatch, path: str
+) -> None:
+    monkeypatch.setattr(routes, "embed", lambda *a, **k: [unit_vector(0)])
+
+    def unavailable(*args: Any, **kwargs: Any) -> Any:
+        raise SQLAlchemyError("database://synthetic-secret")
+
+    monkeypatch.setattr(routes, "search", unavailable)
+    headers = {"X-Admin-Token": REVIEW_TOKEN}
+    if path == SEARCH:
+        response = sqlite_client.get(SEARCH, params={"q": "synthetic"}, headers=headers)
+    else:
+        response = sqlite_client.post(ASK, json={"question": "synthetic"}, headers=headers)
+    assert response.status_code == 503
+    assert response.json()["error"]["code"] == "SERVICE_UNAVAILABLE"
+    assert response.headers["X-Request-ID"] == response.json()["error"]["request_id"]
+    assert "synthetic-secret" not in response.text
+
+
+@pytest.mark.parametrize("path", [SEARCH, ASK])
+def test_empty_index_returns_no_claims_without_generation(
+    sqlite_client: TestClient, monkeypatch: pytest.MonkeyPatch, path: str
+) -> None:
+    monkeypatch.setattr(routes, "embed", lambda *a, **k: [unit_vector(0)])
+    monkeypatch.setattr(routes, "search", lambda *a, **k: [])
+    generator = Mock(side_effect=AssertionError("Empty retrieval must not call the model"))
+    monkeypatch.setattr(routes, "answer", generator)
+    headers = {"X-Admin-Token": REVIEW_TOKEN}
+    if path == SEARCH:
+        response = sqlite_client.get(SEARCH, params={"q": "synthetic"}, headers=headers)
+        assert response.json() == {"publication_allowed": False, "results": []}
+    else:
+        response = sqlite_client.post(ASK, json={"question": "synthetic"}, headers=headers)
+        assert response.json() == {
+            "publication_allowed": False,
+            "answer": "No staging records are indexed yet.",
+            "cited_slugs": [],
+            "sources": [],
+        }
+    assert response.status_code == 200
+    generator.assert_not_called()
+
+
+@pytest.mark.parametrize(
+    "cited,expected_status", [(["synthetic-farm"], 200), (["invented"], 503), ([], 200)]
+)
+def test_ask_transport_to_source_contract_is_always_unverified(
+    sqlite_client: TestClient,
+    monkeypatch: pytest.MonkeyPatch,
+    cited: list[str],
+    expected_status: int,
+) -> None:
+    embedded = Mock(return_value=[unit_vector(0)])
+    monkeypatch.setattr(routes, "embed", embedded)
+    row = hit("synthetic-farm", benefits="SYNTHETIC Tractor aid", verification_status="verified")
+    row.missing_fields = ["official_url", "eligibility"]
+    monkeypatch.setattr(routes, "search", lambda *a, **k: [(row, 0.876543)])
+    assert isinstance(sqlite_client.app, FastAPI)
+    sqlite_client.app.dependency_overrides[get_ai_settings] = configured
+    monkeypatch.setattr(
+        staging_search,
+        "urlopen",
+        lambda *a, **k: generation(
+            {
+                "answer": "SYNTHETIC Tractor aid",
+                "cited_slugs": cited,
+            }
+        ),
+    )
+    response = sqlite_client.post(
+        ASK,
+        json={"question": "  synthetic tractor?  ", "limit": 1},
+        headers={"X-Admin-Token": REVIEW_TOKEN},
+    )
+    assert response.status_code == expected_status
+    assert embedded.call_args.args[1:] == (["synthetic tractor?"], "RETRIEVAL_QUERY")
+    if expected_status == 200:
+        body = response.json()
+        assert body["publication_allowed"] is False
+        assert body["cited_slugs"] == cited
+        source = body["sources"][0]
+        assert source["review_status"] == "draft"
+        assert source["record"]["verification_status"] == "verified"
+        assert source["missing_fields"] == ["official_url", "eligibility"]
+        assert source["similarity"] == 0.8765
+        if not cited:
+            assert "enough evidence" in body["answer"]
+            assert "Tractor aid" not in body["answer"]
+
+
+def test_search_keeps_draft_source_metadata_and_trims_query(
+    sqlite_client: TestClient,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    embedded = Mock(return_value=[unit_vector(0)])
+    monkeypatch.setattr(routes, "embed", embedded)
+    row = hit("synthetic-study", eligibility=None)
+    row.missing_fields = ["eligibility"]
+    retrieved = Mock(return_value=[(row, 0.75)])
+    monkeypatch.setattr(routes, "search", retrieved)
+    response = sqlite_client.get(
+        SEARCH,
+        params={"q": "  synthetic study  ", "limit": 1},
+        headers={"X-Admin-Token": REVIEW_TOKEN},
+    )
+    assert response.status_code == 200
+    assert response.json()["results"][0]["review_status"] == "draft"
+    assert response.json()["results"][0]["missing_fields"] == ["eligibility"]
+    assert response.json()["publication_allowed"] is False
+    assert embedded.call_args.args[1:] == (["synthetic study"], "RETRIEVAL_QUERY")
+    assert retrieved.call_args.args[1:] == (unit_vector(0), 1)
+
+
+@pytest.mark.parametrize("path", [SEARCH, ASK])
+def test_publisher_and_invalid_tokens_cannot_read_staging(
+    monkeypatch: pytest.MonkeyPatch, path: str
+) -> None:
+    engine = create_engine("sqlite+pysqlite://")
+    settings = admin_settings("sqlite+pysqlite://").model_copy(
+        update={
+            "admin_publish_token": SecretStr("publisher-secret-with-at-least-32-characters"),
+            "admin_publisher_id": "synthetic-publisher",
+        }
+    )
+    embedded = Mock(side_effect=AssertionError("Unauthorized requests must not reach the provider"))
+    monkeypatch.setattr(routes, "embed", embedded)
+    with TestClient(create_app(settings, database_engine=engine)) as client:
+        for token in ["publisher-secret-with-at-least-32-characters", "invalid-synthetic-token"]:
+            headers = {"X-Admin-Token": token}
+            response = (
+                client.get(SEARCH, params={"q": "synthetic"}, headers=headers)
+                if path == SEARCH
+                else client.post(ASK, json={"question": "synthetic"}, headers=headers)
+            )
+            assert response.status_code == 403
+    embedded.assert_not_called()
+
+
+@pytest.mark.parametrize(
+    "path,query,limit",
+    [
+        (SEARCH, "x", 1),
+        (SEARCH, "x" * 501, 1),
+        (SEARCH, "synthetic", 0),
+        (SEARCH, "synthetic", 51),
+        (ASK, "x", 1),
+        (ASK, "x" * 501, 1),
+        (ASK, "synthetic", 0),
+        (ASK, "synthetic", 11),
+    ],
+)
+def test_request_bounds_rejected_before_external_calls(
+    sqlite_client: TestClient,
+    monkeypatch: pytest.MonkeyPatch,
+    path: str,
+    query: str,
+    limit: int,
+) -> None:
+    embedded = Mock(side_effect=AssertionError("Invalid requests must not reach the provider"))
+    monkeypatch.setattr(routes, "embed", embedded)
+    headers = {"X-Admin-Token": REVIEW_TOKEN}
+    response = (
+        sqlite_client.get(SEARCH, params={"q": query, "limit": limit}, headers=headers)
+        if path == SEARCH
+        else sqlite_client.post(ASK, json={"question": query, "limit": limit}, headers=headers)
+    )
+    assert response.status_code == 422
+    embedded.assert_not_called()
+
+
+def test_search_compiles_pgvector_distance_and_stable_ordering() -> None:
+    session = Mock(spec=Session)
+    row = hit("synthetic-farm")
+    session.execute.return_value = [(row, 0.25)]
+    assert staging_search.search(session, unit_vector(0), 2) == [(row, 0.75)]
+    statement = session.execute.call_args.args[0].compile(
+        dialect=PGDialect()  # type: ignore[no-untyped-call]  # SQLAlchemy constructor lacks types.
+    )
+    sql = str(statement)
+    assert "<=>" in sql
+    assert "ORDER BY distance, staging_schemes.slug" in sql
+    assert "FROM staging_schemes" in sql
+    assert statement.params["param_1"] == 2
+
+
+def test_invalid_ai_settings_disable_provider_without_exposing_values(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setenv("GEMINI_MODEL", "invalid/synthetic-secret")
+    get_ai_settings.cache_clear()
+    try:
+        settings = get_ai_settings()
+        assert (
+            settings.model is None and settings.api_key is None and settings.embedding_model is None
+        )
+    finally:
+        get_ai_settings.cache_clear()
+
+
 @pytest.fixture
 def pgvector_engine() -> Generator[Engine]:
     url = os.environ.get("STAGING_SEARCH_PG_URL")
     if not url:
         pytest.skip("STAGING_SEARCH_PG_URL not set")
-    # Isolated schema: never touches existing tables in the target database.
-    with create_engine(url).begin() as connection:
-        connection.execute(text("CREATE EXTENSION IF NOT EXISTS vector"))
-        connection.execute(text("DROP SCHEMA IF EXISTS staging_search_test CASCADE"))
-        connection.execute(text("CREATE SCHEMA staging_search_test"))
-    engine = create_engine(
-        url, connect_args={"options": "-csearch_path=staging_search_test,public"}
-    )
-    Base.metadata.create_all(engine)
-    yield engine
-    engine.dispose()
-    with create_engine(url).begin() as connection:
-        connection.execute(text("DROP SCHEMA staging_search_test CASCADE"))
+    # Never drop a fixed schema or install extensions in a shared database.
+    schema = f"staging_search_test_{uuid4().hex}"
+    control = create_engine(url)
+    try:
+        with control.begin() as connection:
+            installed = connection.scalar(
+                text("SELECT 1 FROM pg_extension WHERE extname = 'vector'")
+            )
+            if not installed:
+                pytest.skip("vector extension must be provisioned in the test database")
+            connection.execute(text(f"CREATE SCHEMA {schema}"))
+        engine = None
+        try:
+            engine = create_engine(url, connect_args={"options": f"-csearch_path={schema},public"})
+            assert isinstance(StagingScheme.__table__, Table)
+            StagingScheme.__table__.create(engine)
+            yield engine
+        finally:
+            if engine is not None:
+                engine.dispose()
+            with control.begin() as connection:
+                connection.execute(text(f"DROP SCHEMA {schema} CASCADE"))
+    finally:
+        control.dispose()
 
 
 def test_search_ranks_unverified_records_by_similarity(

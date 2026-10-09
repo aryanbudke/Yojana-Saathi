@@ -4,6 +4,7 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import ValidationError
+from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
 from app.api.dependencies import get_db_session
@@ -113,14 +114,14 @@ def search_staging_schemes(
         raise HTTPException(status_code=422, detail="Enter at least two non-space characters.")
     try:
         [query_vector] = embed(ai_settings, [q], "RETRIEVAL_QUERY")
-    except EmbeddingUnavailable:
+        return StagingSearchResponse(
+            results=[
+                _result(scheme, similarity)
+                for scheme, similarity in search(session, query_vector, limit)
+            ]
+        )
+    except (EmbeddingUnavailable, SQLAlchemyError):
         raise HTTPException(status_code=503, detail="Staging search is unavailable.") from None
-    return StagingSearchResponse(
-        results=[
-            _result(scheme, similarity)
-            for scheme, similarity in search(session, query_vector, limit)
-        ]
-    )
 
 
 @router.post("/admin/staging-schemes/ask", response_model=StagingAskResponse, tags=["admin"])
@@ -143,7 +144,7 @@ def ask_staging_schemes(
                 answer="No staging records are indexed yet.", cited_slugs=[], sources=[]
             )
         text, cited = answer(ai_settings, question, [hit for hit, _ in hits])
-    except (EmbeddingUnavailable, AnswerUnavailable):
+    except (EmbeddingUnavailable, AnswerUnavailable, SQLAlchemyError):
         raise HTTPException(status_code=503, detail="Staging answers are unavailable.") from None
     return StagingAskResponse(
         answer=text,

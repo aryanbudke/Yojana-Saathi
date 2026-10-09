@@ -6,7 +6,7 @@ Scope: curator-only notebook RAG; unverified drafts never feed citizen matching 
 | --- | --- | --- |
 | RAG-01 Provider validation and grounded answers | COMPLETED | Reject invalid vectors/provider output and unknown citations, fixed abstention for uncited answers; backend tests/lint/types pass; commit before RAG-02 |
 | RAG-02 Safe indexing pipeline | COMPLETED | Validate before replacement, failures preserve existing snapshot, use existing database model; synthetic local tests, CLI errors and transaction verification |
-| RAG-03 Retrieval and API verification | PENDING | Synthetic local auth/error/retrieval contracts and PostgreSQL test harness; full regression/lint/types; no real-data claim |
+| RAG-03 Retrieval and API verification | COMPLETED | Synthetic local auth/error/retrieval contracts and PostgreSQL test harness; full regression/lint/types; no real-data claim |
 | RAG-04 Real-data indexing and live verification | PENDING | Actual cleaned export, PostgreSQL with vector, server Gemini and reviewer configuration, reachable API; real retrieval/answers measured |
 
 ## Repository and configuration inspection
@@ -40,5 +40,16 @@ Scope: curator-only notebook RAG; unverified drafts never feed citizen matching 
 - Tests: TDD reproduced7 failures before fixes. Final indexing14 passed; full backend302 passed,2 PostgreSQL skips. Index CLI100% statement coverage; staging service93% (pgvector retrieval pending). Ruff lint/format, strict mypy app/tests/index CLI and diff checks passed. Real SQLite persistence/rollback used existing StagingScheme; no SQLite cosine-search claim.
 - Changes: shared vector validation (including float32 bounds), explicit nonempty/count checks instead of removable assertions, construct replacement rows before deletion, transaction context/rollback, sanitized configuration/database errors and engine cleanup. Tests cover no-write invalid inputs, provenance, successful replacement, insert-after-delete failure, engine/config/provider failures and CLI entrypoint.
 - Problems: no actual dataset or PostgreSQL available. No production seed/database touched.
-- Commit: task commit `fix(ai): preserve staging snapshots on indexing failures` (exact reference in next update).
+- Commit: `82bc98b` — `fix(ai): preserve staging snapshots on indexing failures`.
 - Next task: RAG-03 retrieval/API verification after commit.
+
+## RAG-03 — Retrieval and API verification
+
+- Status: COMPLETED (local synthetic contracts and SQL compilation only)
+- Files: `services/api/app/modules/ai/routes.py`, `services/api/tests/ai/test_staging_search.py`, `docs/ai/NOTEBOOK_INTEGRATION.md` and this progress file; no shared API schema changes.
+- Verification: final backend322 passed,2 PostgreSQL skips;94% total app coverage,99% staging-service coverage,100% index CLI coverage in the separate indexing gate. Ruff lint/format, strict mypy app/tests/index CLI, diff and unchanged-frontend checks passed. Synthetic route tests exercise reviewer/publisher isolation, retrieval/source DTOs, empty index, invalid bounds, provider/database errors and citation validation; SQL compilation verifies cosine distance/limit/stable slug ordering.
+- Changes: staging database outages return sanitized503 instead of falling through to unexpected500/logged exception; two failing tests reproduced the difference. PostgreSQL fixture uses generated unique schema names, pre-existing vector, staging table only and finally cleanup; code reviewed, actual PostgreSQL execution still skipped and belongs to RAG-04.
+- Review: API paths/admin DTOs unchanged; mocks confined to tests, raw verification claims remain draft, no production synthetic fallback; no frontend files differ from base.
+- Problems: PostgreSQL tests require an explicitly authorized disposable test database with vector; schema tests cannot establish ranking quality or real-data success.
+- Commit: task commit `test(ai): verify curator retrieval contracts and outage handling` (exact reference in next update).
+- Next task: RAG-04 real-data/live gate after local task commit.

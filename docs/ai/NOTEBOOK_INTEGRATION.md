@@ -63,11 +63,26 @@ Reviewers can semantically search the unverified notebook records to decide whic
      http://127.0.0.1:8000/api/v1/admin/staging-schemes/ask
    ```
 
-   The response has `answer`, `cited_slugs` and the retrieved `sources`. The server rejects the entire generated answer if any citation was not retrieved, and the prompt treats record text as untrusted. Uncited output is replaced with a fixed insufficient-evidence message. Citation membership does not prove each statement is supported; curator review remains required. Answers come from unverified drafts, so they are triage notes for curators, never citizen guidance. If the model is overloaded or unconfigured, the endpoint returns 503.
+   The response has `answer`, `cited_slugs` and the retrieved `sources`. The server rejects the entire generated answer if any citation was not retrieved, and the prompt treats record text as untrusted. Uncited output is replaced with a fixed insufficient-evidence message. Citation membership does not prove each statement is supported; curator review remains required. Answers come from unverified drafts, so they are triage notes for curators, never citizen guidance. If the model is overloaded/unconfigured or the staging database is unavailable, the endpoint returns 503.
 
 Every result carries `review_status: draft`, its `missing_fields` and the raw record; the response has `publication_allowed: false`. Similarity is a cosine score for ordering, not relevance or eligibility evidence. The embedded text is name, level, category, details, benefits, eligibility and tags. Search queries are sent to Gemini, so curators should not paste citizen data into them.
 
-`tests/ai/test_staging_search.py` covers auth, outage fallback and request batching on SQLite. The pgvector ranking test runs only when `STAGING_SEARCH_PG_URL` points at a PostgreSQL database with `vector` available; it uses an isolated temporary schema.
+`tests/ai/test_staging_search.py` covers reviewer/publisher isolation, query bounds, source DTOs, empty retrieval, citation rejection/abstention, provider batching/retries and sanitized database/provider outages using synthetic mocked retrieval. A PostgreSQL SQL-compilation check verifies cosine ordering and stable slug tie-breaking; it does not execute vector search.
+
+`tests/ai/test_staging_index.py` uses synthetic exports and the existing model on SQLite to verify provenance, successful full replacement, invalid input rejection before deletion, and rollback after an insert fails following deletion. It also checks sanitized configuration/database failures and cleanup. SQLite is used for transaction verification only.
+
+The two pgvector integration tests run only when `STAGING_SEARCH_PG_URL` points at an authorized disposable PostgreSQL test database with `vector` already provisioned. Each run creates a unique temporary schema, creates only the staging table, and drops only its own schema in cleanup. Tests never install extensions or drop a fixed/shared schema. These tests remain skipped locally until that database is available.
+
+Run local checks from `services/api`:
+
+```bash
+.venv/bin/ruff check .
+.venv/bin/ruff format --check .
+.venv/bin/mypy app tests scripts/index_notebook_staging.py
+.venv/bin/python -m pytest --cov=app --cov-report=term-missing
+```
+
+Use a fresh environment installed from this checkout for actual CLI execution. Tests use explicitly synthetic transports and records; they never fall back to those fixtures in production. See `docs/rag/PROGRESS.md` for current evidence and external blockers.
 
 ## Verification and outstanding evidence
 
