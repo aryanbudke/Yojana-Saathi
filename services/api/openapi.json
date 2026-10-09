@@ -1480,6 +1480,83 @@
         "title": "SourceReference",
         "type": "object"
       },
+      "StagingSearchResponse": {
+        "additionalProperties": false,
+        "description": "Unverified curation leads; publication_allowed is always false.",
+        "properties": {
+          "publication_allowed": {
+            "const": false,
+            "default": false,
+            "title": "Publication Allowed",
+            "type": "boolean"
+          },
+          "results": {
+            "items": {
+              "$ref": "#/components/schemas/StagingSearchResult"
+            },
+            "title": "Results",
+            "type": "array"
+          }
+        },
+        "required": [
+          "results"
+        ],
+        "title": "StagingSearchResponse",
+        "type": "object"
+      },
+      "StagingSearchResult": {
+        "additionalProperties": false,
+        "properties": {
+          "missing_fields": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Missing Fields",
+            "type": "array"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "record": {
+            "additionalProperties": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "title": "Record",
+            "type": "object"
+          },
+          "review_status": {
+            "const": "draft",
+            "default": "draft",
+            "title": "Review Status",
+            "type": "string"
+          },
+          "similarity": {
+            "title": "Similarity",
+            "type": "number"
+          },
+          "slug": {
+            "title": "Slug",
+            "type": "string"
+          }
+        },
+        "required": [
+          "slug",
+          "name",
+          "similarity",
+          "missing_fields",
+          "record"
+        ],
+        "title": "StagingSearchResult",
+        "type": "object"
+      },
       "ValidationError": {
         "properties": {
           "ctx": {
@@ -1653,6 +1730,79 @@
           }
         },
         "summary": "Review Version",
+        "tags": [
+          "admin"
+        ]
+      }
+    },
+    "/api/v1/admin/staging-schemes/search": {
+      "get": {
+        "description": "Find unverified notebook records worth curating. Never used for citizen matching.",
+        "operationId": "search_staging_schemes_api_v1_admin_staging_schemes_search_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "q",
+            "required": true,
+            "schema": {
+              "maxLength": 500,
+              "minLength": 2,
+              "title": "Q",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 10,
+              "maximum": 50,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Admin-Token",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Admin-Token"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StagingSearchResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Search Staging Schemes",
         "tags": [
           "admin"
         ]

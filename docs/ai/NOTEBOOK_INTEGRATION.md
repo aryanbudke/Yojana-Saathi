@@ -34,7 +34,30 @@ Developer 2 can select a small useful subset and map it to the existing `app/sch
 
 Do not guess applicant geography from text or apply relatives' ages/incomes to the citizen. Unsupported or ambiguous policy clauses need manual review. Complete every mandatory rule and exclusion before approving a scheme. The existing curation CLI validates only a supplied reviewed backend bundle; follow `docs/backend-handoff.md` for the publication workflow. No published scheme or backend-owned code is changed by this adapter.
 
-After a reviewed bundle is available, use the existing candidate repository, deterministic matcher, question selection and source-linked guidance. The notebook's similarity search can be considered later for relevance retrieval, with verified/published filtering and measured retrieval tests; optional RAG stays deferred until the core gates pass. OpenAI answer generation and the FAISS runtime are not added to this project.
+After a reviewed bundle is available, use the existing candidate repository, deterministic matcher, question selection and source-linked guidance. The notebook's similarity search can be considered later for relevance retrieval, with verified/published filtering and measured retrieval tests; optional RAG stays deferred until the core gates pass. OpenAI answer generation and the FAISS runtime are not added to this project; the notebook's similarity search is instead available to curators as described below.
+
+## Curator staging search (pgvector)
+
+Reviewers can semantically search the unverified notebook records to decide which schemes to curate first. This replaces the notebook's FAISS index with PostgreSQL `pgvector` and Gemini embeddings. It is a discovery aid only: results never feed matching, questions, guidance or publication.
+
+1. Run migrations (`20261009_0004` enables the `vector` extension and creates `staging_schemes`). Supabase supports `vector`; other hosts must provide it.
+2. Set `GEMINI_API_KEY` and `GEMINI_EMBEDDING_MODEL` (verified with `gemini-embedding-001`, 768 dimensions).
+3. From `services/api`, index the export. Each run validates it with the staging importer above and replaces the whole staging table:
+
+   ```bash
+   .venv/bin/python scripts/index_notebook_staging.py /absolute/path/sarkarseva_processed/schemes_clean.json
+   ```
+
+4. Search with the reviewer token:
+
+   ```bash
+   curl -H "X-Admin-Token: $ADMIN_REVIEW_TOKEN" \
+     "http://127.0.0.1:8000/api/v1/admin/staging-schemes/search?q=scholarship+for+college&limit=10"
+   ```
+
+Every result carries `review_status: draft`, its `missing_fields` and the raw record; the response has `publication_allowed: false`. Similarity is a cosine score for ordering, not relevance or eligibility evidence. The embedded text is name, level, category, details, benefits, eligibility and tags. Search queries are sent to Gemini, so curators should not paste citizen data into them.
+
+`tests/ai/test_staging_search.py` covers auth, outage fallback and request batching on SQLite. The pgvector ranking test runs only when `STAGING_SEARCH_PG_URL` points at a PostgreSQL database with `vector` available; it uses an isolated temporary schema.
 
 ## Verification and outstanding evidence
 

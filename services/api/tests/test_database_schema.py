@@ -21,6 +21,7 @@ EXPECTED_TABLES = {
     "scheme_versions",
     "schemes",
     "sources",
+    "staging_schemes",
 }
 
 

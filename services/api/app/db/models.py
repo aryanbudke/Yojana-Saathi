@@ -4,6 +4,7 @@ from datetime import UTC, date, datetime
 from typing import Any
 from uuid import UUID, uuid4
 
+from pgvector.sqlalchemy import Vector
 from sqlalchemy import (
     CheckConstraint,
     Date,
@@ -326,3 +327,25 @@ class AdminAuditLog(Base):
     action: Mapped[str] = mapped_column(String(100), nullable=False)
     at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=utc_now)
     details: Mapped[dict[str, Any] | None] = mapped_column(JSON_DOCUMENT)
+
+
+STAGING_EMBEDDING_DIMENSIONS = 768
+
+
+class StagingScheme(Base):
+    """Unverified notebook record kept only for curator search; never matched or published."""
+
+    __tablename__ = "staging_schemes"
+
+    id: Mapped[UUID] = mapped_column(Uuid, primary_key=True, default=uuid4)
+    slug: Mapped[str] = mapped_column(String(255), unique=True, nullable=False)
+    name: Mapped[str] = mapped_column(Text, nullable=False)
+    record: Mapped[dict[str, Any]] = mapped_column(JSON_DOCUMENT, nullable=False)
+    missing_fields: Mapped[list[str]] = mapped_column(JSON_DOCUMENT, nullable=False)
+    input_sha256: Mapped[str] = mapped_column(String(64), nullable=False)
+    embedding: Mapped[list[float]] = mapped_column(
+        Vector(STAGING_EMBEDDING_DIMENSIONS), nullable=False
+    )
+    imported_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=utc_now
+    )
