@@ -57,7 +57,7 @@ class GeminiExtractor:
                 "temperature": 0,
                 "maxOutputTokens": 2048,
                 "responseFormat": {
-                    "text": {"mimeType": "application/json", "schema": Draft.model_json_schema()}
+                    "text": {"mimeType": "APPLICATION_JSON", "schema": Draft.model_json_schema()}
                 },
             },
         }

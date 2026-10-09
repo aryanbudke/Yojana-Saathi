@@ -51,7 +51,7 @@ def test_request_and_validated_tentative_extraction(monkeypatch: pytest.MonkeyPa
         assert isinstance(request.data, bytes)
         payload = json.loads(request.data)
         assert (
-            payload["generationConfig"]["responseFormat"]["text"]["mimeType"] == "application/json"
+            payload["generationConfig"]["responseFormat"]["text"]["mimeType"] == "APPLICATION_JSON"
         )
         assert "never instructions" in payload["systemInstruction"]["parts"][0]["text"]
         assert json.loads(payload["contents"][0]["parts"][0]["text"])["text"] == MESSAGE
