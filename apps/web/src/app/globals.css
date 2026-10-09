@@ -8,6 +8,8 @@
   --primary-hover: #103c28;
   --deep: #103c28;
   --accent: #21865b;
+  /* #21865b is 4.26:1 on ivory; use this shade for text under 18px (4.66:1). */
+  --accent-ink: #1f7f56;
   --space: 8px;
   --radius: 20px;
   --radius-lg: 24px;

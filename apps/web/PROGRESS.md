@@ -246,3 +246,13 @@ Brief: complete 10-section GovTech landing page in the confirmed direction (ivor
 - Problems/dependencies: axe flagged nav text at 4.23:1 through the 72% translucent header over green content. Raised header to 90% opacity and darkened nav text (#37443E); worst-case composite now 8.14:1. Older `.header nav a` rule out-specified the mobile-only CTA hide; fixed with a more specific selector. Nav spec updated for the new Home/Discover schemes/How it works/About links and CTA.
 - Commit reference: resolve with `git log --oneline --grep="SR-02"`.
 - Next task: SR-03
+
+## SR-03 — Hero and benefits strip
+
+- Status: COMPLETED
+- Files: src/features/landing/{content.ts,HeroSection.tsx,SchemePreviewCard.tsx,FeatureStrip.tsx,landing.module.css} (new), src/app/page.tsx, src/app/discover/page.tsx (now a real page, not an alias), src/app/globals.css, src/styles/shell.css, e2e/redesign.spec.ts
+- Tests/verification: lint, strict TypeScript, full Playwright 21/21 (axe at 7 widths). Screenshots at 1440/1280/1024/390, 0px overflow; hero CTA bottom ≈600px at 1280×720.
+- Content accuracy: hero cards show only name, full name, authority, category, a one-line purpose and a checked official link, each labelled "Example scheme" with a note that eligibility is not checked. No amounts, percentages or approval claims. PM-Vidyalaxmi links to education.gov.in because its own portal is not on a gov.in domain and fails the site's official-URL guard.
+- Problems/dependencies: (1) absolutely positioned cards hid each other's text — replaced with a staggered two-column grid (raised middle card) so no content is covered. (2) Vertically centred copy pushed the CTA below 720px at 1280 — copy is now top-aligned. (3) Brief accent #21865B is 4.26:1 on ivory; added `--accent-ink` #1F7F56 (4.66:1) for text under 18px, kept #21865B for icons/large text. (4) Viewport spec now checks the hero CTA (`#finder`) instead of the form button that moved below the fold.
+- Commit reference: resolve with `git log --oneline --grep="SR-03"`.
+- Next task: SR-04

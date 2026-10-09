@@ -56,10 +56,13 @@ test("primary action stays in initial laptop viewport and workspace never overfl
         () => document.documentElement.scrollWidth <= window.innerWidth,
       ),
     ).toBe(true);
+    // The hero's primary action must be visible without scrolling on laptops.
+    const heroCta = page
+      .locator("main")
+      .getByRole("link", { name: "Find my schemes" });
+    await expect(heroCta).toHaveAttribute("href", "#finder");
     if (width >= 1024) {
-      const cta = await page
-        .getByRole("button", { name: "Find my schemes" })
-        .boundingBox();
+      const cta = await heroCta.boundingBox();
       expect(cta!.y + cta!.height).toBeLessThanOrEqual(720);
     }
   }
