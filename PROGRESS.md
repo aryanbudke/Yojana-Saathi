@@ -10,7 +10,7 @@ only after its acceptance checks pass and its work is committed.
 | T2-03 | Stable API DTOs and public frontend fixtures | COMPLETED |
 | T2-04 | Database indexes, publication filters, test seeding | COMPLETED |
 | T2-05 | Select and document 10–15 high-confidence schemes | COMPLETED |
-| T2-06 | Curate official source data, eligibility, and exclusions | BLOCKED |
+| T2-06 | Curate official source data, eligibility, and exclusions | COMPLETED |
 | T2-07 | Normalize codes, units, rule JSON, and conditional documents | BLOCKED |
 | T2-08 | Enforce source linkage and immutable published versions | COMPLETED |
 | T2-09 | Peer review records and provide synthetic fixtures | BLOCKED |
@@ -145,7 +145,34 @@ only after its acceptance checks pass and its work is committed.
 - **Commit reference:** `HEAD` — `docs(data): select first official-source curation batch`
 - **Next task:** T2-06 — Verify official sources, dates, eligibility, and exclusions
 
-## T2-06–T2-07 and T2-09 — Real-scheme verification work
+## T2-06 — Curate official sources, eligibility, and exclusions
+
+- **Status:** COMPLETED
+- **Files created or modified:**
+  `data/curation/source-audit-v1.json`,
+  `services/api/tests/test_source_audit.py`, and `PROGRESS.md`.
+- **Tests executed:** Ten selected records were audited against primary Central
+  Government, ministry, statutory-authority, or official scheme sources. The
+  audit records source retrieval dates, policy dates where the source states
+  one, benefits, eligibility, exclusions, precise locators, and unresolved
+  policy ambiguity.
+  - `.venv/bin/pytest -q tests` — 89 passed; one upstream Starlette
+    TestClient deprecation warning
+  - `.venv/bin/ruff check .` — passed
+  - `.venv/bin/ruff format --check .` — passed (78 files)
+  - `python3 -m json.tool` — source-audit manifest is valid JSON
+- **Problems encountered:** PM SVANidhi was restructured in August 2025, but
+  the current overview does not restate complete vendor-onboarding evidence;
+  that record is explicitly barred from receiving a deterministic eligibility
+  rule. AB PM-JAY uses dynamic national and State beneficiary datasets, and
+  Soil Health Cards are delivered through State/UT sampling rather than a
+  uniform national application. These boundaries are recorded as ambiguities,
+  not guessed rules. The audit also replaces superseded PMMVY 1.0 facts with
+  PMMVY 2.0 material effective 1 April 2022.
+- **Commit reference:** `HEAD` — `docs(data): audit official sources for first scheme batch`
+- **Next task:** T2-07 — Normalize the audited facts, documents, and steps
+
+## T2-07 and T2-09 — Real-scheme normalization and review work
 
 - **Status:** BLOCKED
 - **Files created or modified:** `services/api/app/db/draft_import.py`,
