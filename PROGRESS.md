@@ -26,7 +26,7 @@ only after its acceptance checks pass and its work is committed.
 | T2-19 | Backend deployment and secret configuration | BLOCKED |
 | T2-20 | Full backend verification gate | COMPLETED |
 | T2-21 | Dataset/OpenAPI/runbook handoff | BLOCKED |
-| T2-22 | Provenance and database-design report contribution | PENDING |
+| T2-22 | Provenance and database-design report contribution | COMPLETED |
 
 ## T2-01 — FastAPI skeleton, configuration, health, CORS, error contract
 
@@ -410,3 +410,22 @@ only after its acceptance checks pass and its work is committed.
   user-curated scheme data.
 - **Commit reference:** `HEAD` — `docs(api): add backend integration handoff`
 - **Next task:** T2-22 — Provenance and database-design report contribution
+
+## T2-22 — Provenance and database-design report contribution
+
+- **Status:** COMPLETED
+- **Files created or modified:** `docs/backend-report-contribution.md` and
+  `PROGRESS.md`.
+- **Tests executed:**
+  - `.venv/bin/ruff check .` — passed
+  - `.venv/bin/ruff format --check .` — passed (70 files)
+  - `.venv/bin/mypy app tests` — passed (63 source files)
+  - `.venv/bin/pytest --cov=app --cov-report=term-missing` — 79 passed,
+    91% coverage; one upstream Starlette TestClient deprecation warning
+  - `git diff --check` — passed
+- **Problems encountered:** No failures. The report explicitly distinguishes
+  implemented and locally verified work from the blocked real-data, Supabase,
+  and Railway integrations.
+- **Commit reference:** `HEAD` — `docs(report): add backend and provenance contribution`
+- **Next task:** Await user-curated schemes, Supabase PostgreSQL connection URL,
+  and Railway access to unblock T2-05–T2-07, T2-09, T2-18, T2-19, and T2-21.
