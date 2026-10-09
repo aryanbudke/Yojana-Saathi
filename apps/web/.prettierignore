@@ -1,0 +1,9 @@
+node_modules
+.next
+package-lock.json
+next-env.d.ts
+test-results
+playwright-report
+artifacts
+AGENTS.md
+src/lib/api/fixtures

@@ -1,0 +1,32 @@
+import { test, expect } from "@playwright/test";
+test("guidance checklist is reversible, personal and cannot apply with a placeholder link", async ({
+  page,
+}) => {
+  await page.goto("/schemes/20000000-0000-4000-8000-000000000001");
+  await page.getByRole("link", { name: "Prepare my checklist" }).click();
+  await expect(
+    page.getByRole("heading", { name: "Your personal checklist" }),
+  ).toBeVisible();
+  const check = page.getByRole("checkbox", {
+    name: "Example supporting record I have it",
+  });
+  await check.check();
+  await expect(
+    page.getByText("1 / 1 marked ready", { exact: true }),
+  ).toBeVisible();
+  await check.uncheck();
+  await expect(
+    page.getByText("0 / 1 marked ready", { exact: true }),
+  ).toBeVisible();
+  await expect(
+    page.getByText("Land registration has not been confirmed.", {
+      exact: true,
+    }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("link", { name: "Apply on official portal" }),
+  ).toHaveCount(0);
+  await expect(
+    page.getByRole("button", { name: "Print checklist" }),
+  ).toBeVisible();
+});

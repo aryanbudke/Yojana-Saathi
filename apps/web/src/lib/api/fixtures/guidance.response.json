@@ -1,0 +1,34 @@
+{
+  "scheme_id": "20000000-0000-4000-8000-000000000001",
+  "scheme_version_id": "30000000-0000-4000-8000-000000000001",
+  "scheme_name": "Contract Fixture Scheme",
+  "documents": [
+    {
+      "name": "Example supporting record",
+      "status": "unknown",
+      "note": "Confirm this requirement on the reviewed official source.",
+      "source_id": "40000000-0000-4000-8000-000000000001"
+    }
+  ],
+  "steps": [
+    {
+      "step_number": 1,
+      "instruction": "Review the requirements on the official application page.",
+      "official_url": "https://scheme.example.invalid/apply",
+      "source_id": "40000000-0000-4000-8000-000000000001"
+    }
+  ],
+  "official_application_url": "https://scheme.example.invalid/apply",
+  "unresolved_preconditions": ["Land registration has not been confirmed."],
+  "sources": [
+    {
+      "id": "40000000-0000-4000-8000-000000000001",
+      "title": "Reserved example source",
+      "official_url": "https://scheme.example.invalid/source",
+      "checked_at": "2026-09-20T00:00:00Z",
+      "document_date": "2026-09-01",
+      "excerpt_locator": "Contract fixture section 1"
+    }
+  ],
+  "disclaimer": "Yojana Saathi provides preliminary guidance based on reviewed public sources. Eligibility and approval are determined by the relevant government authority."
+}

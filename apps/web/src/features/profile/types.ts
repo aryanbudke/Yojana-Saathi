@@ -1,0 +1,85 @@
+import type {
+  ProfileFacts,
+  ProfileField,
+  FactOrigin,
+} from "@/lib/api/contracts";
+export type Origins = Partial<Record<ProfileField, FactOrigin>>;
+export type ProfileDraft = { facts: ProfileFacts; origins: Origins };
+export const states = [
+  ["AP", "Andhra Pradesh"],
+  ["AR", "Arunachal Pradesh"],
+  ["AS", "Assam"],
+  ["BR", "Bihar"],
+  ["CG", "Chhattisgarh"],
+  ["GA", "Goa"],
+  ["GJ", "Gujarat"],
+  ["HR", "Haryana"],
+  ["HP", "Himachal Pradesh"],
+  ["JH", "Jharkhand"],
+  ["KA", "Karnataka"],
+  ["KL", "Kerala"],
+  ["MP", "Madhya Pradesh"],
+  ["MH", "Maharashtra"],
+  ["MN", "Manipur"],
+  ["ML", "Meghalaya"],
+  ["MZ", "Mizoram"],
+  ["NL", "Nagaland"],
+  ["OD", "Odisha"],
+  ["PB", "Punjab"],
+  ["RJ", "Rajasthan"],
+  ["SK", "Sikkim"],
+  ["TN", "Tamil Nadu"],
+  ["TS", "Telangana"],
+  ["TR", "Tripura"],
+  ["UP", "Uttar Pradesh"],
+  ["UK", "Uttarakhand"],
+  ["WB", "West Bengal"],
+  ["AN", "Andaman and Nicobar Islands"],
+  ["CH", "Chandigarh"],
+  ["DN", "Dadra and Nagar Haveli and Daman and Diu"],
+  ["DL", "Delhi"],
+  ["JK", "Jammu and Kashmir"],
+  ["LA", "Ladakh"],
+  ["LD", "Lakshadweep"],
+  ["PY", "Puducherry"],
+] as const;
+export const fields: {
+  key: ProfileField;
+  label: string;
+  kind: "number" | "text" | "state" | "choice" | "boolean";
+  max?: number;
+}[] = [
+  { key: "age", label: "Age", kind: "number", max: 120 },
+  { key: "state_code", label: "State or union territory", kind: "state" },
+  { key: "occupation", label: "Occupation", kind: "text" },
+  {
+    key: "family_income_inr",
+    label: "Annual family income (₹)",
+    kind: "number",
+    max: 1_000_000_000,
+  },
+  {
+    key: "land_area_acres",
+    label: "Land area (acres)",
+    kind: "number",
+    max: 1_000_000,
+  },
+  {
+    key: "land_registration",
+    label: "Land registered to your family",
+    kind: "choice",
+  },
+  { key: "category", label: "Support category", kind: "text" },
+  { key: "is_student", label: "Currently a student", kind: "boolean" },
+  { key: "gender", label: "Gender (only if needed)", kind: "text" },
+  {
+    key: "social_category",
+    label: "Social category (only if needed)",
+    kind: "text",
+  },
+  {
+    key: "has_disability",
+    label: "Disability status (only if needed)",
+    kind: "boolean",
+  },
+];
