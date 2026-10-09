@@ -1445,3 +1445,8 @@ p + p {
 .profile-review h2:focus {
   outline: none;
 }
+/* Keep unavailable citations distinct in application steps, just like safe links. */
+.application-steps .source-unavailable {
+  display: block;
+  margin-top: 4px;
+}

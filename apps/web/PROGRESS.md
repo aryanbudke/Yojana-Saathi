@@ -103,3 +103,12 @@ The remaining dependency order is packaging/handoff → live API verification �
 - Problems: Next.js build TypeScript subprocess output was interrupted by the restricted sandbox; the build passed with subprocess access. Added placeholder rejection in live mode, citation membership validation, error visibility, focus management and input locking during confirmation. Five dev-only upstream ESLint findings remain; no compatible fix offered. Automated accessibility does not replace human screen-reader testing.
 - Commit reference: commit containing this entry; resolve with `git log --format="%h %s" --grep="T1-09"`.
 - Next task: T1-10 screenshots and handoff
+
+## T1-10 — Screenshots, startup instructions and handoff
+
+- Status: COMPLETED
+- Files: `apps/web/HANDOFF.md`, `apps/web/README.md`, `apps/web/artifacts/screenshots/discover-1440.png`, `apps/web/artifacts/screenshots/discover-375.png`, `apps/web/artifacts/screenshots/guidance-1440.png`, `apps/web/artifacts/screenshots/profile-review-1440.png`, `apps/web/artifacts/screenshots/recommendations-1440.png`, `apps/web/artifacts/screenshots/recommendations-375.png`, `apps/web/artifacts/screenshots/scheme-detail-1440.png`, `apps/web/scripts/capture.mjs`, `apps/web/src/app/globals.css`
+- Verification: Seven actual mock-mode PNG screenshots captured and visually inspected (desktop/mobile discovery, profile review, desktop/mobile recommendations, details, guidance). Corrected guidance citation layout and recaptured all screens. Lint, strict typecheck, formatting, git diff check and three relevant detail/guidance browser regressions passed.
+- Problems: Initial capture script used URL.pathname and encoded workspace spaces in the filesystem path; replaced it with fileURLToPath, moved the seven generated images into apps/web and cleaned the empty mistaken directories. Preview-panel open did not return; localhost preview remains running. Startup, environment, Vercel-root and ownership/session handoff notes are provided.
+- Commit reference: commit containing this entry; resolve with `git log --format="%h %s" --grep="T1-10"`.
+- Next task: T1-11 live API verification
