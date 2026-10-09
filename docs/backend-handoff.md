@@ -12,11 +12,12 @@ Two external deliverables remain unavailable:
 - **Production dataset:** no user-curated real scheme bundle has been supplied.
   The only seed is the reserved `.invalid` synthetic test fixture and production
   seeding rejects it.
-- **Live API URL:** no Supabase PostgreSQL connection string or authenticated
-  Railway project/token has been supplied. No deployment has been claimed.
+- **Live API URL:** no authenticated Railway project/token has been supplied.
+  No deployment has been claimed.
 
-The Supabase project URL and publishable client key are not sufficient to run
-DDL migrations; Alembic requires the PostgreSQL session-pooler connection URL.
+The Supabase database is migrated through Alembic revision `20261009_0004`.
+All 12 application tables have row-level security enabled, but they contain no
+production records because the reviewed real-scheme bundle is still pending.
 
 ## Local runbook
 
@@ -90,11 +91,10 @@ variables in Railway, including the database URL, CORS allowlist, and separate
 reviewer/publisher credentials. The checked-in config runs migrations before
 starting and gates traffic on `/health`.
 
-After the user supplies approved scheme data and the database connection:
+After the user supplies approved scheme data:
 
 1. Validate the bundle locally.
-2. Run `alembic upgrade head` against Supabase.
-3. Seed, query, and inspect real records through the publication boundary.
-4. Deploy the exact verified commit to Railway.
-5. Record the public API URL and smoke-test `/health`, `/api/v1/schemes`, scheme
+2. Seed, query, and inspect real records through the publication boundary.
+3. Deploy the exact verified commit to Railway.
+4. Record the public API URL and smoke-test `/health`, `/api/v1/schemes`, scheme
    detail, guidance, CORS, admin denial, and error payloads.

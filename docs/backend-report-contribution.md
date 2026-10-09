@@ -77,13 +77,15 @@ supports reproducible explanations without model calls.
 
 ## Reliability and deployment evidence
 
-The final local verification gate produced these results:
+The latest verification gate produced these results:
 
-- 79 pytest tests passed with 91% line coverage;
-- Ruff lint and format checks passed across 70 Python files;
-- strict mypy passed across 63 application/test source files;
-- Alembic reported one head (`20261009_0003`) and rendered the complete
+- 81 pytest tests passed with 91% line coverage;
+- Ruff lint and format checks passed across 72 Python files;
+- strict mypy passed across 64 application/test source files;
+- Alembic reported one head (`20261009_0004`) and rendered the complete
   PostgreSQL upgrade chain;
+- Supabase runs that head with all 12 application tables present and protected
+  by row-level security;
 - the deterministic OpenAPI artifact contains 11 paths and has a drift test;
 - production-mode startup bound to an injected Railway `PORT`;
 - `/health` returned HTTP 200 and production `/docs` returned HTTP 404; and
@@ -97,13 +99,12 @@ through environment variables rather than committed files.
 
 ## Honest limitations and remaining integration
 
-The implementation has not been migrated to Supabase or deployed to Railway.
-The supplied Supabase project URL and publishable client key cannot authorize
-PostgreSQL DDL; a session-pooler `DATABASE_URL` is still required. Railway
-project credentials and a public domain are also absent.
+The implementation has been migrated to Supabase through revision
+`20261009_0004`, but it has not been deployed to Railway. Railway project
+credentials and a public domain are absent.
 
 The user retained ownership of manual scheme collection. Consequently, no real
 verified production dataset snapshot exists yet. The backend is designed to
 reject its synthetic fixture in production. Real-data research, independent
-review, Supabase migration/seed, deployed smoke tests, and the final public API
-URL must be completed before claiming an end-to-end production deployment.
+review, Supabase real-data seeding, deployed smoke tests, and the final public
+API URL must be completed before claiming an end-to-end production deployment.

@@ -331,18 +331,36 @@ only after its acceptance checks pass and its work is committed.
 ## T2-18 — Supabase migration, seed, and real-record smoke test
 
 - **Status:** BLOCKED
-- **Files created or modified:** `PROGRESS.md` only; no database or seed data
-  was changed.
-- **Tests executed:** Read-only environment audit confirmed that
-  `services/api/.env` is absent, `DATABASE_URL` is unset, and the only seed
-  bundle is `services/api/tests/fixtures/minimal_seed.json` using reserved
-  `.invalid` URLs.
-- **Problems encountered:** A Supabase PostgreSQL connection and the
-  user-curated, reviewed real-scheme seed bundle are not available. The user
-  explicitly retained ownership of manual scheme collection, so the synthetic
-  fixture must not be migrated or presented as real guidance.
-- **Commit reference:** Not applicable — external integration is blocked
-- **Next task:** T2-19 — Backend deployment and secret configuration
+- **Files created or modified:** `services/api/app/core/config.py`,
+  `services/api/migrations/versions/20261009_0004_enable_rls.py`,
+  `services/api/tests/test_config.py`,
+  `services/api/tests/test_supabase_security.py`, `docs/backend-handoff.md`,
+  `docs/backend-report-contribution.md`, and `PROGRESS.md`. Supabase received
+  migrations through revision `20261009_0004`; no seed records were inserted.
+- **Tests executed:**
+  - Supabase connection smoke query — passed (`current_database()` returned
+    `postgres`)
+  - Live `alembic upgrade head` — passed at revision `20261009_0004`
+  - Live schema inspection — 12/12 application tables, 14 foreign keys,
+    78 check constraints, and 23 non-primary indexes present
+  - Live immutability inspection — five triggers and two trigger functions
+    present
+  - Live RLS inspection — enabled on 12/12 application tables
+  - Live data inspection — zero schemes, versions, sources, or audit rows
+  - `.venv/bin/ruff check .` — passed
+  - `.venv/bin/ruff format --check .` — passed (72 files)
+  - `.venv/bin/mypy app tests` — passed (64 source files)
+  - `.venv/bin/pytest --cov=app --cov-report=term-missing` — 81 passed,
+    91% coverage; one upstream Starlette TestClient deprecation warning
+- **Problems encountered:** Blank optional admin variables initially prevented
+  settings startup; empty values are now ignored and regression-tested. The
+  schema migration and security checks are complete, but the user-curated,
+  independently reviewed real-scheme bundle has not been supplied. The
+  synthetic `.invalid` fixture was deliberately not inserted into production,
+  so real-record seeding and API smoke tests remain blocked.
+- **Commit reference:** `HEAD` — `feat(db): migrate and secure Supabase schema`
+- **Next task:** Supply and review the real scheme seed bundle, then validate,
+  seed, and smoke-query it before marking T2-18 complete
 
 ## T2-19 — Backend deployment and secret configuration
 
@@ -360,9 +378,9 @@ only after its acceptance checks pass and its work is committed.
   - `GET /health` — 200 with production environment response
   - `GET /docs` in production — 404 as intended
 - **Problems encountered:** No Railway project, authenticated CLI/token,
-  Supabase PostgreSQL `DATABASE_URL`, approved real seed, or deployed API domain
-  is available. The service therefore cannot be deployed or smoke-tested
-  externally yet. No secrets were written to Git.
+  approved real seed, or deployed API domain is available. The service
+  therefore cannot be deployed or smoke-tested externally yet. No secrets were
+  written to Git.
 - **Commit reference:** `HEAD` — `chore(deploy): prepare Railway service configuration`
 - **Next task:** T2-20 — Full backend verification gate
 
@@ -427,5 +445,5 @@ only after its acceptance checks pass and its work is committed.
   implemented and locally verified work from the blocked real-data, Supabase,
   and Railway integrations.
 - **Commit reference:** `HEAD` — `docs(report): add backend and provenance contribution`
-- **Next task:** Await user-curated schemes, Supabase PostgreSQL connection URL,
-  and Railway access to unblock T2-05–T2-07, T2-09, T2-18, T2-19, and T2-21.
+- **Next task:** Await user-curated schemes and Railway access to unblock
+  T2-05–T2-07, T2-09, T2-18, T2-19, and T2-21.
