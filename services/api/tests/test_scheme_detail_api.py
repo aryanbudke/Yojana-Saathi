@@ -29,7 +29,7 @@ def detail_client() -> Generator[TestClient]:
     Base.metadata.create_all(engine)
     factory = create_session_factory(engine)
     with factory.begin() as session:
-        seed_database(session, load_seed_file(FIXTURE))
+        seed_database(session, load_seed_file(FIXTURE), allow_test_urls=True)
     settings = Settings(
         _env_file=None,
         APP_ENV="test",

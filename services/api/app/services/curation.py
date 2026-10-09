@@ -7,6 +7,7 @@ from uuid import UUID
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
+from app.core.official_urls import OfficialUrlValidationError, validate_official_url
 from app.db.enums import ReviewStatus
 from app.db.models import (
     AdminAuditLog,
@@ -53,7 +54,9 @@ def ensure_version_is_mutable(session: Session, version_id: UUID) -> SchemeVersi
     return version
 
 
-def validate_version_provenance(session: Session, version_id: UUID) -> ProvenanceReport:
+def validate_version_provenance(
+    session: Session, version_id: UUID, *, allow_test_urls: bool = False
+) -> ProvenanceReport:
     """Require source-backed rules and report optional guidance coverage."""
 
     version = ensure_version_is_mutable(session, version_id)
@@ -69,6 +72,18 @@ def validate_version_provenance(session: Session, version_id: UUID) -> Provenanc
         errors.append("at least one source-backed eligibility rule is required")
     if not isinstance(version.eligibility_json, dict) or not version.eligibility_json:
         errors.append("eligibility_json must be a non-empty object")
+    sources = session.scalars(select(Source).where(Source.scheme_version_id == version.id))
+    steps = session.scalars(
+        select(ApplicationStep).where(ApplicationStep.scheme_version_id == version.id)
+    )
+    try:
+        for source in sources:
+            validate_official_url(source.official_url, allow_test_urls=allow_test_urls)
+        for step in steps:
+            if step.official_url is not None:
+                validate_official_url(step.official_url, allow_test_urls=allow_test_urls)
+    except OfficialUrlValidationError as exc:
+        errors.append(str(exc))
     if errors:
         raise CurationValidationError("; ".join(errors))
 
@@ -86,6 +101,7 @@ def review_scheme_version(
     *,
     reviewer: str,
     now: datetime | None = None,
+    allow_test_urls: bool = False,
 ) -> ProvenanceReport:
     """Mark a complete draft verified and write an audit record."""
 
@@ -93,7 +109,7 @@ def review_scheme_version(
     if version.review_status != ReviewStatus.DRAFT:
         raise InvalidReviewTransitionError("only draft versions can be reviewed")
     normalized_reviewer = _validated_actor(reviewer)
-    report = validate_version_provenance(session, version_id)
+    report = validate_version_provenance(session, version_id, allow_test_urls=allow_test_urls)
     reviewed_at = now or datetime.now(UTC)
     version.review_status = ReviewStatus.VERIFIED
     version.reviewed_by = normalized_reviewer
@@ -118,6 +134,7 @@ def publish_scheme_version(
     *,
     actor: str,
     now: datetime | None = None,
+    allow_test_urls: bool = False,
 ) -> ProvenanceReport:
     """Publish a verified version exactly once and write an audit record."""
 
@@ -127,7 +144,7 @@ def publish_scheme_version(
     if version.reviewed_by is None or version.verified_at is None:
         raise CurationValidationError("verified versions require reviewer provenance")
     normalized_actor = _validated_actor(actor)
-    report = validate_version_provenance(session, version_id)
+    report = validate_version_provenance(session, version_id, allow_test_urls=allow_test_urls)
     published_at = now or datetime.now(UTC)
     version.published_at = published_at
     session.add(

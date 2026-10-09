@@ -30,7 +30,7 @@ def repository() -> Generator[tuple[MatchingRepository, Session, UUID]]:
     engine = create_engine("sqlite+pysqlite:///:memory:")
     Base.metadata.create_all(engine)
     session = Session(engine)
-    seed_database(session, load_seed_file(FIXTURE))
+    seed_database(session, load_seed_file(FIXTURE), allow_test_urls=True)
     session_id = uuid4()
     session.add(
         ProfileSession(

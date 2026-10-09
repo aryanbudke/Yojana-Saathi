@@ -25,7 +25,7 @@ def test_application_guard_rejects_published_version() -> None:
     Base.metadata.create_all(engine)
     try:
         with Session(engine) as session:
-            seed_database(session, load_seed_file(FIXTURE))
+            seed_database(session, load_seed_file(FIXTURE), allow_test_urls=True)
             session.commit()
 
             with pytest.raises(PublishedVersionImmutableError):
@@ -39,7 +39,7 @@ def test_application_guard_allows_draft_version() -> None:
     Base.metadata.create_all(engine)
     try:
         with Session(engine) as session:
-            seed_database(session, load_seed_file(FIXTURE))
+            seed_database(session, load_seed_file(FIXTURE), allow_test_urls=True)
             draft_id = UUID("51000000-0000-4000-8000-000000000002")
             session.add(
                 SchemeVersion(

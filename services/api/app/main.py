@@ -9,6 +9,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import Engine
 
 from app.api.health import router as health_router
+from app.api.v1.admin import router as admin_router
 from app.api.v1.guidance import router as guidance_router
 from app.api.v1.profiles import router as profiles_router
 from app.api.v1.schemes import router as schemes_router
@@ -49,13 +50,14 @@ def create_app(
         allow_origins=runtime_settings.allowed_origins,
         allow_credentials=False,
         allow_methods=["GET", "POST", "DELETE", "OPTIONS"],
-        allow_headers=["Accept", "Content-Type", "X-Request-ID"],
+        allow_headers=["Accept", "Content-Type", "X-Admin-Token", "X-Request-ID"],
         expose_headers=["X-Request-ID"],
         max_age=600,
     )
     install_request_id_middleware(application)
     install_error_handlers(application)
     application.include_router(health_router)
+    application.include_router(admin_router)
     application.include_router(schemes_router)
     application.include_router(guidance_router)
     application.include_router(profiles_router)

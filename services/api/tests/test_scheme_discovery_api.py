@@ -49,7 +49,7 @@ def discovery_client() -> Generator[TestClient]:
         schemes=[first_bundle.schemes[0], second_bundle.schemes[0]],
     )
     with factory.begin() as session:
-        seed_database(session, combined)
+        seed_database(session, combined, allow_test_urls=True)
     settings = Settings(
         _env_file=None,
         APP_ENV="test",

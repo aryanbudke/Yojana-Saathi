@@ -20,7 +20,7 @@ only after its acceptance checks pass and its work is committed.
 | T2-13 | F06 application guidance API | COMPLETED |
 | T2-14 | F01 ephemeral sessions and confirmed facts | COMPLETED |
 | T2-15 | Matching and question repository/service interfaces | COMPLETED |
-| T2-16 | Admin restrictions and official URL validation | PENDING |
+| T2-16 | Admin restrictions and official URL validation | COMPLETED |
 | T2-17 | Optional F07 guest saves (after all P0 work) | PENDING |
 | T2-18 | Supabase migration/seed and real-record smoke test | PENDING |
 | T2-19 | Backend deployment and secret configuration | PENDING |
@@ -280,3 +280,27 @@ only after its acceptance checks pass and its work is committed.
   rule/source pair cannot leave a partially flushed run.
 - **Commit reference:** `HEAD` — `feat(db): add matching integration repositories`
 - **Next task:** T2-16 — Admin restrictions and official URL validation
+
+## T2-16 — Admin restrictions and official URL validation
+
+- **Status:** COMPLETED
+- **Files created or modified:** `services/api/app/core/config.py`,
+  `services/api/app/core/admin_auth.py`,
+  `services/api/app/core/official_urls.py`,
+  `services/api/app/schemas/admin.py`,
+  `services/api/app/api/v1/admin.py`, `services/api/app/main.py`,
+  `services/api/app/db/seed.py`, `services/api/app/services/curation.py`,
+  `services/api/.env.example`, `services/api/README.md`, affected test seed
+  call sites, `services/api/tests/test_admin_security.py`, and `PROGRESS.md`.
+- **Tests executed:**
+  - `.venv/bin/ruff check .` — passed
+  - `.venv/bin/ruff format --check .` — passed (64 files)
+  - `.venv/bin/mypy app tests` — passed (58 source files)
+  - `.venv/bin/pytest --cov=app --cov-report=term-missing` — 73 passed,
+    91% coverage; one upstream Starlette TestClient deprecation warning
+- **Problems encountered:** Initial changes were behaviorally correct but had
+  four formatter differences. Seed validation was also moved ahead of every
+  insert so a later invalid URL cannot leave earlier pending records. The full
+  suite passed after both corrections.
+- **Commit reference:** `HEAD` — `feat(admin): secure curation and validate official URLs`
+- **Next task:** T2-17 — Optional guest saved schemes

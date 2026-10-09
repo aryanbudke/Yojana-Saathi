@@ -73,3 +73,21 @@ Developer 3 should depend on the protocols and DTOs in
 
 The AI/rule module owns extraction, evaluation, ranking, and question selection;
 the repository owns publication filtering, provenance checks, and persistence.
+
+## Administrative roles and official links
+
+The review and publish endpoints are disabled until their separate role
+credentials are configured:
+
+- `ADMIN_REVIEW_TOKEN` (32+ characters) with `ADMIN_REVIEWER_ID`
+- `ADMIN_PUBLISH_TOKEN` (32+ characters) with `ADMIN_PUBLISHER_ID`
+
+Send the applicable secret only in `X-Admin-Token`. Reviewer credentials cannot
+publish, publisher credentials cannot review, and actor IDs come from server
+configuration rather than request data. Both transitions write audit records.
+
+Source and application links are revalidated before review/publication. They
+must use HTTPS with a reviewed named public host; reserved placeholder domains,
+embedded credentials, localhost/private targets, and raw IP hosts are rejected.
+The `allow_test_urls` override exists only for synthetic test fixtures and is
+never used by the curation CLI or administrative API.
