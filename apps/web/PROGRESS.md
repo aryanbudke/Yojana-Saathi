@@ -9,7 +9,7 @@ Strict order: no next task begins until the current implementation passes its ch
 | T1-01 | Next.js foundation, design tokens, shared UI and accessible shell | COMPLETED |
 | T1-02 | Typed client, runtime contracts, mock fixtures and session boundary | COMPLETED |
 | T1-03 | F01 composer and editable confirmed profile | COMPLETED |
-| T1-04 | F02 discovery filters, URL state and result states | PENDING |
+| T1-04 | F02 discovery filters, URL state and result states | COMPLETED |
 | T1-05 | F03 recommendations and rule checklists | PENDING |
 | T1-06 | F04 follow-up, skip/edit and rematching | PENDING |
 | T1-07 | F05 detail, exclusions and source provenance | PENDING |
@@ -47,3 +47,12 @@ Optional saved and Hindi features depend on the complete P0 live flow and are no
 - Problems: Next.js 16 development-origin protection prevented hydration in first browser run; explicitly allowed localhost/127.0.0.1 and both tests passed after restart. Profile stays in memory and server session; no long-term local storage.
 - Commit reference: commit containing this entry; resolve with `git log --format="%h %s" --grep="T1-03"`.
 - Next task: T1-04 scheme discovery
+
+## T1-04 — F02 discovery filters, URL state and result states
+
+- Status: COMPLETED
+- Files: `apps/web/e2e/discovery.spec.ts`, `apps/web/src/app/schemes/[schemeId]/page.tsx`, `apps/web/src/features/discovery/DetailPreview.tsx`, `apps/web/src/features/discovery/Discovery.tsx`, `apps/web/src/features/discovery/SchemeCard.tsx`, `apps/web/src/features/discovery/query.test.ts`, `apps/web/src/features/discovery/types.ts`, `apps/web/src/lib/api/use-resource.ts`, `apps/web/src/lib/format.ts`, `apps/web/src/app/globals.css`, `apps/web/src/app/page.tsx`
+- Verification: Lint, strict typecheck, 15 unit/contract tests and discovery browser test passed. Browser verified filter URL updates, back history, clearing and functional detail navigation.
+- Problems: Created a working basic detail route as a discovery dependency; full F05 sections are sequential task T1-07. National fixtures remain included regardless of state; production filtering belongs to API.
+- Commit reference: commit containing this entry; resolve with `git log --format="%h %s" --grep="T1-04"`.
+- Next task: T1-05 recommendations
