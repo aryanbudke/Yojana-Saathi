@@ -256,3 +256,25 @@ Brief: complete 10-section GovTech landing page in the confirmed direction (ivor
 - Problems/dependencies: (1) absolutely positioned cards hid each other's text — replaced with a staggered two-column grid (raised middle card) so no content is covered. (2) Vertically centred copy pushed the CTA below 720px at 1280 — copy is now top-aligned. (3) Brief accent #21865B is 4.26:1 on ivory; added `--accent-ink` #1F7F56 (4.66:1) for text under 18px, kept #21865B for icons/large text. (4) Viewport spec now checks the hero CTA (`#finder`) instead of the form button that moved below the fold.
 - Commit reference: resolve with `git log --oneline --grep="SR-03"`.
 - Next task: SR-04
+
+## SR-04 — How it works
+
+- Status: COMPLETED
+- Files: src/features/landing/{HowItWorks.tsx,sections.module.css}, src/app/page.tsx, src/features/profile/{ProfileComposer.tsx,model.ts}, src/lib/classes.ts, e2e/landing.spec.ts, PROGRESS.md. Resumed and preserved the unfinished changes from the earlier approved redesign session.
+- Verification: lint and strict TypeScript passed; four existing redesign browser tests and two new section tests passed. Inspected actual 375/1280 screenshots, tested the finder anchor and no horizontal overflow. The screenshot is not supplied; comparison is against the written brief and the confirmed asymmetric layout. Sticky navigation can appear inside tall element captures; final full-page captures will reset scrolling.
+- Problems: moved the shared example to a plain module for Server Component imports; corrected misleading “no forms” copy. Existing API and mock boundaries preserved.
+- Commit: commit containing this entry, resolve with `git log --oneline --grep=SR-04`.
+- Next: SR-05 scheme finder and matching preview.
+
+| Task | Status |
+| --- | --- |
+| SR-01 Inspect/map | COMPLETED |
+| SR-02 Tokens/navigation | COMPLETED |
+| SR-03 Hero/benefits | COMPLETED |
+| SR-04 How it works | COMPLETED |
+| SR-05 Interactive finder | PENDING |
+| SR-06 Categories/sources | PENDING |
+| SR-07 Guidance/footer | PENDING |
+| SR-08 Responsive | PENDING |
+| SR-09 API journeys | PENDING |
+| SR-10 Visual/accessibility polish | PENDING |

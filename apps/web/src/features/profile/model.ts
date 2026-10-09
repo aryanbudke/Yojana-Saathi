@@ -1,5 +1,9 @@
 import type { ProfileFacts } from "@/lib/api/contracts";
 import type { ProfileDraft } from "./types";
+
+/** Sample description used by "Try an example" and the How it works illustration. */
+export const example =
+  "I’m a 24-year-old farmer from Maharashtra helping my family farm 1.5 acres.";
 export function mergeExtraction(
   previous: ProfileDraft,
   incoming: ProfileFacts,

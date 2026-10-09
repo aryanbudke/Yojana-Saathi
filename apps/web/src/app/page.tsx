@@ -7,6 +7,7 @@ import {
 } from "@/features/profile/ProfileComposer";
 import { FeatureStrip } from "@/features/landing/FeatureStrip";
 import { HeroSection } from "@/features/landing/HeroSection";
+import { HowItWorks } from "@/features/landing/HowItWorks";
 
 export default function Home() {
   return (
@@ -14,6 +15,7 @@ export default function Home() {
       <ModeNotice />
       <HeroSection />
       <FeatureStrip />
+      <HowItWorks />
       {/* SR-05 replaces this with the scheme finder and matching preview. */}
       <section
         id="finder"

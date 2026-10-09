@@ -18,11 +18,9 @@ import { errorMessage, isMock } from "@/lib/api";
 import { useProfile } from "./hooks";
 import { useMatching } from "@/features/matching/hooks";
 import { fields, states } from "./types";
-import { fieldValue } from "./model";
+import { example, fieldValue } from "./model";
 import Link from "next/link";
 
-export const example =
-  "I’m a 24-year-old farmer from Maharashtra helping my family farm 1.5 acres.";
 export function ModeNotice() {
   return isMock ? (
     <div className="mode-notice">
