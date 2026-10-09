@@ -121,8 +121,13 @@ repository files:
 - `ALLOWED_ORIGINS` as a comma-separated HTTPS allowlist
 - separate `ADMIN_REVIEW_TOKEN`/`ADMIN_REVIEWER_ID` and
   `ADMIN_PUBLISH_TOKEN`/`ADMIN_PUBLISHER_ID` pairs if admin APIs are enabled
+- `GEMINI_API_KEY` for profile extraction and curator search/answers. The
+  Blueprint sets `GEMINI_MODEL` and `GEMINI_EMBEDDING_MODEL`; without a key,
+  extraction falls back to manual entry and the curator endpoints return 503.
 
-Deploy from the `feat/backend-db` branch while this work is under review. After
-merging, change the Blueprint branch to `main`. Smoke-test the generated
+The Blueprint deploys from `main`. Because the start command migrates first, a
+deploy is what advances Supabase (currently to `20261009_0005`), so code and
+schema always move together. Do not migrate Supabase ahead of the deployed code:
+the next start would fail on an unknown revision. Smoke-test the generated
 `onrender.com` URL at `/health`, confirm `/docs` returns 404 in production, and
 query one verified `/api/v1/schemes` record after real data is seeded.

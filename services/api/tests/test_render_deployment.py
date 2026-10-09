@@ -14,6 +14,7 @@ def test_render_blueprint_configures_production_api_safely() -> None:
     assert service["type"] == "web"
     assert service["runtime"] == "python"
     assert service["rootDir"] == "services/api"
+    assert service["branch"] == "main"
     assert service["healthCheckPath"] == "/health"
     assert service["startCommand"].startswith("alembic upgrade head && ")
     assert "--host 0.0.0.0 --port $PORT" in service["startCommand"]
@@ -24,3 +25,6 @@ def test_render_blueprint_configures_production_api_safely() -> None:
     assert env_vars["ALLOWED_ORIGINS"]["sync"] is False
     assert "value" not in env_vars["DATABASE_URL"]
     assert "value" not in env_vars["ALLOWED_ORIGINS"]
+    assert env_vars["GEMINI_API_KEY"]["sync"] is False
+    assert "value" not in env_vars["GEMINI_API_KEY"]
+    assert env_vars["GEMINI_EMBEDDING_MODEL"]["value"] == "gemini-embedding-001"
