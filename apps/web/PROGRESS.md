@@ -10,7 +10,7 @@ Strict order: no next task begins until the current implementation passes its ch
 | T1-02 | Typed client, runtime contracts, mock fixtures and session boundary | COMPLETED |
 | T1-03 | F01 composer and editable confirmed profile | COMPLETED |
 | T1-04 | F02 discovery filters, URL state and result states | COMPLETED |
-| T1-05 | F03 recommendations and rule checklists | PENDING |
+| T1-05 | F03 recommendations and rule checklists | COMPLETED |
 | T1-06 | F04 follow-up, skip/edit and rematching | PENDING |
 | T1-07 | F05 detail, exclusions and source provenance | PENDING |
 | T1-08 | F06 application readiness and checklist | PENDING |
@@ -56,3 +56,12 @@ Optional saved and Hindi features depend on the complete P0 live flow and are no
 - Problems: Created a working basic detail route as a discovery dependency; full F05 sections are sequential task T1-07. National fixtures remain included regardless of state; production filtering belongs to API.
 - Commit reference: commit containing this entry; resolve with `git log --format="%h %s" --grep="T1-04"`.
 - Next task: T1-05 recommendations
+
+## T1-05 — F03 recommendations and rule checklists
+
+- Status: COMPLETED
+- Files: `apps/web/e2e/matching.spec.ts`, `apps/web/src/app/recommendations/page.tsx`, `apps/web/src/features/matching/MatchCard.tsx`, `apps/web/src/features/matching/Recommendations.tsx`, `apps/web/src/features/matching/RuleChecklist.tsx`, `apps/web/src/features/matching/hooks.tsx`, `apps/web/src/features/matching/types.ts`, `apps/web/src/app/globals.css`, `apps/web/src/app/layout.tsx`, `apps/web/src/features/profile/ProfileComposer.tsx`
+- Verification: Lint, strict typecheck, 15 unit/contract tests and recommendation browser journey passed. Guarded matching behind explicit confirmation; unknown/source/version rendered and scores hidden.
+- Problems: Source IDs are joined against the matching detail version, never assumed to map by array position. Missing detail metadata remains unavailable rather than guessed. Match cache keyed by session and facts to avoid stale profile results.
+- Commit reference: commit containing this entry; resolve with `git log --format="%h %s" --grep="T1-05"`.
+- Next task: T1-06 follow-up and rematch
