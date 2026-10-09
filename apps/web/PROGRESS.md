@@ -11,7 +11,7 @@ Strict order: no next task begins until the current implementation passes its ch
 | T1-03 | F01 composer and editable confirmed profile | COMPLETED |
 | T1-04 | F02 discovery filters, URL state and result states | COMPLETED |
 | T1-05 | F03 recommendations and rule checklists | COMPLETED |
-| T1-06 | F04 follow-up, skip/edit and rematching | PENDING |
+| T1-06 | F04 follow-up, skip/edit and rematching | COMPLETED |
 | T1-07 | F05 detail, exclusions and source provenance | PENDING |
 | T1-08 | F06 application readiness and checklist | PENDING |
 | T1-09 | F10 explanations and responsive/accessibility gate | PENDING |
@@ -65,3 +65,12 @@ Optional saved and Hindi features depend on the complete P0 live flow and are no
 - Problems: Source IDs are joined against the matching detail version, never assumed to map by array position. Missing detail metadata remains unavailable rather than guessed. Match cache keyed by session and facts to avoid stale profile results.
 - Commit reference: commit containing this entry; resolve with `git log --format="%h %s" --grep="T1-05"`.
 - Next task: T1-06 follow-up and rematch
+
+## T1-06 — F04 follow-up, skip/edit and rematching
+
+- Status: COMPLETED
+- Files: `apps/web/e2e/questions.spec.ts`, `apps/web/src/features/questions/FollowUpCard.tsx`, `apps/web/src/features/questions/model.test.ts`, `apps/web/src/features/questions/model.ts`, `apps/web/src/app/globals.css`, `apps/web/src/features/matching/Recommendations.tsx`, `apps/web/src/features/profile/hooks.tsx`, `apps/web/src/lib/api/mock.ts`, `apps/web/src/lib/api/use-resource.ts`
+- Verification: Lint, strict typecheck, 17 unit/contract tests and two question browser tests passed: yes-to-pass, edit-to-fail, status-change announcements, not-sure remains unknown, no repeated questions.
+- Problems: First browser pass found rematch loading unmounted the follow-up panel and lost the change notice. Preserving the previous resource while loading keeps state and retry intact; both scenarios passed after repair. Null confirmation no longer counts as a question answer in mock playback.
+- Commit reference: commit containing this entry; resolve with `git log --format="%h %s" --grep="T1-06"`.
+- Next task: T1-07 full scheme detail

@@ -16,7 +16,8 @@ function useProfileState(){
     setDraft({facts,origins:Object.fromEntries(Object.keys(facts).map(k=>[k,'user']))});setConfirmed(true);return active;
   }
   async function clear(){if(session){try{await api.deleteSession(session.session_id);}catch(e){if(!(e instanceof Error)||!e.message.includes('expired'))throw e;}}revision.current++;setText('');setDraft({facts:{...blankFacts},origins:{}});setSession(null);setReviewing(false);setConfirmed(false);}
-  return {draft,text,setText,reviewing,setReviewing,confirmed,session,extract,edit,confirm,clear};
+  async function applyAnswer(field:ProfileField,value:ProfileFacts[ProfileField]){if(!session)throw new Error('Start a session first');profileSchema.parse({...draft.facts,[field]:value});const response=await api.answer(session.session_id,field,value);setDraft(prev=>({facts:response.facts,origins:{...prev.origins,[field]:'user'}}));return response.facts;}
+  return {draft,text,setText,reviewing,setReviewing,confirmed,session,extract,edit,confirm,clear,applyAnswer};
 }
 const Context=createContext<ReturnType<typeof useProfileState>|null>(null);
 export function ProfileProvider({children}:{children:ReactNode}){const value=useProfileState();return <Context.Provider value={value}>{children}</Context.Provider>;}

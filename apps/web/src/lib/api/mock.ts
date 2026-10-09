@@ -17,7 +17,7 @@ export function createMockApi(delay=350):Api {
     async extract(){await wait();return extractSchema.parse(structuredClone(extraction));},
     async createSession(){await wait();const session_id=crypto.randomUUID();const expires_at=new Date(Date.now()+86_400_000).toISOString();sessions.set(session_id,{facts:{...blankFacts},expires_at,answered:false});return sessionSchema.parse({session_id,expires_at,facts:blankFacts});},
     async deleteSession(id){await wait();sessions.delete(id);},
-    async answer(session_id,field,value){await wait();const s=session(session_id);s.facts={...s.facts,[field]:value};if(field==='land_registration')s.answered=true;return answerSchema.parse({session_id,facts:s.facts,requires_rematch:true});},
+    async answer(session_id,field,value){await wait();const s=session(session_id);s.facts={...s.facts,[field]:value};if(field==='land_registration')s.answered=value!==null;return answerSchema.parse({session_id,facts:s.facts,requires_rematch:true});},
     async matches(id){await wait();const s=session(id);const data=matchesSchema.parse(structuredClone(matches));
       // Play predefined yes/no/unknown contract scenarios. Never evaluate citizen eligibility.
       if(s.answered&&s.facts.land_registration==='yes'){const rule={...data.results[0].unknown_rules[0],result:'pass' as const,reason:'Synthetic yes-answer scenario: registration confirmed.'};data.results[0].matched_rules.push(rule);data.results[0].unknown_rules=[];data.results[0].status='all_checked_conditions_met';}
