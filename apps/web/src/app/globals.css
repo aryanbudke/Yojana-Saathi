@@ -2,17 +2,30 @@
 :root {
   --bg: #f8f8f3;
   --surface: #fff;
-  --ink: #101d19;
+  --ink: #10231b;
   --muted: #64716b;
-  --primary: #1f5a3a;
-  --primary-hover: #123d2a;
-  --deep: #123d2a;
+  --primary: #14532d;
+  --primary-hover: #103c28;
+  --deep: #103c28;
+  --accent: #21865b;
   --space: 8px;
   --radius: 20px;
+  --radius-lg: 24px;
+  --radius-sm: 12px;
   --sage: #e6f1e8;
   --olive: #789532;
   --lime: #dff2a2;
-  --line: #dfe5dd;
+  --line: #dfe7df;
+  --glass-bg: rgb(255 255 255 / 72%);
+  --glass-border: rgb(255 255 255 / 65%);
+  --glass-shadow: 0 12px 40px rgb(20 55 35 / 6%);
+  --shadow-lift: 0 18px 48px rgb(20 55 35 / 10%);
+  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --duration: 200ms;
+  --text-display: clamp(2.25rem, 1.4rem + 3.2vw, 3.75rem);
+  --text-h2: clamp(1.75rem, 1.3rem + 1.6vw, 2.5rem);
+  --text-h3: clamp(1.125rem, 1.05rem + 0.3vw, 1.25rem);
+  --section-gap: clamp(64px, 48px + 4vw, 112px);
   --success: #147b55;
   --warning: #885600;
   --danger: #b63739;
@@ -1560,9 +1573,9 @@ h3 {
 }
 .glass {
   background: rgb(255 255 255 / 76%);
-  border: 1px solid rgb(31 90 58 / 12%);
+  border: 1px solid rgb(20 83 45 / 12%);
   border-radius: var(--radius);
-  box-shadow: 0 8px 32px rgb(18 61 42 / 5%);
+  box-shadow: 0 8px 32px rgb(16 60 40 / 5%);
   padding: 24px;
 }
 .panel {
@@ -1638,7 +1651,7 @@ section[id] {
     padding: 12px 20px;
     border-bottom: 1px solid var(--line);
     background: var(--bg);
-    box-shadow: 0 12px 20px rgb(18 61 42 / 5%);
+    box-shadow: 0 12px 20px rgb(16 60 40 / 5%);
   }
   .header nav a {
     min-height: 44px;
@@ -1695,8 +1708,8 @@ section[id] {
 .composer-shell {
   padding: 24px;
   background: rgb(255 255 255 / 78%);
-  border: 1px solid rgb(31 90 58 / 15%);
-  box-shadow: 0 8px 28px rgb(18 61 42 / 5%);
+  border: 1px solid rgb(20 83 45 / 15%);
+  box-shadow: 0 8px 28px rgb(16 60 40 / 5%);
 }
 .composer-shell h2 {
   font-size: 22px;
@@ -2420,7 +2433,7 @@ section[id] {
 }
 .input:focus-visible {
   border-color: var(--primary);
-  box-shadow: 0 0 0 4px rgb(31 90 58 / 8%);
+  box-shadow: 0 0 0 4px rgb(20 83 45 / 8%);
 }
 .header nav a:hover {
   background: var(--sage);
@@ -2496,7 +2509,7 @@ section[id] {
   .scheme-card:hover,
   .match-card:hover {
     border-color: #b8cbbd;
-    box-shadow: 0 6px 20px rgb(18 61 42 / 4%);
+    box-shadow: 0 6px 20px rgb(16 60 40 / 4%);
   }
   .category-chip:hover {
     border-color: #91ae97;

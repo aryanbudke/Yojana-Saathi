@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "@fontsource-variable/inter";
 import "./globals.css";
+import "@/styles/shell.css";
 import { AppHeader, Disclaimer } from "@/components/ui";
 import { ProfileProvider } from "@/features/profile/hooks";
 import { MatchingProvider } from "@/features/matching/hooks";

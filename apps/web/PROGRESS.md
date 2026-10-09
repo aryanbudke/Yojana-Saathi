@@ -224,3 +224,25 @@ The remaining dependency order is packaging/handoff → live API verification �
 | UI-05 | `67dad94`                                                                  |
 | UI-06 | `5846eba`                                                                  |
 | UI-07 | Commit containing this entry, resolved by `git log --oneline --grep=UI-07` |
+
+# Full-site redesign (SR) — landing page and shared shell
+
+Brief: complete 10-section GovTech landing page in the confirmed direction (ivory `#F8F8F3`, forest `#14532D`, deep `#103C28`, accent `#21865B`, sage, lime; Inter; glass only on nav, hero showcase and scheme finder). Branding stays **yojana saathi.** Backend, schema and matching engine are untouched. The reference screenshot was **not supplied**, so per-task comparisons are against the written brief only.
+
+## SR-01 — Inspect existing code and map it to the brief
+
+- Status: COMPLETED
+- Files: none (read-only)
+- Tests/verification: baseline `npx playwright test` 21/21 passed (Chromium build 1248 installed for the pinned Playwright).
+- Findings: routes `/`, `/discover` (alias), `/help`, `/recommendations`, `/schemes/[id]`, `/schemes/[id]/apply`. Reuse ProfileComposer, Discovery, MatchCard, RuleChecklist, FollowUpCard, verdict labels and the mock-mode API client. `/discover` must remain the working tool page ("Create my profile"/"Edit profile" link there). Official links verified to resolve: india.gov.in, igod.gov.in (+ /sg/states), egazette.gov.in, pmkisan.gov.in, pmayg.dord.gov.in, education.gov.in. `pmayg.nic.in` does not resolve and is not used.
+- Decisions (confirmed by user): honest About/Privacy/Disclaimer pages + FAQ on /help, no Contact/Terms; hero scheme cards show name/authority/category/official link only, labelled "Example scheme"; asymmetric How-it-works; glass limited to three places.
+- Next task: SR-02
+
+## SR-02 — Tokens, typography, glass primitive and navigation
+
+- Status: COMPLETED
+- Files: src/app/globals.css (tokens), src/styles/shell.css (new), src/app/layout.tsx, src/components/AppHeader.tsx, e2e/redesign.spec.ts
+- Tests/verification: lint (0 warnings), strict TypeScript, full Playwright 21/21 after fix. Screenshots at 1440/900/390 (menu open), 0px horizontal overflow.
+- Problems/dependencies: axe flagged nav text at 4.23:1 through the 72% translucent header over green content. Raised header to 90% opacity and darkened nav text (#37443E); worst-case composite now 8.14:1. Older `.header nav a` rule out-specified the mobile-only CTA hide; fixed with a more specific selector. Nav spec updated for the new Home/Discover schemes/How it works/About links and CTA.
+- Commit reference: resolve with `git log --oneline --grep="SR-02"`.
+- Next task: SR-03

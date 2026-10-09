@@ -3,16 +3,37 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useRef, useState } from "react";
-import { Globe2, Menu, X } from "lucide-react";
+import { ArrowRight, Globe2, Menu, X } from "lucide-react";
+
+type NavLink = {
+  href: string;
+  label: string;
+  isActive: (path: string) => boolean;
+};
+
+const links: NavLink[] = [
+  { href: "/", label: "Home", isActive: (path) => path === "/" },
+  {
+    href: "/discover",
+    label: "Discover schemes",
+    isActive: (path) =>
+      path.startsWith("/discover") ||
+      path.startsWith("/schemes") ||
+      path.startsWith("/recommendations"),
+  },
+  {
+    href: "/help",
+    label: "How it works",
+    isActive: (path) => path === "/help",
+  },
+  { href: "/about", label: "About", isActive: (path) => path === "/about" },
+];
 
 export function AppHeader() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const trigger = useRef<HTMLButtonElement>(null);
-  const links = [
-    { href: "/discover", label: "Discover", active: pathname !== "/help" },
-    { href: "/help", label: "How it works", active: pathname === "/help" },
-  ];
+  const close = () => setOpen(false);
   return (
     <header
       className="header"
@@ -28,7 +49,7 @@ export function AppHeader() {
           className="brand"
           href="/"
           aria-label="yojana saathi home"
-          onClick={() => setOpen(false)}
+          onClick={close}
         >
           <span className="brand-mark" aria-hidden="true">
             <svg viewBox="0 0 32 32" fill="none">
@@ -59,19 +80,33 @@ export function AppHeader() {
             <Link
               key={link.href}
               href={link.href}
-              aria-current={link.active ? "page" : undefined}
-              onClick={() => setOpen(false)}
+              aria-current={link.isActive(pathname) ? "page" : undefined}
+              onClick={close}
             >
               {link.label}
             </Link>
           ))}
+          <Link
+            className="button primary nav-cta-mobile"
+            href="/#finder"
+            onClick={close}
+          >
+            Find my schemes
+            <ArrowRight size={16} aria-hidden="true" />
+          </Link>
         </nav>
-        <span
-          className="header-language"
-          aria-label="Current language: English"
-        >
-          <Globe2 size={16} aria-hidden="true" /> English
-        </span>
+        <div className="header-actions">
+          <span
+            className="header-language"
+            aria-label="Current language: English"
+          >
+            <Globe2 size={16} aria-hidden="true" /> English
+          </span>
+          <Link className="button primary header-cta" href="/#finder">
+            Find my schemes
+            <ArrowRight size={16} aria-hidden="true" />
+          </Link>
+        </div>
         <button
           ref={trigger}
           className="menu-toggle"

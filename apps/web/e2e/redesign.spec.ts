@@ -4,11 +4,22 @@ test("sticky navigation, active route and keyboard mobile menu", async ({
   page,
 }) => {
   await page.goto("/");
+  const nav = page.getByRole("navigation");
   await expect(
-    page
-      .getByRole("navigation")
-      .getByRole("link", { name: "Discover", exact: true }),
+    nav.getByRole("link", { name: "Home", exact: true }),
   ).toHaveAttribute("aria-current", "page");
+  await expect(
+    page.locator(".header-actions").getByRole("link", {
+      name: "Find my schemes",
+    }),
+  ).toHaveAttribute("href", "/#finder");
+  await page.goto("/discover");
+  await expect(
+    nav.getByRole("link", { name: "Discover schemes", exact: true }),
+  ).toHaveAttribute("aria-current", "page");
+  await expect(
+    nav.getByRole("link", { name: "Home", exact: true }),
+  ).not.toHaveAttribute("aria-current", "page");
   await page.setViewportSize({ width: 390, height: 844 });
   const menu = page.getByRole("button", { name: "Open navigation" });
   await menu.click();
