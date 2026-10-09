@@ -22,6 +22,34 @@ for (const width of [375, 1280]) {
   });
 }
 
+test("guidance, footer routes and FAQ are functional", async ({ page }) => {
+  await page.goto("/");
+  const guidance = page.getByRole("region", { name: "Application guidance" });
+  await expect(guidance.getByRole("listitem")).toHaveCount(4);
+  const footer = page.getByRole("contentinfo");
+  await expect(footer).toContainText(String(new Date().getFullYear()));
+  await footer.screenshot({ path: "test-results/footer-1280.png" });
+  await guidance.screenshot({ path: "test-results/guidance-1280.png" });
+  for (const [link, title] of [
+    ["About", "Support starts with understanding."],
+    ["Privacy policy", "Privacy and your profile"],
+    ["Disclaimer", "Preliminary guidance, clear limits."],
+  ]) {
+    await footer.getByRole("link", { name: link, exact: true }).click();
+    await expect(
+      page.getByRole("heading", { level: 1, name: title }),
+    ).toBeVisible();
+  }
+  await footer.getByRole("link", { name: "FAQ", exact: true }).click();
+  await expect(page).toHaveURL(/\/help#faq$/);
+  await page
+    .getByText("Does a match mean I am officially eligible?", { exact: true })
+    .click();
+  await expect(
+    page.getByText("No. Results explain checked conditions.", { exact: false }),
+  ).toBeVisible();
+});
+
 test("landing finder confirms, asks and rematches without leaving the page", async ({
   page,
 }) => {

@@ -274,7 +274,7 @@ Brief: complete 10-section GovTech landing page in the confirmed direction (ivor
 | SR-04 How it works | COMPLETED |
 | SR-05 Interactive finder | COMPLETED |
 | SR-06 Categories/sources | COMPLETED |
-| SR-07 Guidance/footer | PENDING |
+| SR-07 Guidance/footer | COMPLETED |
 | SR-08 Responsive | PENDING |
 | SR-09 API journeys | PENDING |
 | SR-10 Visual/accessibility polish | PENDING |
@@ -296,3 +296,12 @@ Brief: complete 10-section GovTech landing page in the confirmed direction (ivor
 - Problems: source destinations are discovery references, not proof of synthetic-record verification or official endorsement. No government seals, scraped policy or new backend categories are invented. Reference image absent; written brief used.
 - Commit: commit containing this entry, resolve with `git log --oneline --grep=SR-06`.
 - Next: SR-07 application guidance, complete footer and honest informational routes.
+
+## SR-07 — Guidance, footer and informational routes
+
+- Status: COMPLETED
+- Files: src/features/landing/ApplicationGuidance.tsx, sections.module.css, src/components/{AppFooter,Brand,AppHeader}.tsx, src/app/{layout,page,help/page,about/page,privacy/page,disclaimer/page}.tsx, src/styles/shell.css, e2e/{landing,redesign}.spec.ts, PROGRESS.md.
+- Verification: lint and strict TypeScript passed; guidance/footer routes/FAQ and sticky/mobile navigation browser tests passed. Four guidance steps and current-year copyright verified. Actual1280 guidance/footer and375 footer captures inspected; no mobile overflow. Footer destinations resolve to implemented routes/anchors. Shared logo reused.
+- Problems: footer adds another navigation landmark, so existing test locators now explicitly select Main navigation. Per the prior user-approved decisions, Contact/Terms/subscriptions are not invented; actual Help/FAQ/Privacy/Disclaimer pages are supplied. Application tracking text is conditional and refers to the official authority. Reference image absent; written brief used.
+- Commit: commit containing this entry, resolve with `git log --oneline --grep=SR-07`.
+- Next: SR-08 full responsive matrix.

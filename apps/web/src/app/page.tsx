@@ -5,6 +5,7 @@ import { HowItWorks } from "@/features/landing/HowItWorks";
 import { SchemeFinder } from "@/features/landing/SchemeFinder";
 import { PopularCategories } from "@/features/landing/PopularCategories";
 import { OfficialSources } from "@/features/landing/OfficialSources";
+import { ApplicationGuidance } from "@/features/landing/ApplicationGuidance";
 
 export default function Home() {
   return (
@@ -16,6 +17,7 @@ export default function Home() {
       <SchemeFinder />
       <PopularCategories />
       <OfficialSources />
+      <ApplicationGuidance />
     </>
   );
 }

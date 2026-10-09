@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import "@fontsource-variable/inter";
 import "./globals.css";
 import "@/styles/shell.css";
-import { AppHeader, Disclaimer } from "@/components/ui";
+import { AppHeader } from "@/components/ui";
+import { AppFooter } from "@/components/AppFooter";
 import { ProfileProvider } from "@/features/profile/hooks";
 import { MatchingProvider } from "@/features/matching/hooks";
 export const metadata: Metadata = {
@@ -27,10 +28,7 @@ export default function RootLayout({
             <main id="main" className="container">
               {children}
             </main>
-            <footer className="container footer">
-              <span className="brand-small">yojana saathi.</span>
-              <Disclaimer />
-            </footer>
+            <AppFooter />
           </MatchingProvider>
         </ProfileProvider>
       </body>

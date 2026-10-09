@@ -322,3 +322,92 @@ body {
     padding: 16px;
   }
 }
+
+.site-footer {
+  margin-top: var(--section-gap);
+  padding-top: 48px;
+  padding-bottom: 32px;
+  border-top: 1px solid var(--line);
+}
+.footer-grid {
+  display: grid;
+  gap: 40px;
+}
+.footer-brand {
+  max-width: 36ch;
+}
+.footer-brand .brand {
+  font-size: 20px;
+  min-height: 44px;
+}
+.footer-brand p {
+  margin-top: 16px;
+  color: var(--muted);
+}
+.footer-links {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 32px;
+}
+.footer-links h2 {
+  font-size: 16px;
+}
+.footer-links ul {
+  padding: 0;
+  margin: 12px 0 0;
+  list-style: none;
+}
+.footer-links a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--muted);
+  font-size: 14px;
+}
+.footer-links a:hover {
+  text-decoration: underline;
+  color: var(--primary);
+}
+.footer-bottom {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px 48px;
+  margin-top: 40px;
+  padding-top: 24px;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 14px;
+}
+.reading-page > p {
+  margin: 24px 0;
+}
+.reading-page > h2 {
+  margin-top: 40px;
+}
+.faq {
+  margin: 48px 0;
+  scroll-margin-top: 96px;
+}
+.faq details {
+  border-bottom: 1px solid var(--line);
+}
+.faq summary {
+  cursor: pointer;
+  min-height: 48px;
+  padding: 16px 0;
+  font-weight: 600;
+}
+.faq details p {
+  margin-bottom: 24px;
+  color: var(--muted);
+}
+@media (min-width: 768px) {
+  .footer-links {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+@media (min-width: 1024px) {
+  .footer-grid {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr);
+  }
+}
