@@ -12,7 +12,7 @@ Strict order: no next task begins until the current implementation passes its ch
 | T1-04 | F02 discovery filters, URL state and result states | COMPLETED |
 | T1-05 | F03 recommendations and rule checklists | COMPLETED |
 | T1-06 | F04 follow-up, skip/edit and rematching | COMPLETED |
-| T1-07 | F05 detail, exclusions and source provenance | PENDING |
+| T1-07 | F05 detail, exclusions and source provenance | COMPLETED |
 | T1-08 | F06 application readiness and checklist | PENDING |
 | T1-09 | F10 explanations and responsive/accessibility gate | PENDING |
 | T1-10 | Live integration verification | PENDING |
@@ -74,3 +74,12 @@ Optional saved and Hindi features depend on the complete P0 live flow and are no
 - Problems: First browser pass found rematch loading unmounted the follow-up panel and lost the change notice. Preserving the previous resource while loading keeps state and retry intact; both scenarios passed after repair. Null confirmation no longer counts as a question answer in mock playback.
 - Commit reference: commit containing this entry; resolve with `git log --format="%h %s" --grep="T1-06"`.
 - Next task: T1-07 full scheme detail
+
+## T1-07 — F05 detail, exclusions and source provenance
+
+- Status: COMPLETED
+- Files: `apps/web/e2e/details.spec.ts`, `apps/web/src/features/schemes/SchemeDetail.tsx`, `apps/web/e2e/discovery.spec.ts`, `apps/web/src/app/globals.css`, `apps/web/src/app/schemes/[schemeId]/page.tsx`, `apps/web/src/features/discovery/DetailPreview.tsx`, `apps/web/src/features/matching/Recommendations.tsx`, `apps/web/src/features/matching/hooks.tsx`
+- Verification: Lint, strict typecheck and 17 unit/contract tests passed. Discovery regression and two detail browser tests passed: all disclosures, verification/source metadata, disabled placeholders and missing-scheme retry.
+- Problems: Corrected a hook dependency warning. Error test initially selected the framework route announcer too; scoped it to main content. Initial matches now populate shared context so checked outcomes survive detail navigation only for the same scheme version.
+- Commit reference: commit containing this entry; resolve with `git log --format="%h %s" --grep="T1-07"`.
+- Next task: T1-08 application guidance
