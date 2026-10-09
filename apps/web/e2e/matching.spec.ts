@@ -24,4 +24,10 @@ test("only matches after confirmation and explains source-linked unknowns withou
     page.getByText("Version 30000000", { exact: false }),
   ).toBeVisible();
   await expect(page.locator("main")).not.toContainText("84%");
+  await page.getByRole("link", { name: "Edit profile", exact: true }).click();
+  await page.getByRole("button", { name: "Clear my details" }).click();
+  await page.goBack();
+  await expect(
+    page.getByRole("heading", { name: "Start with your details" }),
+  ).toBeVisible();
 });

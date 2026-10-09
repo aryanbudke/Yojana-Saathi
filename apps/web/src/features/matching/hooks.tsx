@@ -4,23 +4,29 @@ import {
   useContext,
   useState,
   useCallback,
+  useRef,
   type ReactNode,
 } from "react";
 import { api } from "@/lib/api";
 import type { MatchesResponse, ProfileFacts } from "@/lib/api/contracts";
 function useMatchingState() {
+  const revision = useRef(0);
   const [key, setKey] = useState("");
   const [matches, setMatches] = useState<MatchesResponse | null>(null);
   const rematch = useCallback(
     async (sessionId: string, facts: ProfileFacts) => {
+      const currentRevision = revision.current;
       const response = await api.matches(sessionId, facts);
-      setMatches(response);
-      setKey(JSON.stringify({ sessionId, facts }));
+      if (currentRevision === revision.current) {
+        setMatches(response);
+        setKey(JSON.stringify({ sessionId, facts }));
+      }
       return response;
     },
     [],
   );
   function reset() {
+    revision.current++;
     setMatches(null);
     setKey("");
   }

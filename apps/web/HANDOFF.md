@@ -55,3 +55,7 @@ These are frontend/contract checks. They do not measure eligibility accuracy, ce
 4. Deploy the verified branch to Vercel with `apps/web` as project root and public live environment settings, then run the same live smoke demo.
 
 Saved UI and reviewed Hindi copy remain optional after the real P0 flow passes. They are not advertised with inactive navigation or fake controls.
+
+## Current backend readiness audit
+
+`artifacts/backend-readiness.json` records the latest fetched backend main and its route decorators. On 9 October 2026, the three missing core routes were extract, matches and next-question; the documented local health endpoint was unavailable and no deployed API origin was supplied. T1-11 is BLOCKED; T1-12 has not started. Use `python3 scripts/check_backend.py` after fetching main to refresh the static audit, then run an actual live smoke test once the service exists. The static audit alone must never be treated as a live pass.

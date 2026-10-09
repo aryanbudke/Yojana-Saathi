@@ -49,8 +49,21 @@ function useProfileState() {
         : await api.createSession();
     setSession(active);
     // Save reviewed facts using the existing one-field endpoint; model values are now citizen-confirmed.
-    for (const field of Object.keys(facts) as ProfileField[])
-      await api.answer(active.session_id, field, facts[field]);
+    try {
+      for (const field of Object.keys(facts) as ProfileField[])
+        await api.answer(active.session_id, field, facts[field]);
+    } catch (error) {
+      if (error instanceof ApiError && error.status === 404) {
+        setSession(null);
+        setConfirmed(false);
+        throw new ApiError(
+          "SESSION_EXPIRED",
+          "Your session expired. Your details are still here; confirm them to start a new session.",
+          404,
+        );
+      }
+      throw error;
+    }
     setDraft({
       facts,
       origins: Object.fromEntries(Object.keys(facts).map((k) => [k, "user"])),

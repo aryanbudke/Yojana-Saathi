@@ -18,6 +18,7 @@ import {
 } from "@/components/ui";
 import { errorMessage, isMock } from "@/lib/api";
 import { useProfile } from "./hooks";
+import { useMatching } from "@/features/matching/hooks";
 import { fields, states } from "./types";
 import { fieldValue } from "./model";
 import Link from "next/link";
@@ -38,6 +39,7 @@ export function ModeNotice() {
 }
 export function ProfileComposer() {
   const p = useProfile();
+  const matching = useMatching();
   const [busy, setBusy] = useState<"extract" | "confirm" | "clear" | null>(
     null,
   );
@@ -51,6 +53,7 @@ export function ProfileComposer() {
     setError("");
     try {
       await p[kind]();
+      if (kind === "clear") matching.reset();
     } catch (e) {
       setError(errorMessage(e));
       if (kind === "extract") p.setReviewing(true);

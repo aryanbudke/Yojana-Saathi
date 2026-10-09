@@ -14,10 +14,10 @@ Strict order: no next task begins until the current implementation passes its ch
 | T1-06 | F04 follow-up, skip/edit and rematching                             | COMPLETED |
 | T1-07 | F05 detail, exclusions and source provenance                        | COMPLETED |
 | T1-08 | F06 application readiness and checklist                             | COMPLETED |
-| T1-09 | F10 explanations and responsive/accessibility gate                  | PENDING   |
-| T1-10 | Live integration verification                                       | PENDING   |
-| T1-11 | Vercel deployment and live demo                                     | PENDING   |
-| T1-12 | Screenshots, startup instructions and handoff                       | PENDING   |
+| T1-09 | F10 explanations and responsive/accessibility gate                  | COMPLETED |
+| T1-10 | Screenshots, startup instructions and handoff                       | COMPLETED |
+| T1-11 | Live integration verification                                       | BLOCKED   |
+| T1-12 | Vercel deployment and live demo                                     | PENDING   |
 
 Optional saved and Hindi features depend on the complete P0 live flow and are not started before that gate. No citizen-facing admin UI is required.
 
@@ -112,3 +112,28 @@ The remaining dependency order is packaging/handoff → live API verification �
 - Problems: Initial capture script used URL.pathname and encoded workspace spaces in the filesystem path; replaced it with fileURLToPath, moved the seven generated images into apps/web and cleaned the empty mistaken directories. Preview-panel open did not return; localhost preview remains running. Startup, environment, Vercel-root and ownership/session handoff notes are provided.
 - Commit reference: commit containing this entry; resolve with `git log --format="%h %s" --grep="T1-10"`.
 - Next task: T1-11 live API verification
+
+## T1-11 — Live integration verification
+
+- Status: BLOCKED
+- Files created/modified: `apps/web/scripts/check_backend.py`, `apps/web/artifacts/backend-readiness.json`, `apps/web/PROGRESS.md`, `apps/web/scripts/progress.py`, `apps/web/src/features/profile/ProfileComposer.tsx`, `apps/web/src/features/profile/hooks.tsx`, `apps/web/src/features/matching/hooks.tsx`, `apps/web/e2e/matching.spec.ts`, `apps/web/HANDOFF.md`.
+- Verification: Fetched current backend main and inspected route decorators read-only. Available: sessions, answers, schemes, detail and guidance. Missing: `POST /api/v1/profiles/extract`, `POST /api/v1/matches`, `POST /api/v1/questions/next`. Documented local `/health` on port 8000 refused the connection. No deployed backend URL has been provided. The route audit explicitly records that it is not a live integration pass.
+- Frontend checks: 19 unit/contract tests, lint, strict typecheck, formatting and final production build passed. Five relevant browser regressions passed; the improved client-history clearing test also passed after ensuring it retained the same browser context. Clearing now resets derived match data and invalidates in-flight cached results. Expired answer sessions preserve citizen facts and allow reconfirmation into a fresh session.
+- Problems encountered: Cannot execute live extract-to-guidance journey without the missing routes, backend URL and reviewed records. App coordination tools did not return, so no cross-chat agreement or message is claimed. Markdown formatting aligned table cells and defeated the old progress helper's exact text replacement; column parsing now keeps the status table consistent with verified task entries.
+- Commit reference: commit containing this audit; resolve with `git log --format="%h %s" --grep="T1-11"`.
+- Next task: Resume T1-11 when the API is supplied. T1-12 is PENDING and has not started because live verification must pass first. Optional Saved and Hindi also remain unstarted behind that gate.
+
+## Verified commit references
+
+| Task  | Commit    |
+| ----- | --------- |
+| T1-01 | `94e630d` |
+| T1-02 | `73a9cef` |
+| T1-03 | `e0f3fe9` |
+| T1-04 | `bf73b09` |
+| T1-05 | `9d965e1` |
+| T1-06 | `6dce7d1` |
+| T1-07 | `e8443a4` |
+| T1-08 | `e144f68` |
+| T1-09 | `1f51b69` |
+| T1-10 | `1689a1b` |

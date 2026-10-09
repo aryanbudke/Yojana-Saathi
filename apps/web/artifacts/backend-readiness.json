@@ -1,0 +1,23 @@
+{
+  "checked_at_utc": "2026-10-09T14:58:58.488631+00:00",
+  "backend_main_commit": "968ff17b39ff0db124440320e1a2832ffddacc10",
+  "inspection": "Static route audit only; not live integration",
+  "available_routes": [
+    "DELETE /api/v1/profiles/sessions/{session_id}",
+    "GET /api/v1/guidance/{scheme_id}",
+    "GET /api/v1/schemes",
+    "GET /api/v1/schemes/{scheme_id}",
+    "GET /health",
+    "POST /api/v1/admin/scheme-versions/{version_id}/publish",
+    "POST /api/v1/admin/scheme-versions/{version_id}/review",
+    "POST /api/v1/profiles/answers",
+    "POST /api/v1/profiles/sessions"
+  ],
+  "missing_core_routes": [
+    "POST /api/v1/profiles/extract",
+    "POST /api/v1/matches",
+    "POST /api/v1/questions/next"
+  ],
+  "live_api_url_provided": false,
+  "live_smoke_test_passed": false
+}
