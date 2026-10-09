@@ -11,7 +11,7 @@ only after its acceptance checks pass and its work is committed.
 | T2-04 | Database indexes, publication filters, test seeding | COMPLETED |
 | T2-05 | Select and document 10–15 high-confidence schemes | COMPLETED |
 | T2-06 | Curate official source data, eligibility, and exclusions | COMPLETED |
-| T2-07 | Normalize codes, units, rule JSON, and conditional documents | BLOCKED |
+| T2-07 | Normalize codes, units, rule JSON, and conditional documents | COMPLETED |
 | T2-08 | Enforce source linkage and immutable published versions | COMPLETED |
 | T2-09 | Peer review records and provide synthetic fixtures | BLOCKED |
 | T2-10 | CLI seed and review/publish controls | COMPLETED |
@@ -172,7 +172,36 @@ only after its acceptance checks pass and its work is committed.
 - **Commit reference:** `HEAD` — `docs(data): audit official sources for first scheme batch`
 - **Next task:** T2-07 — Normalize the audited facts, documents, and steps
 
-## T2-07 and T2-09 — Real-scheme normalization and review work
+## T2-07 — Normalize rules, units, documents, and steps
+
+- **Status:** COMPLETED
+- **Files created or modified:**
+  `data/curation/normalized-candidates-v1.json`,
+  `services/api/tests/test_normalized_candidates.py`, and `PROGRESS.md`.
+- **Tests executed:** The ten candidates are normalized as Central schemes
+  with null State codes, stable categories, structured rule expressions,
+  source-linked conditional documents, and ordered application steps. Income
+  is represented as integer INR per year. The bundle remains explicitly draft
+  and cannot be published before independent review.
+  - `.venv/bin/pytest -q tests` — 92 passed; one upstream Starlette
+    TestClient deprecation warning
+  - `.venv/bin/pytest -q tests/test_normalized_candidates.py tests/test_source_audit.py`
+    — 5 passed
+  - `.venv/bin/ruff check .` — passed
+  - `.venv/bin/ruff format --check .` — passed (79 files)
+  - `.venv/bin/mypy --strict tests/test_normalized_candidates.py tests/test_source_audit.py`
+    — passed
+  - Production URL validator — 18 unique official URLs accepted
+  - `python3 -m json.tool` — normalized candidate manifest is valid JSON
+- **Problems encountered:** The normalization deliberately converts PM
+  SVANidhi onboarding, PM-JAY beneficiary matching, and local Soil Health Card
+  delivery into manual-review rules. It does not infer deterministic answers
+  from incomplete or locally variable policy. PMMVY 2.0 conditional benefits
+  and NMMSS annual-income units are encoded explicitly.
+- **Commit reference:** `HEAD` — `feat(data): normalize first source-backed scheme batch`
+- **Next task:** T2-09 — Obtain independent review and record the review outcome
+
+## T2-09 — Independent real-scheme review
 
 - **Status:** BLOCKED
 - **Files created or modified:** `services/api/app/db/draft_import.py`,

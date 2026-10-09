@@ -1,0 +1,865 @@
+{
+  "schema_version": "1.0",
+  "normalized_at": "2026-10-10",
+  "review_status": "draft",
+  "publication_allowed": false,
+  "normalization_note": "Draft normalization derived from source-audit-v1.json. Independent review is required before verified or published state is permitted.",
+  "schemes": [
+    {
+      "draft_slug": "pm-kisan",
+      "category": "Agriculture, Rural & Environment",
+      "government_level": "central",
+      "state_code": null,
+      "eligibility_json": {
+        "schema_version": "1.0",
+        "all": [
+          {
+            "field": "owns_cultivable_land_in_official_records",
+            "op": "eq",
+            "value": true
+          }
+        ]
+      },
+      "rules": [
+        {
+          "rule_key": "landholding_farmer_family",
+          "severity": "required",
+          "expression": {
+            "field": "owns_cultivable_land_in_official_records",
+            "op": "eq",
+            "value": true
+          },
+          "source_url": "https://pmkisan.gov.in/Documents/RevisedPM-KISANOperationalGuidelines(English).pdf",
+          "question_template": "Does your family own cultivable land recorded in the applicable State or UT land records?"
+        },
+        {
+          "rule_key": "institutional_landholder",
+          "severity": "exclusion",
+          "expression": {
+            "field": "institutional_landholder",
+            "op": "eq",
+            "value": true
+          },
+          "source_url": "https://pmkisan.gov.in/Documents/RevisedPM-KISANOperationalGuidelines(English).pdf",
+          "question_template": "Is the cultivable land held by an institution?"
+        },
+        {
+          "rule_key": "higher_economic_status_category",
+          "severity": "manual_review",
+          "expression": {
+            "field": "pm_kisan_exclusion_category",
+            "op": "present"
+          },
+          "source_url": "https://pmkisan.gov.in/Documents/RevisedPM-KISANOperationalGuidelines(English).pdf",
+          "question_template": "Does any family member fall into an official PM-KISAN exclusion category?"
+        }
+      ],
+      "documents": [
+        {
+          "name": "State or UT land-record entry",
+          "when_required": null,
+          "source_url": "https://pmkisan.gov.in/Documents/RevisedPM-KISANOperationalGuidelines(English).pdf"
+        }
+      ],
+      "steps": [
+        {
+          "step_number": 1,
+          "instruction": "Check eligibility and registration status on the official PM-KISAN portal; State or UT authorities validate land records and exclusions.",
+          "official_url": "https://pmkisan.gov.in/",
+          "source_url": "https://pmkisan.gov.in/"
+        },
+        {
+          "step_number": 2,
+          "instruction": "Complete the mandatory eKYC process shown on the official portal.",
+          "official_url": "https://pmkisan.gov.in/",
+          "source_url": "https://pmkisan.gov.in/"
+        }
+      ]
+    },
+    {
+      "draft_slug": "pmuy2",
+      "category": "Utility & Sanitation",
+      "government_level": "central",
+      "state_code": null,
+      "eligibility_json": {
+        "schema_version": "1.0",
+        "all": [
+          {
+            "field": "age_years",
+            "op": "gte",
+            "value": 18
+          },
+          {
+            "field": "gender",
+            "op": "eq",
+            "value": "female"
+          },
+          {
+            "field": "poor_household_declaration",
+            "op": "eq",
+            "value": true
+          }
+        ]
+      },
+      "rules": [
+        {
+          "rule_key": "adult_woman",
+          "severity": "required",
+          "expression": {
+            "all": [
+              {
+                "field": "age_years",
+                "op": "gte",
+                "value": 18
+              },
+              {
+                "field": "gender",
+                "op": "eq",
+                "value": "female"
+              }
+            ]
+          },
+          "source_url": "https://www.pmuy.gov.in/ujjwala2.html",
+          "question_template": "Are you a woman aged 18 years or older?"
+        },
+        {
+          "rule_key": "poor_household_declaration",
+          "severity": "required",
+          "expression": {
+            "field": "poor_household_declaration",
+            "op": "eq",
+            "value": true
+          },
+          "source_url": "https://www.pmuy.gov.in/ujjwala2.html",
+          "question_template": "Can you submit the prescribed deprivation declaration for a poor household?"
+        },
+        {
+          "rule_key": "existing_household_lpg_connection",
+          "severity": "exclusion",
+          "expression": {
+            "field": "household_has_omc_lpg_connection",
+            "op": "eq",
+            "value": true
+          },
+          "source_url": "https://www.pmuy.gov.in/ujjwala2.html",
+          "question_template": "Does anyone in your household already have an LPG connection from an Oil Marketing Company?"
+        }
+      ],
+      "documents": [
+        {
+          "name": "KYC application form",
+          "when_required": null,
+          "source_url": "https://www.pmuy.gov.in/ujjwala2.html"
+        },
+        {
+          "name": "Applicant Aadhaar",
+          "when_required": null,
+          "source_url": "https://www.pmuy.gov.in/ujjwala2.html"
+        },
+        {
+          "name": "Current-address proof",
+          "when_required": {
+            "field": "aadhaar_matches_current_address",
+            "op": "eq",
+            "value": false
+          },
+          "source_url": "https://www.pmuy.gov.in/ujjwala2.html"
+        },
+        {
+          "name": "Ration card or State household-composition document",
+          "when_required": null,
+          "source_url": "https://www.pmuy.gov.in/ujjwala2.html"
+        },
+        {
+          "name": "Bank account details",
+          "when_required": null,
+          "source_url": "https://www.pmuy.gov.in/ujjwala2.html"
+        },
+        {
+          "name": "Deprivation declaration",
+          "when_required": null,
+          "source_url": "https://www.pmuy.gov.in/ujjwala2.html"
+        }
+      ],
+      "steps": [
+        {
+          "step_number": 1,
+          "instruction": "Prepare the KYC, household, identity, bank and deprivation-declaration documents listed on the official page.",
+          "official_url": "https://www.pmuy.gov.in/ujjwala2.html",
+          "source_url": "https://www.pmuy.gov.in/ujjwala2.html"
+        },
+        {
+          "step_number": 2,
+          "instruction": "Apply through an Oil Marketing Company route linked by PMUY or submit the request to a distributor of your choice.",
+          "official_url": "https://www.pmuy.gov.in/ujjwala2.html",
+          "source_url": "https://www.pmuy.gov.in/ujjwala2.html"
+        }
+      ]
+    },
+    {
+      "draft_slug": "pm-svanidhi",
+      "category": "Business & Entrepreneurship",
+      "government_level": "central",
+      "state_code": null,
+      "eligibility_json": {
+        "schema_version": "1.0",
+        "manual_review": [
+          {
+            "reason_code": "current_vendor_onboarding_evidence_required"
+          }
+        ]
+      },
+      "rules": [
+        {
+          "rule_key": "current_vendor_onboarding_evidence",
+          "severity": "manual_review",
+          "expression": {
+            "field": "current_ulb_vendor_eligibility_confirmed",
+            "op": "manual_review"
+          },
+          "source_url": "https://mohua.gov.in/static/uploads/2026/07/d8d54098c59ba07acbdc2fc48e02d635.pdf",
+          "question_template": "Has your Urban Local Body or participating lender confirmed your current PM SVANidhi onboarding evidence?"
+        }
+      ],
+      "documents": [],
+      "steps": [
+        {
+          "step_number": 1,
+          "instruction": "Contact the Urban Local Body or participating lender to confirm the current restructured-scheme onboarding evidence before applying.",
+          "official_url": null,
+          "source_url": "https://mohua.gov.in/static/uploads/2026/07/d8d54098c59ba07acbdc2fc48e02d635.pdf"
+        }
+      ]
+    },
+    {
+      "draft_slug": "apy",
+      "category": "Social Welfare & Empowerment",
+      "government_level": "central",
+      "state_code": null,
+      "eligibility_json": {
+        "schema_version": "1.0",
+        "all": [
+          {
+            "field": "citizenship_country_code",
+            "op": "eq",
+            "value": "IN"
+          },
+          {
+            "field": "age_years",
+            "op": "between_inclusive",
+            "min": 18,
+            "max": 40
+          },
+          {
+            "field": "has_savings_account",
+            "op": "eq",
+            "value": true
+          }
+        ]
+      },
+      "rules": [
+        {
+          "rule_key": "citizen_age_and_account",
+          "severity": "required",
+          "expression": {
+            "all": [
+              {
+                "field": "citizenship_country_code",
+                "op": "eq",
+                "value": "IN"
+              },
+              {
+                "field": "age_years",
+                "op": "between_inclusive",
+                "min": 18,
+                "max": 40
+              },
+              {
+                "field": "has_savings_account",
+                "op": "eq",
+                "value": true
+              }
+            ]
+          },
+          "source_url": "https://pfrda.org.in/w/faqs/atal-pension-yojana",
+          "question_template": "Are you an Indian citizen aged 18–40 with a bank or post-office savings account?"
+        },
+        {
+          "rule_key": "income_taxpayer_at_application",
+          "severity": "exclusion",
+          "expression": {
+            "all": [
+              {
+                "field": "application_date",
+                "op": "gte",
+                "value": "2022-10-01"
+              },
+              {
+                "field": "income_taxpayer_at_application",
+                "op": "eq",
+                "value": true
+              }
+            ]
+          },
+          "source_url": "https://pfrda.org.in/w/faqs/atal-pension-yojana",
+          "question_template": "Are you or have you been an income-tax payer as of the APY application date?"
+        }
+      ],
+      "documents": [
+        {
+          "name": "APY registration details for savings account auto-debit",
+          "when_required": null,
+          "source_url": "https://pfrda.org.in/w/faqs/atal-pension-yojana"
+        }
+      ],
+      "steps": [
+        {
+          "step_number": 1,
+          "instruction": "Choose a guaranteed pension slab and contribution frequency after reviewing the age-based contribution table.",
+          "official_url": "https://pfrda.org.in/w/faqs/atal-pension-yojana",
+          "source_url": "https://pfrda.org.in/w/faqs/atal-pension-yojana"
+        },
+        {
+          "step_number": 2,
+          "instruction": "Enroll through the bank or post office maintaining the savings account, or use an official e-APY route referenced by PFRDA.",
+          "official_url": "https://pfrda.org.in/w/faqs/atal-pension-yojana",
+          "source_url": "https://pfrda.org.in/w/faqs/atal-pension-yojana"
+        }
+      ]
+    },
+    {
+      "draft_slug": "pmjdy",
+      "category": "Banking, Financial Services and Insurance",
+      "government_level": "central",
+      "state_code": null,
+      "eligibility_json": {
+        "schema_version": "1.0",
+        "all": [
+          {
+            "field": "has_bank_account",
+            "op": "eq",
+            "value": false
+          }
+        ]
+      },
+      "rules": [
+        {
+          "rule_key": "unbanked_person",
+          "severity": "required",
+          "expression": {
+            "field": "has_bank_account",
+            "op": "eq",
+            "value": false
+          },
+          "source_url": "https://pmjdy.gov.in/scheme",
+          "question_template": "Do you currently have no bank account?"
+        }
+      ],
+      "documents": [],
+      "steps": [
+        {
+          "step_number": 1,
+          "instruction": "Request a PMJDY basic savings bank deposit account at a bank branch or Business Correspondent (Bank Mitra) outlet.",
+          "official_url": "https://pmjdy.gov.in/scheme",
+          "source_url": "https://pmjdy.gov.in/scheme"
+        },
+        {
+          "step_number": 2,
+          "instruction": "Ask the bank which current KYC document is acceptable and complete the bank's account-opening process.",
+          "official_url": "https://pmjdy.gov.in/scheme",
+          "source_url": "https://pmjdy.gov.in/scheme"
+        }
+      ]
+    },
+    {
+      "draft_slug": "pmmvy",
+      "category": "Women and Child",
+      "government_level": "central",
+      "state_code": null,
+      "eligibility_json": {
+        "schema_version": "1.0",
+        "manual_review": [
+          {
+            "reason_code": "pregnancy_child_order_and_category_proof"
+          }
+        ]
+      },
+      "rules": [
+        {
+          "rule_key": "first_child_or_second_girl_child",
+          "severity": "required",
+          "expression": {
+            "any": [
+              {
+                "field": "living_child_order",
+                "op": "eq",
+                "value": 1
+              },
+              {
+                "all": [
+                  {
+                    "field": "living_child_order",
+                    "op": "eq",
+                    "value": 2
+                  },
+                  {
+                    "field": "second_child_gender",
+                    "op": "eq",
+                    "value": "female"
+                  }
+                ]
+              }
+            ]
+          },
+          "source_url": "https://www.spniwcd.wcd.gov.in/uploads/pdf/1710098119_SYeJGnu1ej.pdf",
+          "question_template": "Is this your first living child, or your second living child and a girl?"
+        },
+        {
+          "rule_key": "government_or_psu_employment",
+          "severity": "exclusion",
+          "expression": {
+            "field": "regular_government_or_psu_employee",
+            "op": "eq",
+            "value": true
+          },
+          "source_url": "https://www.spniwcd.wcd.gov.in/uploads/pdf/1710098119_SYeJGnu1ej.pdf",
+          "question_template": "Are you in regular Central Government, State Government or PSU employment?"
+        },
+        {
+          "rule_key": "similar_maternity_benefit",
+          "severity": "exclusion",
+          "expression": {
+            "field": "receives_similar_maternity_benefit_under_law",
+            "op": "eq",
+            "value": true
+          },
+          "source_url": "https://www.spniwcd.wcd.gov.in/uploads/pdf/1710098119_SYeJGnu1ej.pdf",
+          "question_template": "Do you receive similar maternity benefits under another law?"
+        },
+        {
+          "rule_key": "current_category_proof",
+          "severity": "manual_review",
+          "expression": {
+            "field": "pmmvy_category_proof",
+            "op": "manual_review"
+          },
+          "source_url": "https://www.spniwcd.wcd.gov.in/pradhan-mantri-matru-vandana-yojna/faqs",
+          "question_template": "Which current PMMVY eligibility category and proof apply to you?"
+        }
+      ],
+      "documents": [
+        {
+          "name": "Beneficiary Aadhaar or permitted enrolment evidence",
+          "when_required": null,
+          "source_url": "https://www.spniwcd.wcd.gov.in/uploads/pdf/1710098119_SYeJGnu1ej.pdf"
+        },
+        {
+          "name": "Mother and Child Protection card or RCH details",
+          "when_required": null,
+          "source_url": "https://www.spniwcd.wcd.gov.in/uploads/pdf/1710098119_SYeJGnu1ej.pdf"
+        },
+        {
+          "name": "Aadhaar-enabled bank or post-office account details",
+          "when_required": null,
+          "source_url": "https://www.spniwcd.wcd.gov.in/uploads/pdf/1710098119_SYeJGnu1ej.pdf"
+        },
+        {
+          "name": "Second girl child's birth and vaccination records",
+          "when_required": {
+            "all": [
+              {
+                "field": "living_child_order",
+                "op": "eq",
+                "value": 2
+              },
+              {
+                "field": "second_child_gender",
+                "op": "eq",
+                "value": "female"
+              }
+            ]
+          },
+          "source_url": "https://www.spniwcd.wcd.gov.in/uploads/pdf/1710098119_SYeJGnu1ej.pdf"
+        }
+      ],
+      "steps": [
+        {
+          "step_number": 1,
+          "instruction": "Register the pregnancy and record the required antenatal check-up through the Anganwadi Centre, ASHA, ANM or approved health facility.",
+          "official_url": "https://www.spniwcd.wcd.gov.in/pradhan-mantri-matru-vandana-yojna/faqs",
+          "source_url": "https://www.spniwcd.wcd.gov.in/pradhan-mantri-matru-vandana-yojna/faqs"
+        },
+        {
+          "step_number": 2,
+          "instruction": "Submit the current eligibility proof and account details through the implementing worker or PMMVY system.",
+          "official_url": "https://www.spniwcd.wcd.gov.in/pradhan-mantri-matru-vandana-yojna/faqs",
+          "source_url": "https://www.spniwcd.wcd.gov.in/pradhan-mantri-matru-vandana-yojna/faqs"
+        }
+      ]
+    },
+    {
+      "draft_slug": "ab-pmjay",
+      "category": "Health & Wellness",
+      "government_level": "central",
+      "state_code": null,
+      "eligibility_json": {
+        "schema_version": "1.0",
+        "manual_review": [
+          {
+            "reason_code": "authoritative_beneficiary_database_lookup"
+          }
+        ]
+      },
+      "rules": [
+        {
+          "rule_key": "authoritative_beneficiary_database_match",
+          "severity": "manual_review",
+          "expression": {
+            "field": "pmjay_beneficiary_database_match",
+            "op": "manual_review"
+          },
+          "source_url": "https://hem.nha.gov.in/BeneficiaryIdentification.pdf",
+          "question_template": "Does the current NHA or State beneficiary lookup show your household as entitled?"
+        }
+      ],
+      "documents": [
+        {
+          "name": "Identity document accepted by the beneficiary identification process",
+          "when_required": null,
+          "source_url": "https://hem.nha.gov.in/BeneficiaryIdentification.pdf"
+        }
+      ],
+      "steps": [
+        {
+          "step_number": 1,
+          "instruction": "Use the current NHA beneficiary portal or an authorized PM-JAY help point to check household entitlement.",
+          "official_url": "https://beneficiary.nha.gov.in/",
+          "source_url": "https://beneficiary.nha.gov.in/"
+        },
+        {
+          "step_number": 2,
+          "instruction": "Complete beneficiary identification with the requested identity evidence before seeking cashless treatment at an empanelled hospital.",
+          "official_url": "https://beneficiary.nha.gov.in/",
+          "source_url": "https://hem.nha.gov.in/BeneficiaryIdentification.pdf"
+        }
+      ]
+    },
+    {
+      "draft_slug": "pmv",
+      "category": "Skills & Employment",
+      "government_level": "central",
+      "state_code": null,
+      "eligibility_json": {
+        "schema_version": "1.0",
+        "all": [
+          {
+            "field": "age_years",
+            "op": "gte",
+            "value": 18
+          },
+          {
+            "field": "covered_traditional_trade",
+            "op": "eq",
+            "value": true
+          }
+        ]
+      },
+      "rules": [
+        {
+          "rule_key": "adult_covered_traditional_artisan",
+          "severity": "required",
+          "expression": {
+            "all": [
+              {
+                "field": "age_years",
+                "op": "gte",
+                "value": 18
+              },
+              {
+                "field": "covered_traditional_trade",
+                "op": "eq",
+                "value": true
+              },
+              {
+                "field": "engaged_in_trade_on_registration_date",
+                "op": "eq",
+                "value": true
+              }
+            ]
+          },
+          "source_url": "https://pmvishwakarma.gov.in/Home/FAQ",
+          "question_template": "Are you at least 18 and currently self-employed in one of the eighteen covered traditional trades?"
+        },
+        {
+          "rule_key": "one_member_per_family",
+          "severity": "required",
+          "expression": {
+            "field": "another_family_member_registered",
+            "op": "eq",
+            "value": false
+          },
+          "source_url": "https://pmvishwakarma.gov.in/FileHandling/ViewFile/MiscFiles%5CPM%20Vishwakarma-Guidelines.pdf",
+          "question_template": "Has another member of your family already registered for PM Vishwakarma?"
+        },
+        {
+          "rule_key": "government_service_family",
+          "severity": "exclusion",
+          "expression": {
+            "field": "applicant_or_family_in_government_service",
+            "op": "eq",
+            "value": true
+          },
+          "source_url": "https://pmvishwakarma.gov.in/Home/FAQ",
+          "question_template": "Are you or a family member in government service?"
+        },
+        {
+          "rule_key": "previous_similar_credit_scheme",
+          "severity": "manual_review",
+          "expression": {
+            "field": "previous_similar_credit_scheme_history",
+            "op": "manual_review"
+          },
+          "source_url": "https://pmvishwakarma.gov.in/FileHandling/ViewFile/MiscFiles%5CPM%20Vishwakarma-Guidelines.pdf",
+          "question_template": "Have you used a similar government credit scheme, and if so when was it repaid?"
+        }
+      ],
+      "documents": [
+        {
+          "name": "Aadhaar",
+          "when_required": null,
+          "source_url": "https://pmvishwakarma.gov.in/FileHandling/ViewFile/MiscFiles%5CPM%20Vishwakarma-Guidelines.pdf"
+        },
+        {
+          "name": "Mobile number",
+          "when_required": null,
+          "source_url": "https://pmvishwakarma.gov.in/FileHandling/ViewFile/MiscFiles%5CPM%20Vishwakarma-Guidelines.pdf"
+        },
+        {
+          "name": "Bank account details",
+          "when_required": null,
+          "source_url": "https://pmvishwakarma.gov.in/FileHandling/ViewFile/MiscFiles%5CPM%20Vishwakarma-Guidelines.pdf"
+        },
+        {
+          "name": "Ration card",
+          "when_required": null,
+          "source_url": "https://pmvishwakarma.gov.in/FileHandling/ViewFile/MiscFiles%5CPM%20Vishwakarma-Guidelines.pdf"
+        }
+      ],
+      "steps": [
+        {
+          "step_number": 1,
+          "instruction": "Take the required identity, family and bank details to a Common Service Centre for registration and Aadhaar authentication.",
+          "official_url": "https://pmvishwakarma.gov.in/",
+          "source_url": "https://pmvishwakarma.gov.in/FileHandling/ViewFile/MiscFiles%5CPM%20Vishwakarma-Guidelines.pdf"
+        },
+        {
+          "step_number": 2,
+          "instruction": "Complete the local verification stages described in the implementation guideline and track the application on the official portal.",
+          "official_url": "https://pmvishwakarma.gov.in/",
+          "source_url": "https://pmvishwakarma.gov.in/FileHandling/ViewFile/MiscFiles%5CPM%20Vishwakarma-Guidelines.pdf"
+        }
+      ]
+    },
+    {
+      "draft_slug": "nmmss",
+      "category": "Education & Learning",
+      "government_level": "central",
+      "state_code": null,
+      "eligibility_json": {
+        "schema_version": "1.0",
+        "all": [
+          {
+            "field": "parental_income_inr_per_year",
+            "op": "lte",
+            "value": 350000,
+            "unit": "INR_PER_YEAR"
+          },
+          {
+            "field": "school_type",
+            "op": "in",
+            "value": [
+              "government",
+              "government_aided",
+              "local_body"
+            ]
+          }
+        ]
+      },
+      "rules": [
+        {
+          "rule_key": "parental_income_ceiling",
+          "severity": "required",
+          "expression": {
+            "field": "parental_income_inr_per_year",
+            "op": "lte",
+            "value": 350000,
+            "unit": "INR_PER_YEAR"
+          },
+          "source_url": "https://scholarships.gov.in/public/schemeGuidelines/NMMSSGuidelines.pdf",
+          "question_template": "Is total parental income from all sources ₹3,50,000 per year or less?"
+        },
+        {
+          "rule_key": "eligible_school_type",
+          "severity": "required",
+          "expression": {
+            "field": "school_type",
+            "op": "in",
+            "value": [
+              "government",
+              "government_aided",
+              "local_body"
+            ]
+          },
+          "source_url": "https://scholarships.gov.in/public/schemeGuidelines/NMMSSGuidelines.pdf",
+          "question_template": "Do you study as a regular student in a Government, Government-aided or local-body school?"
+        },
+        {
+          "rule_key": "class_seven_marks",
+          "severity": "required",
+          "expression": {
+            "any": [
+              {
+                "all": [
+                  {
+                    "field": "social_category",
+                    "op": "in",
+                    "value": [
+                      "SC",
+                      "ST"
+                    ]
+                  },
+                  {
+                    "field": "class_7_percentage",
+                    "op": "gte",
+                    "value": 50
+                  }
+                ]
+              },
+              {
+                "field": "class_7_percentage",
+                "op": "gte",
+                "value": 55
+              }
+            ]
+          },
+          "source_url": "https://scholarships.gov.in/public/schemeGuidelines/NMMSSGuidelines.pdf",
+          "question_template": "What percentage did you receive in Class VII, and are you in the SC or ST category?"
+        },
+        {
+          "rule_key": "excluded_school_type",
+          "severity": "exclusion",
+          "expression": {
+            "field": "school_type",
+            "op": "in",
+            "value": [
+              "kendriya_vidyalaya",
+              "jawahar_navodaya_vidyalaya",
+              "government_residential_with_boarding",
+              "private"
+            ]
+          },
+          "source_url": "https://scholarships.gov.in/public/schemeGuidelines/NMMSSGuidelines.pdf",
+          "question_template": "Do you study in an excluded residential, central-system or private school?"
+        }
+      ],
+      "documents": [
+        {
+          "name": "Parent or guardian income certificate",
+          "when_required": null,
+          "source_url": "https://scholarships.gov.in/public/FAQ/NMSSS_FAQ.pdf"
+        },
+        {
+          "name": "Caste certificate",
+          "when_required": {
+            "field": "social_category",
+            "op": "in",
+            "value": [
+              "SC",
+              "ST"
+            ]
+          },
+          "source_url": "https://scholarships.gov.in/public/FAQ/NMSSS_FAQ.pdf"
+        }
+      ],
+      "steps": [
+        {
+          "step_number": 1,
+          "instruction": "Apply for and pass the State or UT NMMSS selection test under the current local schedule.",
+          "official_url": "https://scholarships.gov.in/public/schemeGuidelines/NMMSSGuidelines.pdf",
+          "source_url": "https://scholarships.gov.in/public/schemeGuidelines/NMMSSGuidelines.pdf"
+        },
+        {
+          "step_number": 2,
+          "instruction": "Register for an OTR and submit the fresh or renewal application on the National Scholarship Portal during the current window.",
+          "official_url": "https://scholarships.gov.in/",
+          "source_url": "https://scholarships.gov.in/public/FAQ/NMSSS_FAQ.pdf"
+        },
+        {
+          "step_number": 3,
+          "instruction": "Ensure the school, district and State or UT verification authorities approve the application on the portal.",
+          "official_url": "https://scholarships.gov.in/",
+          "source_url": "https://scholarships.gov.in/public/FAQ/NMSSS_FAQ.pdf"
+        }
+      ]
+    },
+    {
+      "draft_slug": "rkvyshfshc",
+      "category": "Agriculture, Rural & Environment",
+      "government_level": "central",
+      "state_code": null,
+      "eligibility_json": {
+        "schema_version": "1.0",
+        "all": [
+          {
+            "field": "occupation",
+            "op": "eq",
+            "value": "farmer"
+          }
+        ],
+        "manual_review": [
+          {
+            "reason_code": "state_or_ut_sampling_process"
+          }
+        ]
+      },
+      "rules": [
+        {
+          "rule_key": "farmer_scope",
+          "severity": "required",
+          "expression": {
+            "field": "occupation",
+            "op": "eq",
+            "value": "farmer"
+          },
+          "source_url": "https://www.pib.gov.in/FactsheetDetails.aspx?Id=148602",
+          "question_template": "Are you a farmer seeking a Soil Health Card for a landholding?"
+        },
+        {
+          "rule_key": "local_sampling_process",
+          "severity": "manual_review",
+          "expression": {
+            "field": "local_soil_sampling_process",
+            "op": "manual_review"
+          },
+          "source_url": "https://www.pib.gov.in/FactsheetDetails.aspx?Id=148602",
+          "question_template": "What sampling or request process does your State or UT agriculture department use?"
+        }
+      ],
+      "documents": [],
+      "steps": [
+        {
+          "step_number": 1,
+          "instruction": "Ask the State or UT agriculture department or local agriculture office when and how the landholding will be sampled.",
+          "official_url": "https://soilhealth.dac.gov.in/",
+          "source_url": "https://www.pib.gov.in/FactsheetDetails.aspx?Id=148602"
+        },
+        {
+          "step_number": 2,
+          "instruction": "Use the official Soil Health Card portal to access available card services after the sample is processed.",
+          "official_url": "https://soilhealth.dac.gov.in/",
+          "source_url": "https://soilhealth.dac.gov.in/"
+        }
+      ]
+    }
+  ]
+}
