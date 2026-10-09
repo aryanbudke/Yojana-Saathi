@@ -9,11 +9,11 @@ only after its acceptance checks pass and its work is committed.
 | T2-02 | PostgreSQL models and Alembic migrations | COMPLETED |
 | T2-03 | Stable API DTOs and public frontend fixtures | COMPLETED |
 | T2-04 | Database indexes, publication filters, test seeding | COMPLETED |
-| T2-05 | Select and document 10–15 high-confidence schemes | PENDING |
-| T2-06 | Curate official source data, eligibility, and exclusions | PENDING |
-| T2-07 | Normalize codes, units, rule JSON, and conditional documents | PENDING |
-| T2-08 | Enforce source linkage and immutable published versions | PENDING |
-| T2-09 | Peer review records and provide synthetic fixtures | PENDING |
+| T2-05 | Select and document 10–15 high-confidence schemes | BLOCKED |
+| T2-06 | Curate official source data, eligibility, and exclusions | BLOCKED |
+| T2-07 | Normalize codes, units, rule JSON, and conditional documents | BLOCKED |
+| T2-08 | Enforce source linkage and immutable published versions | COMPLETED |
+| T2-09 | Peer review records and provide synthetic fixtures | BLOCKED |
 | T2-10 | CLI seed and review/publish controls | PENDING |
 | T2-11 | F02 scheme discovery API | PENDING |
 | T2-12 | F05 scheme detail API | PENDING |
@@ -116,5 +116,40 @@ only after its acceptance checks pass and its work is committed.
   provenance mutation, SQLite resource warnings, and SQLAlchemy 2.1's variadic
   `Select` annotation. The test now mutates the actual rule source, engines are
   disposed deterministically, and the query type matches the installed API.
-- **Commit reference:** `HEAD` — `feat(db): enforce published queries and seeded fixtures`
+- **Commit reference:** `7c76bd6` — `feat(db): enforce published queries and seeded fixtures`
 - **Next task:** T2-05 — Select and document 10–15 high-confidence schemes
+
+## T2-05–T2-07 and T2-09 — Real-scheme data work
+
+- **Status:** BLOCKED
+- **Files created or modified:** `PROGRESS.md`
+- **Tests executed:** Not applicable; no real scheme data was committed.
+- **Problems encountered:** On 2026-10-09 the user explicitly took ownership
+  of choosing schemes and manually collecting/scraping their official source
+  material. The stopped research produced no repository data. These tasks must
+  resume only after the user supplies that reviewed input; synthetic fixtures
+  remain clearly labeled and cannot satisfy this gate.
+- **Commit reference:** Pending progress-only record
+- **Next task:** T2-08 — Enforce source linkage and immutable published versions
+
+## T2-08 — Enforce source linkage and immutable published versions
+
+- **Status:** COMPLETED
+- **Files created or modified:**
+  `services/api/app/services/curation.py`,
+  `services/api/migrations/versions/20261009_0003_immutable_versions.py`,
+  `services/api/tests/test_curation_guards.py`, and `PROGRESS.md`.
+- **Tests executed:**
+  - `.venv/bin/ruff check .` — passed
+  - `.venv/bin/ruff format --check .` — passed (39 files)
+  - `.venv/bin/mypy app tests` — passed (34 source files)
+  - `.venv/bin/pytest --cov=app --cov-report=term-missing` — 35 passed,
+    96% coverage; one upstream Starlette TestClient deprecation warning
+  - `.venv/bin/alembic upgrade head --sql` plus trigger-name assertions —
+    passed for the version table and all four source-backed child tables
+- **Problems encountered:** The initial trigger test looked for dynamically
+  formatted names in source text rather than generated SQL. Verification now
+  asserts the emitted offline PostgreSQL DDL, while unit tests cover the
+  application-level immutable-version guard.
+- **Commit reference:** `HEAD` — `feat(db): protect published scheme versions`
+- **Next task:** T2-10 — CLI seed and review/publish controls
