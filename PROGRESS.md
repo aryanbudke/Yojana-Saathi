@@ -22,8 +22,8 @@ only after its acceptance checks pass and its work is committed.
 | T2-15 | Matching and question repository/service interfaces | COMPLETED |
 | T2-16 | Admin restrictions and official URL validation | COMPLETED |
 | T2-17 | Optional F07 guest saves (after all P0 work) | COMPLETED |
-| T2-18 | Supabase migration/seed and real-record smoke test | PENDING |
-| T2-19 | Backend deployment and secret configuration | PENDING |
+| T2-18 | Supabase migration/seed and real-record smoke test | BLOCKED |
+| T2-19 | Backend deployment and secret configuration | BLOCKED |
 | T2-20 | Full backend verification gate | PENDING |
 | T2-21 | Dataset/OpenAPI/runbook handoff | PENDING |
 | T2-22 | Provenance and database-design report contribution | PENDING |
@@ -327,3 +327,41 @@ only after its acceptance checks pass and its work is committed.
   clean full-suite rerun.
 - **Commit reference:** `HEAD` — `feat(api): add guest saved schemes`
 - **Next task:** T2-18 — Supabase migration, seed, and smoke query
+
+## T2-18 — Supabase migration, seed, and real-record smoke test
+
+- **Status:** BLOCKED
+- **Files created or modified:** `PROGRESS.md` only; no database or seed data
+  was changed.
+- **Tests executed:** Read-only environment audit confirmed that
+  `services/api/.env` is absent, `DATABASE_URL` is unset, and the only seed
+  bundle is `services/api/tests/fixtures/minimal_seed.json` using reserved
+  `.invalid` URLs.
+- **Problems encountered:** A Supabase PostgreSQL connection and the
+  user-curated, reviewed real-scheme seed bundle are not available. The user
+  explicitly retained ownership of manual scheme collection, so the synthetic
+  fixture must not be migrated or presented as real guidance.
+- **Commit reference:** Not applicable — external integration is blocked
+- **Next task:** T2-19 — Backend deployment and secret configuration
+
+## T2-19 — Backend deployment and secret configuration
+
+- **Status:** BLOCKED
+- **Files created or modified:** `services/api/railway.json`,
+  `services/api/README.md`, and `PROGRESS.md`.
+- **Tests executed:** Read-only environment audit confirmed the Railway CLI and
+  `RAILWAY_TOKEN` are absent. Deployment configuration was checked against the
+  current official Railway config-as-code, FastAPI, pre-deploy migration, and
+  health-check documentation.
+  - `.venv/bin/python -m json.tool railway.json` — passed
+  - `.venv/bin/alembic upgrade head --sql` — rendered all three PostgreSQL
+    migrations successfully
+  - Production-mode Uvicorn startup with injected `PORT=8099` — passed
+  - `GET /health` — 200 with production environment response
+  - `GET /docs` in production — 404 as intended
+- **Problems encountered:** No Railway project, authenticated CLI/token,
+  Supabase PostgreSQL `DATABASE_URL`, approved real seed, or deployed API domain
+  is available. The service therefore cannot be deployed or smoke-tested
+  externally yet. No secrets were written to Git.
+- **Commit reference:** `HEAD` — `chore(deploy): prepare Railway service configuration`
+- **Next task:** T2-20 — Full backend verification gate

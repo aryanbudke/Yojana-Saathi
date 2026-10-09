@@ -99,3 +99,23 @@ and `DELETE /api/v1/saved/{scheme_id}`. Saves are idempotent, capped at 50 per
 session, isolated by session ID, and only return schemes that still pass the
 verified public-publication boundary. Deleting or purging the parent session
 cascades to its saved rows in PostgreSQL.
+
+## Railway deployment
+
+The checked-in `railway.json` uses Railpack, runs `alembic upgrade head` as a
+pre-deploy command, starts Uvicorn on Railway's injected `PORT`, and gates
+traffic on `GET /health`. When connecting this monorepo, set the Railway service
+root directory to `services/api`.
+
+Configure secrets as Railway service variables, never repository files:
+
+- `APP_ENV=production`
+- `DATABASE_URL` using the Supabase PostgreSQL session pooler URL and the
+  `postgresql+psycopg://` SQLAlchemy scheme
+- `ALLOWED_ORIGINS` as a comma-separated HTTPS allowlist
+- separate `ADMIN_REVIEW_TOKEN`/`ADMIN_REVIEWER_ID` and
+  `ADMIN_PUBLISH_TOKEN`/`ADMIN_PUBLISHER_ID` pairs if admin APIs are enabled
+
+After deployment, generate a Railway domain and smoke-test `/health`, `/docs`
+(non-production only), and one verified `/api/v1/schemes` query. Production
+OpenAPI UI is intentionally disabled.
