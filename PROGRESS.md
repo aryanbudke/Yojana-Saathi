@@ -14,7 +14,7 @@ only after its acceptance checks pass and its work is committed.
 | T2-07 | Normalize codes, units, rule JSON, and conditional documents | BLOCKED |
 | T2-08 | Enforce source linkage and immutable published versions | COMPLETED |
 | T2-09 | Peer review records and provide synthetic fixtures | BLOCKED |
-| T2-10 | CLI seed and review/publish controls | PENDING |
+| T2-10 | CLI seed and review/publish controls | COMPLETED |
 | T2-11 | F02 scheme discovery API | PENDING |
 | T2-12 | F05 scheme detail API | PENDING |
 | T2-13 | F06 application guidance API | PENDING |
@@ -151,5 +151,27 @@ only after its acceptance checks pass and its work is committed.
   formatted names in source text rather than generated SQL. Verification now
   asserts the emitted offline PostgreSQL DDL, while unit tests cover the
   application-level immutable-version guard.
-- **Commit reference:** `HEAD` — `feat(db): protect published scheme versions`
+- **Commit reference:** `e906959` — `feat(db): protect published scheme versions`
 - **Next task:** T2-10 — CLI seed and review/publish controls
+
+## T2-10 — CLI seed and review/publish controls
+
+- **Status:** COMPLETED
+- **Files created or modified:** `services/api/app/services/curation.py`,
+  `services/api/app/cli/curation.py`, `services/api/README.md`,
+  `services/api/tests/test_curation_workflow.py`, package markers, and
+  `PROGRESS.md`.
+- **Tests executed:**
+  - `.venv/bin/ruff check .` — passed
+  - `.venv/bin/ruff format --check .` — passed (42 files)
+  - `.venv/bin/mypy app tests` — passed (37 source files)
+  - `.venv/bin/pytest --cov=app --cov-report=term-missing` — 40 passed,
+    94% coverage; one upstream Starlette TestClient deprecation warning
+  - `.venv/bin/python -m app.cli.curation validate
+    tests/fixtures/minimal_seed.json` — passed with one validated synthetic scheme
+- **Problems encountered:** Strict typing required an explicit mixed-value CLI
+  result type, and SQLite drops timezone metadata after reload; the test now
+  normalizes the SQLite timestamp while production PostgreSQL remains
+  timezone-aware.
+- **Commit reference:** `HEAD` — `feat(admin): add audited scheme curation CLI`
+- **Next task:** T2-11 — F02 scheme discovery API
