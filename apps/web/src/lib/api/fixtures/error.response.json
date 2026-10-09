@@ -1,0 +1,14 @@
+{
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "message": "The request could not be validated.",
+    "request_id": "fixture-request-001",
+    "details": [
+      {
+        "type": "value_error",
+        "location": ["body", "state_code"],
+        "message": "Value must be a two-letter uppercase state code."
+      }
+    ]
+  }
+}

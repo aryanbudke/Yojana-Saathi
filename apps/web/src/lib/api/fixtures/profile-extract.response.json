@@ -1,0 +1,17 @@
+{
+  "facts": {
+    "age": 24,
+    "state_code": "MH",
+    "occupation": "farmer",
+    "family_income_inr": null,
+    "land_area_acres": 1.5,
+    "land_registration": null,
+    "category": "agriculture",
+    "social_category": null,
+    "gender": null,
+    "has_disability": null,
+    "is_student": null
+  },
+  "unknown_fields": ["family_income_inr", "land_registration"],
+  "needs_review": true
+}

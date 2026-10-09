@@ -7,7 +7,7 @@ Strict order: no next task begins until the current implementation passes its ch
 | ID | Task | Status |
 |---|---|---|
 | T1-01 | Next.js foundation, design tokens, shared UI and accessible shell | COMPLETED |
-| T1-02 | Typed client, runtime contracts, mock fixtures and session boundary | PENDING |
+| T1-02 | Typed client, runtime contracts, mock fixtures and session boundary | COMPLETED |
 | T1-03 | F01 composer and editable confirmed profile | PENDING |
 | T1-04 | F02 discovery filters, URL state and result states | PENDING |
 | T1-05 | F03 recommendations and rule checklists | PENDING |
@@ -29,3 +29,12 @@ Optional saved and Hindi features depend on the complete P0 live flow and are no
 - Problems: Corrected one lint warning. Patched test runner audit findings. Five upstream ESLint dev-tool findings remain without a compatible fix; production dependency audit is checked at release.
 - Commit reference: commit containing this entry; resolve with `git log --format="%h %s" --grep="T1-01"`.
 - Next task: T1-02 typed client
+
+## T1-02 — Typed client, runtime contracts, mock fixtures and session boundary
+
+- Status: COMPLETED
+- Files: `apps/web/src/lib/api/client.test.ts`, `apps/web/src/lib/api/client.ts`, `apps/web/src/lib/api/contracts.ts`, `apps/web/src/lib/api/fixtures/error.response.json`, `apps/web/src/lib/api/fixtures/guidance.response.json`, `apps/web/src/lib/api/fixtures/matches.response.json`, `apps/web/src/lib/api/fixtures/profile-extract.response.json`, `apps/web/src/lib/api/fixtures/question-next.response.json`, `apps/web/src/lib/api/fixtures/scheme-detail.response.json`, `apps/web/src/lib/api/fixtures/schemes-list.response.json`, `apps/web/src/lib/api/index.ts`, `apps/web/src/lib/api/mock.ts`, `apps/web/vitest.config.ts`, `apps/web/PROGRESS.md`
+- Verification: Lint and strict typecheck passed; 10 contract/client tests passed, covering frozen fixtures, malformed responses, offline and 400/422/429/503 errors, session/answer body, unknown and safe links.
+- Problems: JSON inference narrowed empty arrays incorrectly; parsing fixtures through the DTO schema fixed typing. Session contract confirmed from Developer 2 implementation; no cross-chat message sent.
+- Commit reference: commit containing this entry; resolve with `git log --format="%h %s" --grep="T1-02"`.
+- Next task: T1-03 profile intake
