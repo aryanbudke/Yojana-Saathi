@@ -53,6 +53,14 @@ def published_schemes_statement() -> Select[Scheme, SchemeVersion]:
     )
 
 
+def published_scheme_by_id_statement(
+    scheme_id: UUID,
+) -> Select[Scheme, SchemeVersion]:
+    """Select one scheme through the same public boundary as discovery."""
+
+    return published_schemes_statement().where(Scheme.id == scheme_id)
+
+
 def search_published_schemes(
     session: Session,
     filters: SchemeSearchFilters,

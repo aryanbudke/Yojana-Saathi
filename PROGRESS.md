@@ -16,7 +16,7 @@ only after its acceptance checks pass and its work is committed.
 | T2-09 | Peer review records and provide synthetic fixtures | BLOCKED |
 | T2-10 | CLI seed and review/publish controls | COMPLETED |
 | T2-11 | F02 scheme discovery API | COMPLETED |
-| T2-12 | F05 scheme detail API | PENDING |
+| T2-12 | F05 scheme detail API | COMPLETED |
 | T2-13 | F06 application guidance API | PENDING |
 | T2-14 | F01 ephemeral sessions and confirmed facts | PENDING |
 | T2-15 | Matching and question repository/service interfaces | PENDING |
@@ -195,5 +195,24 @@ only after its acceptance checks pass and its work is committed.
 - **Problems encountered:** SQLAlchemy 2.1 deprecated `Result.tuples()` and
   tightened inferred mapping types; result unpacking and source-map annotations
   were updated before final verification.
-- **Commit reference:** `HEAD` — `feat(api): add verified scheme discovery endpoint`
+- **Commit reference:** `50ee4eb` — `feat(api): add verified scheme discovery endpoint`
 - **Next task:** T2-12 — F05 scheme detail API
+
+## T2-12 — F05 scheme detail API
+
+- **Status:** COMPLETED
+- **Files created or modified:** `services/api/app/api/v1/schemes.py`,
+  `services/api/app/repositories/schemes.py`,
+  `services/api/app/services/scheme_detail.py`,
+  `services/api/tests/test_scheme_detail_api.py`, and `PROGRESS.md`.
+- **Tests executed:**
+  - `.venv/bin/ruff check .` — passed
+  - `.venv/bin/ruff format --check .` — passed (50 files)
+  - `.venv/bin/mypy app tests` — passed (44 source files)
+  - `.venv/bin/pytest --cov=app --cov-report=term-missing` — 52 passed,
+    95% coverage; one upstream Starlette TestClient deprecation warning
+- **Problems encountered:** The initial formatter check found two mechanical
+  layout differences; both were formatted and the full suite rerun. No API or
+  source-integrity failures remained.
+- **Commit reference:** `HEAD` — `feat(api): add source-linked scheme details`
+- **Next task:** T2-13 — F06 application guidance API

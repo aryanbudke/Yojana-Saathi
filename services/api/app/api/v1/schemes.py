@@ -1,6 +1,7 @@
 """Public scheme discovery routes."""
 
 from typing import Annotated
+from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
@@ -8,7 +9,8 @@ from sqlalchemy.orm import Session
 from app.api.dependencies import get_db_session
 from app.db.enums import GovernmentLevel
 from app.schemas.common import StateCode
-from app.schemas.scheme import SchemeListResponse
+from app.schemas.scheme import SchemeDetailResponse, SchemeListResponse
+from app.services.scheme_detail import get_scheme_detail
 from app.services.scheme_discovery import (
     DiscoveryQuery,
     InvalidCursorError,
@@ -44,3 +46,16 @@ def list_schemes(
         )
     except InvalidCursorError as exc:
         raise HTTPException(status_code=422, detail="Invalid pagination cursor.") from exc
+
+
+@router.get("/{scheme_id}", response_model=SchemeDetailResponse)
+def scheme_detail(
+    scheme_id: UUID,
+    session: Annotated[Session, Depends(get_db_session)],
+) -> SchemeDetailResponse:
+    """Return one latest verified, published, source-backed scheme version."""
+
+    detail = get_scheme_detail(session, scheme_id)
+    if detail is None:
+        raise HTTPException(status_code=404, detail="Scheme not found.")
+    return detail
