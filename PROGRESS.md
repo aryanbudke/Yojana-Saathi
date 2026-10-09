@@ -25,7 +25,7 @@ only after its acceptance checks pass and its work is committed.
 | T2-18 | Supabase migration/seed and real-record smoke test | BLOCKED |
 | T2-19 | Backend deployment and secret configuration | BLOCKED |
 | T2-20 | Full backend verification gate | COMPLETED |
-| T2-21 | Dataset/OpenAPI/runbook handoff | PENDING |
+| T2-21 | Dataset/OpenAPI/runbook handoff | BLOCKED |
 | T2-22 | Provenance and database-design report contribution | PENDING |
 
 ## T2-01 — FastAPI skeleton, configuration, health, CORS, error contract
@@ -387,3 +387,26 @@ only after its acceptance checks pass and its work is committed.
   Python 3.14; it does not affect runtime behavior.
 - **Commit reference:** `HEAD` — `test(api): complete backend verification gate`
 - **Next task:** T2-21 — Dataset/OpenAPI/runbook handoff
+
+## T2-21 — Dataset/OpenAPI/runbook handoff
+
+- **Status:** BLOCKED
+- **Files created or modified:** `services/api/openapi.json`,
+  `services/api/scripts/export_openapi.py`,
+  `services/api/tests/test_openapi_artifact.py`, `docs/backend-handoff.md`, and
+  `PROGRESS.md`.
+- **Tests executed:**
+  - OpenAPI exporter run twice — identical SHA-256
+    `b46acc3fc884d1635a0c6423c52f9b766b95f58617a99c2d4961b2cfb0828543`
+  - `.venv/bin/python -m json.tool openapi.json` — passed
+  - `.venv/bin/ruff check .` — passed
+  - `.venv/bin/ruff format --check .` — passed (70 files)
+  - `.venv/bin/mypy app tests` — passed (63 source files)
+  - `.venv/bin/pytest --cov=app --cov-report=term-missing` — 79 passed,
+    91% coverage; one upstream Starlette TestClient deprecation warning
+- **Problems encountered:** The code, OpenAPI, fixtures, integration interfaces,
+  and runbook are ready, but a real verified dataset snapshot and deployed API
+  URL cannot be supplied until T2-18 and T2-19 receive external credentials and
+  user-curated scheme data.
+- **Commit reference:** `HEAD` — `docs(api): add backend integration handoff`
+- **Next task:** T2-22 — Provenance and database-design report contribution
