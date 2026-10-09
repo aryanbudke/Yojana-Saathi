@@ -18,7 +18,8 @@ import { verdictLabels } from "./types";
 import type { SchemeMatch } from "@/lib/api/contracts";
 import { MatchCard } from "./MatchCard";
 import { FollowUpCard } from "@/features/questions/FollowUpCard";
-export function Recommendations() {
+import { cn } from "@/lib/classes";
+export function Recommendations({ embedded = false }: { embedded?: boolean }) {
   const [filter, setFilter] = useState<SchemeMatch["status"] | "all">("all");
   const p = useProfile();
   const matching = useMatching();
@@ -39,16 +40,20 @@ export function Recommendations() {
     [];
   return (
     <>
-      <ModeNotice />
-      <section className="page-heading">
-        <p className="eyebrow">Your story. Your possibilities.</p>
-        <h1>
-          Let’s make your options clearer<span className="green">.</span>
-        </h1>
-        <p className="muted">
-          A shortlist with the reasons, the unknowns, and your next steps.
-        </p>
-      </section>
+      {!embedded && (
+        <>
+          <ModeNotice />
+          <section className="page-heading">
+            <p className="eyebrow">Your story. Your possibilities.</p>
+            <h1>
+              Let’s make your options clearer<span className="green">.</span>
+            </h1>
+            <p className="muted">
+              A shortlist with the reasons, the unknowns, and your next steps.
+            </p>
+          </section>
+        </>
+      )}
       {!sessionId ? (
         <EmptyState title="Start with your details">
           <p>
@@ -60,7 +65,12 @@ export function Recommendations() {
           </Link>
         </EmptyState>
       ) : (
-        <div className="recommendation-layout">
+        <div
+          className={cn(
+            "recommendation-layout",
+            embedded && "embedded-matches",
+          )}
+        >
           <div className="stack">
             {r.loading ? (
               <>
@@ -129,52 +139,57 @@ export function Recommendations() {
           </div>
           <aside className="stack">
             {results && <FollowUpCard matches={results} />}
-            <GlassPanel className="profile-snapshot">
-              <div className="section-heading">
-                <h3>Your profile</h3>
-                <Badge tone="success">Confirmed by you</Badge>
-              </div>
-              <dl>
-                {fields.slice(0, 6).map((f) => {
-                  const value = p.draft.facts[f.key];
-                  return (
-                    <div key={f.key}>
-                      <dt>{f.label}</dt>
-                      <dd>
-                        {value === null
-                          ? "Unknown"
-                          : f.key === "state_code"
-                            ? (states.find(([code]) => code === value)?.[1] ??
-                              String(value))
-                            : String(value)}
-                      </dd>
-                    </div>
-                  );
-                })}
-              </dl>
-              <Link
-                className="button secondary wide"
-                href="/discover"
-                onClick={matching.reset}
-              >
-                Edit profile
-              </Link>
-              <p className="small muted">
-                Your corrections take priority over extracted details.
-              </p>
-            </GlassPanel>
-            <div className="next-step-note">
-              <p className="eyebrow">A match is a starting point</p>
-              <h3>
-                Read the conditions.
-                <br />
-                Check the source.
-              </h3>
-              <p>
-                Only the relevant government authority can determine eligibility
-                and approve an application.
-              </p>
-            </div>
+            {!embedded && (
+              <>
+                <GlassPanel className="profile-snapshot">
+                  <div className="section-heading">
+                    <h3>Your profile</h3>
+                    <Badge tone="success">Confirmed by you</Badge>
+                  </div>
+                  <dl>
+                    {fields.slice(0, 6).map((f) => {
+                      const value = p.draft.facts[f.key];
+                      return (
+                        <div key={f.key}>
+                          <dt>{f.label}</dt>
+                          <dd>
+                            {value === null
+                              ? "Unknown"
+                              : f.key === "state_code"
+                                ? (states.find(
+                                    ([code]) => code === value,
+                                  )?.[1] ?? String(value))
+                                : String(value)}
+                          </dd>
+                        </div>
+                      );
+                    })}
+                  </dl>
+                  <Link
+                    className="button secondary wide"
+                    href="/discover"
+                    onClick={matching.reset}
+                  >
+                    Edit profile
+                  </Link>
+                  <p className="small muted">
+                    Your corrections take priority over extracted details.
+                  </p>
+                </GlassPanel>
+                <div className="next-step-note">
+                  <p className="eyebrow">A match is a starting point</p>
+                  <h3>
+                    Read the conditions.
+                    <br />
+                    Check the source.
+                  </h3>
+                  <p>
+                    Only the relevant government authority can determine
+                    eligibility and approve an application.
+                  </p>
+                </div>
+              </>
+            )}
           </aside>
         </div>
       )}

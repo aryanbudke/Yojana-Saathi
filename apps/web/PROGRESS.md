@@ -272,9 +272,18 @@ Brief: complete 10-section GovTech landing page in the confirmed direction (ivor
 | SR-02 Tokens/navigation | COMPLETED |
 | SR-03 Hero/benefits | COMPLETED |
 | SR-04 How it works | COMPLETED |
-| SR-05 Interactive finder | PENDING |
+| SR-05 Interactive finder | COMPLETED |
 | SR-06 Categories/sources | PENDING |
 | SR-07 Guidance/footer | PENDING |
 | SR-08 Responsive | PENDING |
 | SR-09 API journeys | PENDING |
 | SR-10 Visual/accessibility polish | PENDING |
+
+## SR-05 — Interactive finder and matching preview
+
+- Status: COMPLETED
+- Files: src/features/landing/{SchemeFinder,MatchingPreview}.tsx, src/features/profile/ProfileComposer.tsx, src/features/matching/Recommendations.tsx, src/app/page.tsx, src/styles/shell.css, e2e/{landing,accessibility,redesign}.spec.ts, PROGRESS.md.
+- Verification: lint, strict TypeScript and formatting passed; 19 unit/contract tests and eight affected browser tests passed. Confirmed inline extract/review/correct/confirm/question/answer/rematch/clear flow without routing away. Category selection sets only stated interest; gender/student remain unknown. Actual desktop/mobile captures inspected; 375px has no overflow.
+- Problems: corrected an exact-label test selector and reran the affected suite serially after overlapping Playwright artifact cleanup caused a test-runner error. Reused existing hooks, MatchCard and FollowUpCard rather than duplicating business logic. Discovery stays functional on /discover; screenshot reference absent. Mock mode remains explicit, and no live success is claimed.
+- Commit: commit containing this entry, resolve with `git log --oneline --grep=SR-05`.
+- Next: SR-06 categories and verified external destinations.

@@ -49,7 +49,7 @@ test("primary action stays in initial laptop viewport and workspace never overfl
     await page.setViewportSize({ width, height: 720 });
     await page.goto("/");
     await expect(
-      page.getByRole("heading", { name: "Tell us about your situation" }),
+      page.getByRole("heading", { name: "Find schemes for your situation" }),
     ).toBeVisible();
     expect(
       await page.evaluate(

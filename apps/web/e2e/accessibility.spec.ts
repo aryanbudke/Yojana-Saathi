@@ -23,7 +23,7 @@ for (const width of [320, 375, 390, 768, 1024, 1280, 1440]) {
       expect(results.violations).toEqual([]);
     }
     await expect(
-      page.getByRole("heading", { name: "Contract Fixture Scheme" }),
+      page.getByRole("heading", { name: "Find schemes for your situation" }),
     ).toBeVisible();
     await check();
     await page.keyboard.press("Tab");
