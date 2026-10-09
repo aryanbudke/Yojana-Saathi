@@ -1,0 +1,1386 @@
+{
+  "schema_version": "1.0",
+  "synthetic_only": true,
+  "label_author": "developer-three",
+  "independent_review": null,
+  "warning": "Hypothetical policies and proposed labels; no government policy or accuracy claim.",
+  "policies": [
+    {
+      "key": "farmer",
+      "name": "Synthetic Farmer Support",
+      "scheme_id": "00000000-0000-0000-0000-0000000000c9",
+      "version_id": "00000000-0000-0000-0000-00000000012d",
+      "source_id": "00000000-0000-0000-0000-000000000065",
+      "source_url": "https://policy.example.invalid/farmer",
+      "required": [
+        {
+          "key": "adult",
+          "expression": {
+            "field": "age",
+            "op": "gte",
+            "value": 18
+          }
+        },
+        {
+          "key": "area",
+          "expression": {
+            "field": "state_code",
+            "op": "in",
+            "value": [
+              "MH",
+              "KA"
+            ]
+          }
+        },
+        {
+          "key": "occupation",
+          "expression": {
+            "field": "occupation",
+            "op": "in",
+            "value": [
+              "farmer",
+              "farm labourer"
+            ]
+          }
+        },
+        {
+          "key": "income",
+          "expression": {
+            "field": "family_income_inr",
+            "op": "lte",
+            "value": 200000
+          }
+        },
+        {
+          "key": "registration",
+          "expression": {
+            "field": "land_registration",
+            "op": "eq",
+            "value": "yes"
+          }
+        }
+      ],
+      "exclusions": [
+        {
+          "key": "large_land",
+          "expression": {
+            "field": "land_area_acres",
+            "op": "gt",
+            "value": 5
+          }
+        }
+      ]
+    },
+    {
+      "key": "student",
+      "name": "Synthetic Student Study",
+      "scheme_id": "00000000-0000-0000-0000-0000000000ca",
+      "version_id": "00000000-0000-0000-0000-00000000012e",
+      "source_id": "00000000-0000-0000-0000-000000000066",
+      "source_url": "https://policy.example.invalid/student",
+      "required": [
+        {
+          "key": "adult",
+          "expression": {
+            "field": "age",
+            "op": "gte",
+            "value": 18
+          }
+        },
+        {
+          "key": "age_limit",
+          "expression": {
+            "field": "age",
+            "op": "lte",
+            "value": 25
+          }
+        },
+        {
+          "key": "area",
+          "expression": {
+            "field": "state_code",
+            "op": "in",
+            "value": [
+              "MH",
+              "KA"
+            ]
+          }
+        },
+        {
+          "key": "student",
+          "expression": {
+            "field": "is_student",
+            "op": "eq",
+            "value": true
+          }
+        },
+        {
+          "key": "income",
+          "expression": {
+            "field": "family_income_inr",
+            "op": "lte",
+            "value": 300000
+          }
+        }
+      ],
+      "exclusions": []
+    },
+    {
+      "key": "disability",
+      "name": "Synthetic Disability Aid",
+      "scheme_id": "00000000-0000-0000-0000-0000000000cb",
+      "version_id": "00000000-0000-0000-0000-00000000012f",
+      "source_id": "00000000-0000-0000-0000-000000000067",
+      "source_url": "https://policy.example.invalid/disability",
+      "required": [
+        {
+          "key": "disability",
+          "expression": {
+            "field": "has_disability",
+            "op": "eq",
+            "value": true
+          }
+        },
+        {
+          "key": "area",
+          "expression": {
+            "field": "state_code",
+            "op": "in",
+            "value": [
+              "MH",
+              "KA"
+            ]
+          }
+        },
+        {
+          "key": "income",
+          "expression": {
+            "field": "family_income_inr",
+            "op": "lte",
+            "value": 300000
+          }
+        }
+      ],
+      "exclusions": [
+        {
+          "key": "public_employee",
+          "expression": {
+            "field": "occupation",
+            "op": "eq",
+            "value": "government_employee"
+          }
+        }
+      ]
+    },
+    {
+      "key": "pension",
+      "name": "Synthetic Senior Pension",
+      "scheme_id": "00000000-0000-0000-0000-0000000000cc",
+      "version_id": "00000000-0000-0000-0000-000000000130",
+      "source_id": "00000000-0000-0000-0000-000000000068",
+      "source_url": "https://policy.example.invalid/pension",
+      "required": [
+        {
+          "key": "senior",
+          "expression": {
+            "field": "age",
+            "op": "gte",
+            "value": 60
+          }
+        },
+        {
+          "key": "area",
+          "expression": {
+            "field": "state_code",
+            "op": "eq",
+            "value": "KA"
+          }
+        },
+        {
+          "key": "income",
+          "expression": {
+            "field": "family_income_inr",
+            "op": "lte",
+            "value": 150000
+          }
+        }
+      ],
+      "exclusions": [
+        {
+          "key": "student_exclusion",
+          "expression": {
+            "field": "is_student",
+            "op": "eq",
+            "value": true
+          }
+        }
+      ]
+    }
+  ],
+  "profiles": [
+    {
+      "id": "persona-01",
+      "description": "Farmer known conditions",
+      "facts": {
+        "age": 24,
+        "state_code": "MH",
+        "occupation": "farmer",
+        "family_income_inr": 150000,
+        "land_area_acres": 2.0,
+        "land_registration": "yes",
+        "is_student": false,
+        "has_disability": false
+      },
+      "policy_variant": "standard",
+      "expected": {
+        "farmer": "all_checked_conditions_met",
+        "student": "not_eligible",
+        "disability": "not_eligible",
+        "pension": "not_eligible"
+      },
+      "expected_missing": {},
+      "relevant": [
+        "farmer"
+      ],
+      "invalid": false
+    },
+    {
+      "id": "persona-02",
+      "description": "Farmer minimum age inclusive",
+      "facts": {
+        "age": 18,
+        "state_code": "MH",
+        "occupation": "farmer",
+        "family_income_inr": 150000,
+        "land_area_acres": 2.0,
+        "land_registration": "yes",
+        "is_student": false,
+        "has_disability": false
+      },
+      "policy_variant": "standard",
+      "expected": {
+        "farmer": "all_checked_conditions_met",
+        "student": "not_eligible",
+        "disability": "not_eligible",
+        "pension": "not_eligible"
+      },
+      "expected_missing": {},
+      "relevant": [
+        "farmer"
+      ],
+      "invalid": false
+    },
+    {
+      "id": "persona-03",
+      "description": "Farmer below minimum age",
+      "facts": {
+        "age": 17,
+        "state_code": "MH",
+        "occupation": "farmer",
+        "family_income_inr": 150000,
+        "land_area_acres": 2.0,
+        "land_registration": "yes",
+        "is_student": false,
+        "has_disability": false
+      },
+      "policy_variant": "standard",
+      "expected": {
+        "farmer": "not_eligible",
+        "student": "not_eligible",
+        "disability": "not_eligible",
+        "pension": "not_eligible"
+      },
+      "expected_missing": {},
+      "relevant": [],
+      "invalid": false
+    },
+    {
+      "id": "persona-04",
+      "description": "Farmer income cap inclusive",
+      "facts": {
+        "age": 24,
+        "state_code": "MH",
+        "occupation": "farmer",
+        "family_income_inr": 200000,
+        "land_area_acres": 2.0,
+        "land_registration": "yes",
+        "is_student": false,
+        "has_disability": false
+      },
+      "policy_variant": "standard",
+      "expected": {
+        "farmer": "all_checked_conditions_met",
+        "student": "not_eligible",
+        "disability": "not_eligible",
+        "pension": "not_eligible"
+      },
+      "expected_missing": {},
+      "relevant": [
+        "farmer"
+      ],
+      "invalid": false
+    },
+    {
+      "id": "persona-05",
+      "description": "Farmer over income cap",
+      "facts": {
+        "age": 24,
+        "state_code": "MH",
+        "occupation": "farmer",
+        "family_income_inr": 200001,
+        "land_area_acres": 2.0,
+        "land_registration": "yes",
+        "is_student": false,
+        "has_disability": false
+      },
+      "policy_variant": "standard",
+      "expected": {
+        "farmer": "not_eligible",
+        "student": "not_eligible",
+        "disability": "not_eligible",
+        "pension": "not_eligible"
+      },
+      "expected_missing": {},
+      "relevant": [],
+      "invalid": false
+    },
+    {
+      "id": "persona-06",
+      "description": "Five acres is not exclusion",
+      "facts": {
+        "age": 24,
+        "state_code": "MH",
+        "occupation": "farmer",
+        "family_income_inr": 150000,
+        "land_area_acres": 5.0,
+        "land_registration": "yes",
+        "is_student": false,
+        "has_disability": false
+      },
+      "policy_variant": "standard",
+      "expected": {
+        "farmer": "all_checked_conditions_met",
+        "student": "not_eligible",
+        "disability": "not_eligible",
+        "pension": "not_eligible"
+      },
+      "expected_missing": {},
+      "relevant": [
+        "farmer"
+      ],
+      "invalid": false
+    },
+    {
+      "id": "persona-07",
+      "description": "Above five acres triggers exclusion",
+      "facts": {
+        "age": 24,
+        "state_code": "MH",
+        "occupation": "farmer",
+        "family_income_inr": 150000,
+        "land_area_acres": 5.0001,
+        "land_registration": "yes",
+        "is_student": false,
+        "has_disability": false
+      },
+      "policy_variant": "standard",
+      "expected": {
+        "farmer": "not_eligible",
+        "student": "not_eligible",
+        "disability": "not_eligible",
+        "pension": "not_eligible"
+      },
+      "expected_missing": {},
+      "relevant": [],
+      "invalid": false
+    },
+    {
+      "id": "persona-08",
+      "description": "Zero land remains known",
+      "facts": {
+        "age": 24,
+        "state_code": "MH",
+        "occupation": "farmer",
+        "family_income_inr": 150000,
+        "land_area_acres": 0.0,
+        "land_registration": "yes",
+        "is_student": false,
+        "has_disability": false
+      },
+      "policy_variant": "standard",
+      "expected": {
+        "farmer": "all_checked_conditions_met",
+        "student": "not_eligible",
+        "disability": "not_eligible",
+        "pension": "not_eligible"
+      },
+      "expected_missing": {},
+      "relevant": [
+        "farmer"
+      ],
+      "invalid": false
+    },
+    {
+      "id": "persona-09",
+      "description": "Missing registration",
+      "facts": {
+        "age": 24,
+        "state_code": "MH",
+        "occupation": "farmer",
+        "family_income_inr": 150000,
+        "land_area_acres": 2.0,
+        "land_registration": null,
+        "is_student": false,
+        "has_disability": false
+      },
+      "policy_variant": "standard",
+      "expected": {
+        "farmer": "needs_information",
+        "student": "not_eligible",
+        "disability": "not_eligible",
+        "pension": "not_eligible"
+      },
+      "expected_missing": {
+        "farmer": [
+          "land_registration"
+        ]
+      },
+      "relevant": [
+        "farmer"
+      ],
+      "invalid": false
+    },
+    {
+      "id": "persona-10",
+      "description": "Not sure registration",
+      "facts": {
+        "age": 24,
+        "state_code": "MH",
+        "occupation": "farmer",
+        "family_income_inr": 150000,
+        "land_area_acres": 2.0,
+        "land_registration": "not_sure",
+        "is_student": false,
+        "has_disability": false
+      },
+      "policy_variant": "standard",
+      "expected": {
+        "farmer": "needs_information",
+        "student": "not_eligible",
+        "disability": "not_eligible",
+        "pension": "not_eligible"
+      },
+      "expected_missing": {
+        "farmer": [
+          "land_registration"
+        ]
+      },
+      "relevant": [
+        "farmer"
+      ],
+      "invalid": false
+    },
+    {
+      "id": "persona-11",
+      "description": "Farmer zero income known",
+      "facts": {
+        "age": 24,
+        "state_code": "MH",
+        "occupation": "farmer",
+        "family_income_inr": 0,
+        "land_area_acres": 2.0,
+        "land_registration": "yes",
+        "is_student": false,
+        "has_disability": false
+      },
+      "policy_variant": "standard",
+      "expected": {
+        "farmer": "all_checked_conditions_met",
+        "student": "not_eligible",
+        "disability": "not_eligible",
+        "pension": "not_eligible"
+      },
+      "expected_missing": {},
+      "relevant": [
+        "farmer"
+      ],
+      "invalid": false
+    },
+    {
+      "id": "persona-12",
+      "description": "Wrong state for farmer",
+      "facts": {
+        "age": 24,
+        "state_code": "DL",
+        "occupation": "farmer",
+        "family_income_inr": 150000,
+        "land_area_acres": 2.0,
+        "land_registration": "yes",
+        "is_student": false,
+        "has_disability": false
+      },
+      "policy_variant": "standard",
+      "expected": {
+        "farmer": "not_eligible",
+        "student": "not_eligible",
+        "disability": "not_eligible",
+        "pension": "not_eligible"
+      },
+      "expected_missing": {},
+      "relevant": [],
+      "invalid": false
+    },
+    {
+      "id": "persona-13",
+      "description": "Student known conditions",
+      "facts": {
+        "age": 22,
+        "state_code": "MH",
+        "occupation": "student",
+        "family_income_inr": 150000,
+        "land_area_acres": 0.0,
+        "land_registration": "no",
+        "is_student": true,
+        "has_disability": false
+      },
+      "policy_variant": "standard",
+      "expected": {
+        "farmer": "not_eligible",
+        "student": "all_checked_conditions_met",
+        "disability": "not_eligible",
+        "pension": "not_eligible"
+      },
+      "expected_missing": {},
+      "relevant": [
+        "student"
+      ],
+      "invalid": false
+    },
+    {
+      "id": "persona-14",
+      "description": "Student minimum age inclusive",
+      "facts": {
+        "age": 18,
+        "state_code": "MH",
+        "occupation": "student",
+        "family_income_inr": 150000,
+        "land_area_acres": 0.0,
+        "land_registration": "no",
+        "is_student": true,
+        "has_disability": false
+      },
+      "policy_variant": "standard",
+      "expected": {
+        "farmer": "not_eligible",
+        "student": "all_checked_conditions_met",
+        "disability": "not_eligible",
+        "pension": "not_eligible"
+      },
+      "expected_missing": {},
+      "relevant": [
+        "student"
+      ],
+      "invalid": false
+    },
+    {
+      "id": "persona-15",
+      "description": "Student maximum age inclusive",
+      "facts": {
+        "age": 25,
+        "state_code": "MH",
+        "occupation": "student",
+        "family_income_inr": 150000,
+        "land_area_acres": 0.0,
+        "land_registration": "no",
+        "is_student": true,
+        "has_disability": false
+      },
+      "policy_variant": "standard",
+      "expected": {
+        "farmer": "not_eligible",
+        "student": "all_checked_conditions_met",
+        "disability": "not_eligible",
+        "pension": "not_eligible"
+      },
+      "expected_missing": {},
+      "relevant": [
+        "student"
+      ],
+      "invalid": false
+    },
+    {
+      "id": "persona-16",
+      "description": "Student age outside upper bound",
+      "facts": {
+        "age": 26,
+        "state_code": "MH",
+        "occupation": "student",
+        "family_income_inr": 150000,
+        "land_area_acres": 0.0,
+        "land_registration": "no",
+        "is_student": true,
+        "has_disability": false
+      },
+      "policy_variant": "standard",
+      "expected": {
+        "farmer": "not_eligible",
+        "student": "not_eligible",
+        "disability": "not_eligible",
+        "pension": "not_eligible"
+      },
+      "expected_missing": {},
+      "relevant": [],
+      "invalid": false
+    },
+    {
+      "id": "persona-17",
+      "description": "Student income cap inclusive",
+      "facts": {
+        "age": 22,
+        "state_code": "MH",
+        "occupation": "student",
+        "family_income_inr": 300000,
+        "land_area_acres": 0.0,
+        "land_registration": "no",
+        "is_student": true,
+        "has_disability": false
+      },
+      "policy_variant": "standard",
+      "expected": {
+        "farmer": "not_eligible",
+        "student": "all_checked_conditions_met",
+        "disability": "not_eligible",
+        "pension": "not_eligible"
+      },
+      "expected_missing": {},
+      "relevant": [
+        "student"
+      ],
+      "invalid": false
+    },
+    {
+      "id": "persona-18",
+      "description": "Student over income cap",
+      "facts": {
+        "age": 22,
+        "state_code": "MH",
+        "occupation": "student",
+        "family_income_inr": 300001,
+        "land_area_acres": 0.0,
+        "land_registration": "no",
+        "is_student": true,
+        "has_disability": false
+      },
+      "policy_variant": "standard",
+      "expected": {
+        "farmer": "not_eligible",
+        "student": "not_eligible",
+        "disability": "not_eligible",
+        "pension": "not_eligible"
+      },
+      "expected_missing": {},
+      "relevant": [],
+      "invalid": false
+    },
+    {
+      "id": "persona-19",
+      "description": "Student status false is known fail",
+      "facts": {
+        "age": 22,
+        "state_code": "MH",
+        "occupation": "student",
+        "family_income_inr": 150000,
+        "land_area_acres": 0.0,
+        "land_registration": "no",
+        "is_student": false,
+        "has_disability": false
+      },
+      "policy_variant": "standard",
+      "expected": {
+        "farmer": "not_eligible",
+        "student": "not_eligible",
+        "disability": "not_eligible",
+        "pension": "not_eligible"
+      },
+      "expected_missing": {},
+      "relevant": [],
+      "invalid": false
+    },
+    {
+      "id": "persona-20",
+      "description": "Student missing status",
+      "facts": {
+        "age": 22,
+        "state_code": "MH",
+        "occupation": "student",
+        "family_income_inr": 150000,
+        "land_area_acres": 0.0,
+        "land_registration": "no",
+        "is_student": null,
+        "has_disability": false
+      },
+      "policy_variant": "standard",
+      "expected": {
+        "farmer": "not_eligible",
+        "student": "needs_information",
+        "disability": "not_eligible",
+        "pension": "not_eligible"
+      },
+      "expected_missing": {
+        "student": [
+          "is_student"
+        ]
+      },
+      "relevant": [
+        "student"
+      ],
+      "invalid": false
+    },
+    {
+      "id": "persona-21",
+      "description": "Disability known conditions",
+      "facts": {
+        "age": 30,
+        "state_code": "MH",
+        "occupation": "tailor",
+        "family_income_inr": 150000,
+        "land_area_acres": 0.0,
+        "land_registration": "no",
+        "is_student": false,
+        "has_disability": true
+      },
+      "policy_variant": "standard",
+      "expected": {
+        "farmer": "not_eligible",
+        "student": "not_eligible",
+        "disability": "all_checked_conditions_met",
+        "pension": "not_eligible"
+      },
+      "expected_missing": {},
+      "relevant": [
+        "disability"
+      ],
+      "invalid": false
+    },
+    {
+      "id": "persona-22",
+      "description": "Disability flag false is known fail",
+      "facts": {
+        "age": 30,
+        "state_code": "MH",
+        "occupation": "tailor",
+        "family_income_inr": 150000,
+        "land_area_acres": 0.0,
+        "land_registration": "no",
+        "is_student": false,
+        "has_disability": false
+      },
+      "policy_variant": "standard",
+      "expected": {
+        "farmer": "not_eligible",
+        "student": "not_eligible",
+        "disability": "not_eligible",
+        "pension": "not_eligible"
+      },
+      "expected_missing": {},
+      "relevant": [],
+      "invalid": false
+    },
+    {
+      "id": "persona-23",
+      "description": "Disability income cap inclusive",
+      "facts": {
+        "age": 30,
+        "state_code": "MH",
+        "occupation": "tailor",
+        "family_income_inr": 300000,
+        "land_area_acres": 0.0,
+        "land_registration": "no",
+        "is_student": false,
+        "has_disability": true
+      },
+      "policy_variant": "standard",
+      "expected": {
+        "farmer": "not_eligible",
+        "student": "not_eligible",
+        "disability": "all_checked_conditions_met",
+        "pension": "not_eligible"
+      },
+      "expected_missing": {},
+      "relevant": [
+        "disability"
+      ],
+      "invalid": false
+    },
+    {
+      "id": "persona-24",
+      "description": "Disability public employment exclusion",
+      "facts": {
+        "age": 30,
+        "state_code": "MH",
+        "occupation": "government_employee",
+        "family_income_inr": 150000,
+        "land_area_acres": 0.0,
+        "land_registration": "no",
+        "is_student": false,
+        "has_disability": true
+      },
+      "policy_variant": "standard",
+      "expected": {
+        "farmer": "not_eligible",
+        "student": "not_eligible",
+        "disability": "not_eligible",
+        "pension": "not_eligible"
+      },
+      "expected_missing": {},
+      "relevant": [],
+      "invalid": false
+    },
+    {
+      "id": "persona-25",
+      "description": "Disability missing occupation exclusion check",
+      "facts": {
+        "age": 30,
+        "state_code": "MH",
+        "occupation": null,
+        "family_income_inr": 150000,
+        "land_area_acres": 0.0,
+        "land_registration": "no",
+        "is_student": false,
+        "has_disability": true
+      },
+      "policy_variant": "standard",
+      "expected": {
+        "farmer": "not_eligible",
+        "student": "not_eligible",
+        "disability": "needs_information",
+        "pension": "not_eligible"
+      },
+      "expected_missing": {
+        "disability": [
+          "occupation"
+        ]
+      },
+      "relevant": [
+        "disability"
+      ],
+      "invalid": false
+    },
+    {
+      "id": "persona-26",
+      "description": "Disability missing flag",
+      "facts": {
+        "age": 30,
+        "state_code": "MH",
+        "occupation": "tailor",
+        "family_income_inr": 150000,
+        "land_area_acres": 0.0,
+        "land_registration": "no",
+        "is_student": false,
+        "has_disability": null
+      },
+      "policy_variant": "standard",
+      "expected": {
+        "farmer": "not_eligible",
+        "student": "not_eligible",
+        "disability": "needs_information",
+        "pension": "not_eligible"
+      },
+      "expected_missing": {
+        "disability": [
+          "has_disability"
+        ]
+      },
+      "relevant": [
+        "disability"
+      ],
+      "invalid": false
+    },
+    {
+      "id": "persona-27",
+      "description": "Pension known conditions",
+      "facts": {
+        "age": 65,
+        "state_code": "KA",
+        "occupation": "retired",
+        "family_income_inr": 150000,
+        "land_area_acres": 0.0,
+        "land_registration": "no",
+        "is_student": false,
+        "has_disability": false
+      },
+      "policy_variant": "standard",
+      "expected": {
+        "farmer": "not_eligible",
+        "student": "not_eligible",
+        "disability": "not_eligible",
+        "pension": "all_checked_conditions_met"
+      },
+      "expected_missing": {},
+      "relevant": [
+        "pension"
+      ],
+      "invalid": false
+    },
+    {
+      "id": "persona-28",
+      "description": "Pension minimum age inclusive",
+      "facts": {
+        "age": 60,
+        "state_code": "KA",
+        "occupation": "retired",
+        "family_income_inr": 150000,
+        "land_area_acres": 0.0,
+        "land_registration": "no",
+        "is_student": false,
+        "has_disability": false
+      },
+      "policy_variant": "standard",
+      "expected": {
+        "farmer": "not_eligible",
+        "student": "not_eligible",
+        "disability": "not_eligible",
+        "pension": "all_checked_conditions_met"
+      },
+      "expected_missing": {},
+      "relevant": [
+        "pension"
+      ],
+      "invalid": false
+    },
+    {
+      "id": "persona-29",
+      "description": "Pension below age boundary",
+      "facts": {
+        "age": 59,
+        "state_code": "KA",
+        "occupation": "retired",
+        "family_income_inr": 150000,
+        "land_area_acres": 0.0,
+        "land_registration": "no",
+        "is_student": false,
+        "has_disability": false
+      },
+      "policy_variant": "standard",
+      "expected": {
+        "farmer": "not_eligible",
+        "student": "not_eligible",
+        "disability": "not_eligible",
+        "pension": "not_eligible"
+      },
+      "expected_missing": {},
+      "relevant": [],
+      "invalid": false
+    },
+    {
+      "id": "persona-30",
+      "description": "Pension income cap inclusive",
+      "facts": {
+        "age": 65,
+        "state_code": "KA",
+        "occupation": "retired",
+        "family_income_inr": 150000,
+        "land_area_acres": 0.0,
+        "land_registration": "no",
+        "is_student": false,
+        "has_disability": false
+      },
+      "policy_variant": "standard",
+      "expected": {
+        "farmer": "not_eligible",
+        "student": "not_eligible",
+        "disability": "not_eligible",
+        "pension": "all_checked_conditions_met"
+      },
+      "expected_missing": {},
+      "relevant": [
+        "pension"
+      ],
+      "invalid": false
+    },
+    {
+      "id": "persona-31",
+      "description": "Pension over income cap",
+      "facts": {
+        "age": 65,
+        "state_code": "KA",
+        "occupation": "retired",
+        "family_income_inr": 150001,
+        "land_area_acres": 0.0,
+        "land_registration": "no",
+        "is_student": false,
+        "has_disability": false
+      },
+      "policy_variant": "standard",
+      "expected": {
+        "farmer": "not_eligible",
+        "student": "not_eligible",
+        "disability": "not_eligible",
+        "pension": "not_eligible"
+      },
+      "expected_missing": {},
+      "relevant": [],
+      "invalid": false
+    },
+    {
+      "id": "persona-32",
+      "description": "Pension student exclusion",
+      "facts": {
+        "age": 65,
+        "state_code": "KA",
+        "occupation": "retired",
+        "family_income_inr": 150000,
+        "land_area_acres": 0.0,
+        "land_registration": "no",
+        "is_student": true,
+        "has_disability": false
+      },
+      "policy_variant": "standard",
+      "expected": {
+        "farmer": "not_eligible",
+        "student": "not_eligible",
+        "disability": "not_eligible",
+        "pension": "not_eligible"
+      },
+      "expected_missing": {},
+      "relevant": [],
+      "invalid": false
+    },
+    {
+      "id": "persona-33",
+      "description": "Pension unknown exclusion",
+      "facts": {
+        "age": 65,
+        "state_code": "KA",
+        "occupation": "retired",
+        "family_income_inr": 150000,
+        "land_area_acres": 0.0,
+        "land_registration": "no",
+        "is_student": null,
+        "has_disability": false
+      },
+      "policy_variant": "standard",
+      "expected": {
+        "farmer": "not_eligible",
+        "student": "not_eligible",
+        "disability": "not_eligible",
+        "pension": "needs_information"
+      },
+      "expected_missing": {
+        "pension": [
+          "is_student"
+        ]
+      },
+      "relevant": [
+        "pension"
+      ],
+      "invalid": false
+    },
+    {
+      "id": "persona-34",
+      "description": "All facts unprovided",
+      "facts": {},
+      "policy_variant": "standard",
+      "expected": {
+        "farmer": "needs_information",
+        "student": "needs_information",
+        "disability": "needs_information",
+        "pension": "needs_information"
+      },
+      "expected_missing": {
+        "farmer": [
+          "age",
+          "state_code",
+          "occupation",
+          "family_income_inr",
+          "land_registration",
+          "land_area_acres"
+        ],
+        "student": [
+          "age",
+          "state_code",
+          "is_student",
+          "family_income_inr"
+        ],
+        "disability": [
+          "has_disability",
+          "state_code",
+          "family_income_inr",
+          "occupation"
+        ],
+        "pension": [
+          "age",
+          "state_code",
+          "family_income_inr",
+          "is_student"
+        ]
+      },
+      "relevant": [
+        "farmer",
+        "student",
+        "disability",
+        "pension"
+      ],
+      "invalid": false
+    },
+    {
+      "id": "persona-35",
+      "description": "Only age stated; no occupation inference",
+      "facts": {
+        "age": 24
+      },
+      "policy_variant": "standard",
+      "expected": {
+        "farmer": "needs_information",
+        "student": "needs_information",
+        "disability": "needs_information",
+        "pension": "not_eligible"
+      },
+      "expected_missing": {
+        "farmer": [
+          "state_code",
+          "occupation",
+          "family_income_inr",
+          "land_registration",
+          "land_area_acres"
+        ],
+        "student": [
+          "state_code",
+          "is_student",
+          "family_income_inr"
+        ],
+        "disability": [
+          "has_disability",
+          "state_code",
+          "family_income_inr",
+          "occupation"
+        ]
+      },
+      "relevant": [
+        "farmer",
+        "student",
+        "disability"
+      ],
+      "invalid": false
+    },
+    {
+      "id": "persona-36",
+      "description": "Missing farmer income and registration",
+      "facts": {
+        "age": 24,
+        "state_code": "MH",
+        "occupation": "farmer",
+        "family_income_inr": null,
+        "land_area_acres": 2.0,
+        "land_registration": null,
+        "is_student": false,
+        "has_disability": false
+      },
+      "policy_variant": "standard",
+      "expected": {
+        "farmer": "needs_information",
+        "student": "not_eligible",
+        "disability": "not_eligible",
+        "pension": "not_eligible"
+      },
+      "expected_missing": {
+        "farmer": [
+          "family_income_inr",
+          "land_registration"
+        ]
+      },
+      "relevant": [
+        "farmer"
+      ],
+      "invalid": false
+    },
+    {
+      "id": "persona-37",
+      "description": "Ambiguous farmer policy",
+      "facts": {
+        "age": 24,
+        "state_code": "MH",
+        "occupation": "farmer",
+        "family_income_inr": 150000,
+        "land_area_acres": 2.0,
+        "land_registration": "yes",
+        "is_student": false,
+        "has_disability": false
+      },
+      "policy_variant": "ambiguous_farmer",
+      "expected": {
+        "farmer": "manual_review",
+        "student": "not_eligible",
+        "disability": "not_eligible",
+        "pension": "not_eligible"
+      },
+      "expected_missing": {},
+      "relevant": [
+        "farmer"
+      ],
+      "invalid": false
+    },
+    {
+      "id": "persona-38",
+      "description": "Exclusion still rejects ambiguous farmer",
+      "facts": {
+        "age": 24,
+        "state_code": "MH",
+        "occupation": "farmer",
+        "family_income_inr": 150000,
+        "land_area_acres": 6.0,
+        "land_registration": "yes",
+        "is_student": false,
+        "has_disability": false
+      },
+      "policy_variant": "ambiguous_farmer",
+      "expected": {
+        "farmer": "not_eligible",
+        "student": "not_eligible",
+        "disability": "not_eligible",
+        "pension": "not_eligible"
+      },
+      "expected_missing": {},
+      "relevant": [],
+      "invalid": false
+    },
+    {
+      "id": "persona-39",
+      "description": "Outdated versions cannot pass",
+      "facts": {
+        "age": 24,
+        "state_code": "MH",
+        "occupation": "farmer",
+        "family_income_inr": 150000,
+        "land_area_acres": 2.0,
+        "land_registration": "yes",
+        "is_student": false,
+        "has_disability": false
+      },
+      "policy_variant": "stale_all",
+      "expected": {
+        "farmer": "manual_review",
+        "student": "manual_review",
+        "disability": "manual_review",
+        "pension": "manual_review"
+      },
+      "expected_missing": {},
+      "relevant": [
+        "farmer"
+      ],
+      "invalid": false
+    },
+    {
+      "id": "persona-40",
+      "description": "Unmapped root criterion cannot disappear",
+      "facts": {
+        "age": 24,
+        "state_code": "MH",
+        "occupation": "farmer",
+        "family_income_inr": 150000,
+        "land_area_acres": 2.0,
+        "land_registration": "yes",
+        "is_student": false,
+        "has_disability": false
+      },
+      "policy_variant": "bad_root_farmer",
+      "expected": {
+        "farmer": "manual_review",
+        "student": "not_eligible",
+        "disability": "not_eligible",
+        "pension": "not_eligible"
+      },
+      "expected_missing": {},
+      "relevant": [
+        "farmer"
+      ],
+      "invalid": false
+    },
+    {
+      "id": "persona-41",
+      "description": "Future publication cannot pass",
+      "facts": {
+        "age": 24,
+        "state_code": "MH",
+        "occupation": "farmer",
+        "family_income_inr": 150000,
+        "land_area_acres": 2.0,
+        "land_registration": "yes",
+        "is_student": false,
+        "has_disability": false
+      },
+      "policy_variant": "future_farmer",
+      "expected": {
+        "farmer": "manual_review",
+        "student": "not_eligible",
+        "disability": "not_eligible",
+        "pension": "not_eligible"
+      },
+      "expected_missing": {},
+      "relevant": [
+        "farmer"
+      ],
+      "invalid": false
+    },
+    {
+      "id": "persona-42",
+      "description": "Conflicting ages require correction",
+      "facts": {
+        "age": [
+          18,
+          65
+        ],
+        "state_code": "MH",
+        "occupation": "farmer",
+        "family_income_inr": 150000,
+        "land_area_acres": 2.0,
+        "land_registration": "yes",
+        "is_student": false,
+        "has_disability": false
+      },
+      "policy_variant": "standard",
+      "expected": {},
+      "expected_missing": {},
+      "relevant": [],
+      "invalid": true
+    },
+    {
+      "id": "persona-43",
+      "description": "Negative annual income rejected",
+      "facts": {
+        "age": 24,
+        "state_code": "MH",
+        "occupation": "farmer",
+        "family_income_inr": -1,
+        "land_area_acres": 2.0,
+        "land_registration": "yes",
+        "is_student": false,
+        "has_disability": false
+      },
+      "policy_variant": "standard",
+      "expected": {},
+      "expected_missing": {},
+      "relevant": [],
+      "invalid": true
+    },
+    {
+      "id": "persona-44",
+      "description": "Unrecognized state rejected",
+      "facts": {
+        "age": 24,
+        "state_code": "XX",
+        "occupation": "farmer",
+        "family_income_inr": 150000,
+        "land_area_acres": 2.0,
+        "land_registration": "yes",
+        "is_student": false,
+        "has_disability": false
+      },
+      "policy_variant": "standard",
+      "expected": {},
+      "expected_missing": {},
+      "relevant": [],
+      "invalid": true
+    }
+  ]
+}

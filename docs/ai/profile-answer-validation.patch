@@ -1,0 +1,54 @@
+--- a/services/api/app/services/profiles.py
++++ b/services/api/app/services/profiles.py
+@@ -4,6 +4,7 @@
+ from typing import Any
+ from uuid import UUID
+ 
++from pydantic import StrictInt, TypeAdapter
+ from sqlalchemy import delete, select
+ from sqlalchemy.orm import Session
+ 
+@@ -139,6 +140,8 @@
+ 
+ 
+ def _validated_value(field: ProfileField, value: Any) -> Any:
++    if field in {"age", "family_income_inr", "land_area_acres"} and isinstance(value, bool):
++        TypeAdapter(StrictInt).validate_python(value)
+     normalized = ProfileFacts.model_validate({field: value})
+     return normalized.model_dump()[field]
+ 
+--- /dev/null
++++ b/services/api/tests/matching/test_answer_validation.py
+@@ -0,0 +1,32 @@
++"""Numeric answers must never be coerced from boolean choices."""
++
++from uuid import UUID
++
++import pytest
++from fastapi.testclient import TestClient
++from sqlalchemy.orm import Session
++
++from app.db.models import ProfileFact
++from tests.matching.test_api import context as context
++
++
++@pytest.mark.parametrize("field", ["age", "family_income_inr", "land_area_acres"])
++@pytest.mark.parametrize("value", [True, False])
++def test_boolean_answer_cannot_replace_confirmed_zero(
++    context: tuple[TestClient, Session, str],
++    field: str,
++    value: bool,
++) -> None:
++    client, db, sid = context
++    confirmed = client.post(
++        "/api/v1/profiles/answers", json={"session_id": sid, "field": field, "value": 0}
++    )
++    assert confirmed.status_code == 200
++    rejected = client.post(
++        "/api/v1/profiles/answers", json={"session_id": sid, "field": field, "value": value}
++    )
++    assert rejected.status_code == 422
++    assert rejected.json()["error"]["code"] == "VALIDATION_ERROR"
++    db.expire_all()
++    fact = db.get(ProfileFact, (UUID(sid), field))
++    assert fact is not None and fact.value_json == 0

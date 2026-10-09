@@ -4,6 +4,7 @@ from datetime import UTC, datetime, timedelta
 from typing import Any
 from uuid import UUID
 
+from pydantic import StrictInt, TypeAdapter
 from sqlalchemy import delete, select
 from sqlalchemy.orm import Session
 
@@ -139,6 +140,8 @@ def require_active_session(
 
 
 def _validated_value(field: ProfileField, value: Any) -> Any:
+    if field in {"age", "family_income_inr", "land_area_acres"} and isinstance(value, bool):
+        TypeAdapter(StrictInt).validate_python(value)
     normalized = ProfileFacts.model_validate({field: value})
     return normalized.model_dump()[field]
 
