@@ -8,7 +8,7 @@ only after its acceptance checks pass and its work is committed.
 | T2-01 | FastAPI skeleton, configuration, health, CORS, error contract | COMPLETED |
 | T2-02 | PostgreSQL models and Alembic migrations | COMPLETED |
 | T2-03 | Stable API DTOs and public frontend fixtures | COMPLETED |
-| T2-04 | Database indexes, publication filters, test seeding | PENDING |
+| T2-04 | Database indexes, publication filters, test seeding | COMPLETED |
 | T2-05 | Select and document 10–15 high-confidence schemes | PENDING |
 | T2-06 | Curate official source data, eligibility, and exclusions | PENDING |
 | T2-07 | Normalize codes, units, rule JSON, and conditional documents | PENDING |
@@ -92,5 +92,29 @@ only after its acceptance checks pass and its work is committed.
 - **Problems encountered:** The first verification pass found only import order
   and formatter differences. Contract coverage was expanded to include the
   scheme-detail response, and question validation now rejects orphaned options.
-- **Commit reference:** `HEAD` — `feat(api): define public DTO contracts and fixtures`
+- **Commit reference:** `e969449` — `feat(api): define public DTO contracts and fixtures`
 - **Next task:** T2-04 — Database indexes, publication filters, and test seeding
+
+## T2-04 — Database indexes, publication filters, and test seeding
+
+- **Status:** COMPLETED
+- **Files created or modified:** `services/api/app/db/models.py`,
+  `services/api/app/db/{session,seed}.py`,
+  `services/api/app/repositories/schemes.py`,
+  `services/api/app/schemas/seed.py`, migrations `0001` and `0002`, the
+  synthetic seed fixture, `services/api/tests/test_seed_and_publication.py`,
+  and `PROGRESS.md`.
+- **Tests executed:**
+  - `.venv/bin/ruff check .` — passed
+  - `.venv/bin/ruff format --check .` — passed (35 files)
+  - `.venv/bin/mypy app tests` — passed (31 source files)
+  - `.venv/bin/pytest --cov=app --cov-report=term-missing` — 31 passed,
+    96% coverage; one upstream Starlette TestClient deprecation warning
+  - `.venv/bin/alembic upgrade head --sql` — passed and emitted all four
+    required query/expiry indexes
+- **Problems encountered:** Initial verification found an inaccurate negative
+  provenance mutation, SQLite resource warnings, and SQLAlchemy 2.1's variadic
+  `Select` annotation. The test now mutates the actual rule source, engines are
+  disposed deterministically, and the query type matches the installed API.
+- **Commit reference:** `HEAD` — `feat(db): enforce published queries and seeded fixtures`
+- **Next task:** T2-05 — Select and document 10–15 high-confidence schemes

@@ -1,0 +1,65 @@
+{
+  "schema_version": "1.0",
+  "schemes": [
+    {
+      "id": "50000000-0000-4000-8000-000000000001",
+      "slug": "test-only-seed-scheme",
+      "name": "Test-only Seed Scheme",
+      "government_level": "central",
+      "state_code": null,
+      "category": "testing",
+      "status": "active",
+      "version_id": "51000000-0000-4000-8000-000000000001",
+      "version": 1,
+      "summary": "Synthetic record for database seed tests only.",
+      "benefit_text": "No real benefit; this record is never production data.",
+      "eligibility_json": {
+        "schema_version": "1.0",
+        "all": [
+          {"field": "age", "op": "gte", "value": 18, "source_id": "52000000-0000-4000-8000-000000000001"}
+        ]
+      },
+      "verified_at": "2026-10-09T00:00:00Z",
+      "reviewed_by": "synthetic-test-reviewer",
+      "review_status": "verified",
+      "published_at": "2026-10-09T00:00:00Z",
+      "sources": [
+        {
+          "id": "52000000-0000-4000-8000-000000000001",
+          "official_url": "https://seed.example.invalid/source",
+          "title": "Reserved synthetic source",
+          "document_date": "2026-10-01",
+          "checked_at": "2026-10-09T00:00:00Z",
+          "excerpt_locator": "Synthetic section"
+        }
+      ],
+      "rules": [
+        {
+          "id": "53000000-0000-4000-8000-000000000001",
+          "rule_key": "adult",
+          "expression": {"field": "age", "op": "gte", "value": 18},
+          "severity": "required",
+          "source_id": "52000000-0000-4000-8000-000000000001",
+          "question_template": "Are you at least 18 years old?"
+        }
+      ],
+      "documents": [
+        {
+          "id": "54000000-0000-4000-8000-000000000001",
+          "name": "Synthetic identity record",
+          "when_required": null,
+          "source_id": "52000000-0000-4000-8000-000000000001"
+        }
+      ],
+      "steps": [
+        {
+          "id": "55000000-0000-4000-8000-000000000001",
+          "step_number": 1,
+          "instruction": "Open the reserved test link.",
+          "official_url": "https://seed.example.invalid/apply",
+          "source_id": "52000000-0000-4000-8000-000000000001"
+        }
+      ]
+    }
+  ]
+}

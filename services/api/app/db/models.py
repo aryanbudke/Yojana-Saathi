@@ -12,6 +12,7 @@ from sqlalchemy import (
     Float,
     ForeignKey,
     ForeignKeyConstraint,
+    Index,
     Integer,
     String,
     Text,
@@ -42,9 +43,10 @@ class Scheme(Base):
     __tablename__ = "schemes"
     __table_args__ = (
         CheckConstraint(
-            "state_code IS NULL OR char_length(state_code) = 2",
+            "state_code IS NULL OR length(state_code) = 2",
             name="state_code_length",
         ),
+        Index("ix_schemes_status_state_code_category", "status", "state_code", "category"),
     )
 
     id: Mapped[UUID] = mapped_column(Uuid, primary_key=True, default=uuid4)
@@ -88,6 +90,12 @@ class SchemeVersion(Base):
         CheckConstraint(
             "published_at IS NULL OR review_status = 'verified'",
             name="published_requires_verified",
+        ),
+        Index(
+            "ix_scheme_versions_scheme_id_review_status_published_at",
+            "scheme_id",
+            "review_status",
+            "published_at",
         ),
     )
 
@@ -136,6 +144,7 @@ class EligibilityRule(Base):
     __tablename__ = "eligibility_rules"
     __table_args__ = (
         UniqueConstraint("scheme_version_id", "rule_key"),
+        Index("ix_eligibility_rules_scheme_version_id", "scheme_version_id"),
         ForeignKeyConstraint(
             ["source_id", "scheme_version_id"],
             ["sources.id", "sources.scheme_version_id"],
@@ -207,7 +216,10 @@ class ApplicationStep(Base):
 
 class ProfileSession(Base):
     __tablename__ = "profile_sessions"
-    __table_args__ = (CheckConstraint("expires_at > created_at", name="expiry_after_creation"),)
+    __table_args__ = (
+        CheckConstraint("expires_at > created_at", name="expiry_after_creation"),
+        Index("ix_profile_sessions_expires_at", "expires_at"),
+    )
 
     id: Mapped[UUID] = mapped_column(Uuid, primary_key=True, default=uuid4)
     expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)

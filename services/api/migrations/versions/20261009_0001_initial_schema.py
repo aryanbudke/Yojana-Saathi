@@ -80,7 +80,7 @@ def upgrade() -> None:
         sa.Column("created_at", sa.DateTime(timezone=True), nullable=False),
         sa.Column("updated_at", sa.DateTime(timezone=True), nullable=False),
         sa.CheckConstraint(
-            "state_code IS NULL OR char_length(state_code) = 2",
+            "state_code IS NULL OR length(state_code) = 2",
             name=op.f("ck_schemes_state_code_length"),
         ),
         sa.PrimaryKeyConstraint("id", name=op.f("pk_schemes")),
