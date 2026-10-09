@@ -69,6 +69,8 @@ try {
     .getByRole("heading", { name: "Your personal checklist" })
     .waitFor();
   for (const width of [1440, 390]) await capture("guidance", width);
+  await page.goto(`${base}/help`);
+  for (const width of [1440, 390]) await capture("how-it-works", width);
   await writeFile(`${output}metrics.json`, JSON.stringify(metrics, null, 2));
   console.log(JSON.stringify(metrics));
 } finally {

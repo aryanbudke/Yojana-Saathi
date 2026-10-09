@@ -176,15 +176,15 @@ The remaining dependency order is packaging/handoff → live API verification �
 
 ## Redesign task status
 
-| ID | Task | Status |
-| --- | --- | --- |
-| UI-01 | Audit | COMPLETED |
-| UI-02 | Foundation and navigation | COMPLETED |
-| UI-03 | Homepage and input | COMPLETED |
-| UI-04 | Discovery and recommendation cards | COMPLETED |
+| ID    | Task                                     | Status    |
+| ----- | ---------------------------------------- | --------- |
+| UI-01 | Audit                                    | COMPLETED |
+| UI-02 | Foundation and navigation                | COMPLETED |
+| UI-03 | Homepage and input                       | COMPLETED |
+| UI-04 | Discovery and recommendation cards       | COMPLETED |
 | UI-05 | Profile, questions, details and guidance | COMPLETED |
-| UI-06 | Interactions and feedback | COMPLETED |
-| UI-07 | Responsive and release verification | IN PROGRESS |
+| UI-06 | Interactions and feedback                | COMPLETED |
+| UI-07 | Responsive and release verification      | COMPLETED |
 
 ## UI-05 — Profile, questions, scheme details and application guidance
 
@@ -203,3 +203,24 @@ The remaining dependency order is packaging/handoff → live API verification �
 - Problems/dependencies: Updated keyboard verdict locator to the actual card because filter options share its text. No animation dependency added.
 - Commit reference: resolve with `git log --oneline --grep="UI-06"`.
 - Next task: UI-07
+
+## UI-07 — Responsive, integration regression and release verification
+
+- Status: COMPLETED
+- Files: src/app/{globals.css,layout.tsx}, src/features/discovery/Discovery.tsx, e2e/accessibility.spec.ts, scripts/{capture-redesign.mjs,redesign-progress.py}, README.md, HANDOFF.md, UI-REDESIGN.md, PROGRESS.md, artifacts/redesign/after/*
+- Tests/verification: 19 unit/contract tests and21 distinct browser checks verified. Final affected12-check run passed after contrast fix;35 axe scans across320,375,390,768,1024,1280,1440 had zero violations and no overflow. Keyboard flow,reduced motion,CTA placement and16 actual screenshots inspected. Lint,strict TypeScript,formatting and production Next build passed.
+- Problems/dependencies: Initial release scan failed glass-header contrast at1024/1280; darkened header text,verified both failures,then reran all seven responsive journeys successfully. Approval review timed out once; separate authorized retry succeeded. Live API/deployment remain externally blocked as recorded in T1-11/T1-12; no live success claimed.
+- Commit reference: resolve with `git log --oneline --grep="UI-07"`.
+- Next task: Redesign complete; existing live API gate remains separate.
+
+## Redesign commit references
+
+| Task  | Commit                                                                     |
+| ----- | -------------------------------------------------------------------------- |
+| UI-01 | `348a3c2`                                                                  |
+| UI-02 | `5c0d2b5`                                                                  |
+| UI-03 | `0cd7a97`                                                                  |
+| UI-04 | `75730d3`                                                                  |
+| UI-05 | `67dad94`                                                                  |
+| UI-06 | `5846eba`                                                                  |
+| UI-07 | Commit containing this entry, resolved by `git log --oneline --grep=UI-07` |

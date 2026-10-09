@@ -41,15 +41,15 @@ npm run build
 npm audit --omit=dev
 ```
 
-The browser suite starts a labeled mock-mode development server and verifies contract playback, not a live eligibility engine. The accessibility matrix covers 320, 375, 768, 1024 and 1440px. It checks overflow and runs axe on home, recommendations, scheme details and guidance. A separate test completes the full flow with Tab, text entry, Enter and Space.
+The browser suite starts a labeled mock-mode development server and verifies contract playback, not a live eligibility engine. The accessibility matrix covers 320, 375, 390, 768, 1024, 1280 and 1440px. It checks overflow and runs axe on home, profile review, recommendations, scheme details and guidance. Desktop CTA placement is verified inside a 720px-high viewport. A separate test completes the full flow with Tab, text entry, Enter and Space.
 
 To capture screenshots while a mock development server is running:
 
 ```bash
-node scripts/capture.mjs
+node scripts/capture-redesign.mjs
 ```
 
-Actual UI screenshots are in `artifacts/screenshots/`. They contain synthetic contract examples, not verified government scheme results.
+Before/after redesign screenshots are in `artifacts/redesign/before/` and `artifacts/redesign/after/`. Viewport and CTA measurements are saved in `artifacts/redesign/after/metrics.json`. They contain synthetic contract examples, not verified government scheme results.
 
 ## Deploy to Vercel
 

@@ -1,7 +1,7 @@
 import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 const scheme = "20000000-0000-4000-8000-000000000001";
-for (const width of [320, 375, 768, 1024, 1440]) {
+for (const width of [320, 375, 390, 768, 1024, 1280, 1440]) {
   test(`accessible full journey at ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height: 900 });
     await page.emulateMedia({ reducedMotion: "reduce" });
@@ -33,6 +33,8 @@ for (const width of [320, 375, 768, 1024, 1440]) {
     await page.keyboard.press("Enter");
     await page.getByRole("button", { name: "Try an example" }).click();
     await page.getByRole("button", { name: "Find my schemes" }).click();
+    await expect(page.getByLabel("Age", { exact: true })).toBeVisible();
+    await check();
     await page.getByRole("button", { name: "Confirm my details" }).click();
     await page.getByRole("link", { name: "See my recommendations" }).click();
     await expect(

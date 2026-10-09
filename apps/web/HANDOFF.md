@@ -40,8 +40,8 @@ The checked-in backend currently lacks the extract, match and next-question rout
 ## Verification evidence
 
 - 19 unit/contract checks passed, including API errors, malformed responses, correction priority, unknowns, citations and source links.
-- 14 browser regression checks passed, covering five full responsive journeys, plus one separate complete keyboard-only journey.
-- 20 axe scans (four core screens × five widths) reported no WCAG A/AA violations; no horizontal overflow at requested widths. Reduced-motion mode was exercised.
+- 21 browser checks verified: seven responsive journeys and profile, discovery, recommendations, follow-up, detail, guidance, keyboard, navigation, status filtering, empty-state and reduced-motion regressions.
+- 35 axe scans (five core screens × seven widths) reported no WCAG A/AA violations after correcting glass-header contrast. No horizontal overflow at 320, 375, 390, 768, 1024, 1280 or 1440px. Reduced-motion mode was exercised.
 - ESLint with zero warnings, strict TypeScript, formatting and production build passed.
 - Production dependency audit reported zero vulnerabilities. Five dev-only findings remain in ESLint's `fast-glob`/`micromatch`/`braces` chain; the audit offers no compatible fix without downgrading the framework's lint configuration. The test runner's original findings were resolved by upgrading.
 
@@ -59,3 +59,11 @@ Saved UI and reviewed Hindi copy remain optional after the real P0 flow passes. 
 ## Current backend readiness audit
 
 `artifacts/backend-readiness.json` records the latest fetched backend main and its route decorators. On 9 October 2026, the three missing core routes were extract, matches and next-question; the documented local health endpoint was unavailable and no deployed API origin was supplied. T1-11 is BLOCKED; T1-12 has not started. Use `python3 scripts/check_backend.py` after fetching main to refresh the static audit, then run an actual live smoke test once the service exists. The static audit alone must never be treated as a live pass.
+
+## UI redesign handoff
+
+The existing frontend now uses a compact two-column discovery workspace, six visible category controls, a sticky glass header with keyboard-accessible mobile navigation, consistent scheme cards and a working recommendation-status filter. Profile review expands across the desktop workspace; questions appear beside the shortlist; source-backed details and personal application checklists share the same typography and spacing.
+
+The primary discovery action is inside a 720px desktop viewport: approximately 665px at 1024px wide, 675px at 1280px and 681px at 1440px. All values and verdicts still come from the existing typed client or explicitly labeled fixtures. No backend, session contract, eligibility algorithm or dependency changed. English is displayed as the current language; optional Saved, Hindi, authentication and an applications dashboard are not advertised before their existing integration gate.
+
+Seven sequential UI commits are tracked in `PROGRESS.md`. The audit is `UI-REDESIGN.md`; final visual evidence and measurements are under `artifacts/redesign/after/`, with baseline captures under `before/`. Run `node scripts/capture-redesign.mjs` against a running mock preview to reproduce them. Live API verification and deployment retain the previously documented external dependencies.

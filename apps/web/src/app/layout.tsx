@@ -5,7 +5,7 @@ import { AppHeader, Disclaimer } from "@/components/ui";
 import { ProfileProvider } from "@/features/profile/hooks";
 import { MatchingProvider } from "@/features/matching/hooks";
 export const metadata: Metadata = {
-  title: "yojana saathi — find your support",
+  title: "yojana saathi — Government schemes, made simple.",
   description:
     "Discover government support, understand the conditions, and prepare your next step. Independent preliminary guidance.",
 };

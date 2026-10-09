@@ -95,7 +95,7 @@ export function Discovery() {
           className="input"
           defaultValue={search.get("state_code") ?? ""}
         >
-          <option value="">All states & national schemes</option>
+          <option value="">All states + national</option>
           {states.map(([code, label]) => (
             <option value={code} key={code}>
               {label}

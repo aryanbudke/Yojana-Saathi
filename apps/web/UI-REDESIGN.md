@@ -17,3 +17,13 @@ Verified against the current source, the supplied request, documentation (`docum
 Before screenshots: `artifacts/redesign/before/`. Baseline homepage has generous hero margins, a 160px textarea, a large right explanation panel and additional trust strip before categories. The first desktop CTA is below the initial 720px viewport. Mobile results and source/version disclosures must remain readable. After screenshots will include all essential routes and both desktop/mobile sizes.
 
 No backend or contract changes, new dependencies, invented eligibility scores or government approval claims are needed.
+
+## Final verified result
+
+The compact discovery workspace replaces the competing promotional panel. All six categories are visible, filtering persists in the URL, and recommendations have a working status filter. Profile review, follow-up answers, provenance disclosures and personal document checklists retain their existing contracts and safeguards.
+
+Before/after screenshots were compared and inspected across desktop and mobile routes. Six homepage sizes are captured, with desktop/mobile profile, recommendation, scheme, guidance and help views (16 screenshots). `artifacts/redesign/after/metrics.json` records no page overflow and desktop CTA bottoms below 720px.
+
+Release checks: 19 unit/contract tests, 21 distinct browser checks, 35 axe scans over seven widths, lint, strict TypeScript, formatting and production build passed. The first final suite caught header contrast at 1024/1280 when scrolling over a green button. The text color was corrected and the entire responsive/accessibility matrix plus discovery/navigation/filter regressions reran successfully. Production routes include home, discover, help, recommendations, scheme detail and guidance.
+
+The backend/live deployment gate remains separate and unverified: extract, matching and next-question routes plus a deployed API origin are still needed. Saved/Hindi/authentication/application tracking remain outside the approved current integration gate.
