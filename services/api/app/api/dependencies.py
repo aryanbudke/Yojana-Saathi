@@ -1,0 +1,13 @@
+"""Shared FastAPI dependencies."""
+
+from collections.abc import Iterator
+
+from fastapi import Request
+from sqlalchemy.orm import Session
+
+
+def get_db_session(request: Request) -> Iterator[Session]:
+    """Yield one SQLAlchemy session from the application-owned factory."""
+
+    with request.app.state.session_factory() as session:
+        yield session

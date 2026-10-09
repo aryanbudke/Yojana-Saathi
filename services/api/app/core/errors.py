@@ -73,6 +73,7 @@ def install_error_handlers(app: FastAPI) -> None:
             404: "NOT_FOUND",
             405: "METHOD_NOT_ALLOWED",
             409: "CONFLICT",
+            422: "VALIDATION_ERROR",
             429: "RATE_LIMITED",
             503: "SERVICE_UNAVAILABLE",
         }

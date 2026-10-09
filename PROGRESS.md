@@ -15,7 +15,7 @@ only after its acceptance checks pass and its work is committed.
 | T2-08 | Enforce source linkage and immutable published versions | COMPLETED |
 | T2-09 | Peer review records and provide synthetic fixtures | BLOCKED |
 | T2-10 | CLI seed and review/publish controls | COMPLETED |
-| T2-11 | F02 scheme discovery API | PENDING |
+| T2-11 | F02 scheme discovery API | COMPLETED |
 | T2-12 | F05 scheme detail API | PENDING |
 | T2-13 | F06 application guidance API | PENDING |
 | T2-14 | F01 ephemeral sessions and confirmed facts | PENDING |
@@ -173,5 +173,27 @@ only after its acceptance checks pass and its work is committed.
   result type, and SQLite drops timezone metadata after reload; the test now
   normalizes the SQLite timestamp while production PostgreSQL remains
   timezone-aware.
-- **Commit reference:** `HEAD` — `feat(admin): add audited scheme curation CLI`
+- **Commit reference:** `ed3b019` — `feat(admin): add audited scheme curation CLI`
 - **Next task:** T2-11 — F02 scheme discovery API
+
+## T2-11 — F02 scheme discovery API
+
+- **Status:** COMPLETED
+- **Files created or modified:** `services/api/app/main.py`,
+  `services/api/app/api/dependencies.py`,
+  `services/api/app/api/v1/schemes.py`,
+  `services/api/app/repositories/schemes.py`,
+  `services/api/app/services/scheme_discovery.py`,
+  `services/api/app/core/errors.py`, discovery/publication tests, package markers,
+  and `PROGRESS.md`.
+- **Tests executed:**
+  - `.venv/bin/ruff check .` — passed
+  - `.venv/bin/ruff format --check .` — passed (48 files)
+  - `.venv/bin/mypy app tests` — passed (42 source files)
+  - `.venv/bin/pytest --cov=app --cov-report=term-missing` — 48 passed,
+    95% coverage; one upstream Starlette TestClient deprecation warning
+- **Problems encountered:** SQLAlchemy 2.1 deprecated `Result.tuples()` and
+  tightened inferred mapping types; result unpacking and source-map annotations
+  were updated before final verification.
+- **Commit reference:** `HEAD` — `feat(api): add verified scheme discovery endpoint`
+- **Next task:** T2-12 — F05 scheme detail API

@@ -11,7 +11,7 @@ from sqlalchemy import create_engine, select
 from sqlalchemy.orm import Session
 
 from app.db.base import Base
-from app.db.enums import ReviewStatus
+from app.db.enums import ReviewStatus, SchemeStatus
 from app.db.models import Scheme, SchemeVersion
 from app.db.seed import SeedConflictError, load_seed_file, seed_database
 from app.repositories.schemes import published_schemes_statement
@@ -80,6 +80,16 @@ def test_public_query_returns_latest_published_version_only(session: Session) ->
 
     assert len(rows) == 1
     assert rows[0].SchemeVersion.version == 1
+
+
+def test_public_query_hides_closed_scheme(session: Session) -> None:
+    seed_database(session, load_seed_file(FIXTURE))
+    scheme = session.scalar(select(Scheme))
+    assert scheme is not None
+    scheme.status = SchemeStatus.CLOSED
+    session.commit()
+
+    assert session.execute(published_schemes_statement()).all() == []
 
 
 def test_required_query_indexes_exist_in_metadata() -> None:
