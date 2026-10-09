@@ -31,6 +31,8 @@ Every evaluated public candidate is persisted, even when the response limit hide
 
 ## Evidence and dependencies
 
+The SarkarSeva notebook's cleaned JSON can be imported into an explicitly unpublished local staging artifact with `scripts/import_notebook_dataset.py`. See [NOTEBOOK_INTEGRATION.md](NOTEBOOK_INTEGRATION.md) for the command and mapping to the existing reviewed backend bundle. The adapter preserves separate raw policy fields; it adds no database writes, public routes, vector dependencies or generated policy decisions.
+
 The local SQLAlchemy integration tests use Developer 2's reserved `.invalid` test seed. Only Gemini transport is replaced; profile storage, candidate retrieval, audit runs, answers and guidance use real backend code and tables. This proves local wiring, not real government policy or live PostgreSQL/Gemini performance.
 
 No active Developer 1/2 implementation chat was identifiable in the available chat list. This handoff records the integration boundary for their review; no unrelated chat was messaged. Remaining evidence: independently reviewed synthetic labels, user-curated real scheme records, PostgreSQL deployment, a live Gemini check, frontend verdict/question review and the joint demo. The backend handoff already lists real data and deployment as blocked dependencies.

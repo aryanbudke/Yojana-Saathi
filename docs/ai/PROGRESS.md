@@ -29,6 +29,15 @@ Workspace: `workspaces/upstream`; branch: `feat/ai-matching`. Developer 2's root
 - Commit: `ai-phase-c-checkpoint`, `ai-phase-c-followup` and `ai-phase-c-answer-guard` (verified work and approved fix, not a completed Phase C).
 - Next: obtain independent review, real guidance checklist and frontend/live integration evidence; rerun evaluation. D only after C acceptance, including review evidence.
 
+### C continuation — connect notebook data for curation
+- Status: COMPLETED (staging adapter only; Phase C remains BLOCKED)
+- Files: `app/modules/ai/notebook_import.py`, `scripts/import_notebook_dataset.py`, `tests/ai/test_notebook_import.py`, NOTEBOOK_INTEGRATION.md, README.md and this log. No backend-owned service, database schema, public DTO, frontend file or original notebook was modified.
+- Scope: the user requested connecting the SarkarSeva preprocessing notebook. Its cleaned JSON now imports into a local unpublished review artifact. Original fields and input hash are preserved; every record remains a draft regardless of claimed verification. Missing policy/source fields are recorded; malformed records and duplicate slugs are rejected. Existing outputs cannot be overwritten. Staging cannot validate as a published SeedBundle.
+- Tests/results: first test run failed because the adapter did not exist; after implementation all 10 adapter/CLI tests passed, and the full backend suite passed (253 tests, one existing Starlette deprecation warning). Clean-cache mypy passed (93 files). Initial lint/format failures were formatting only and were fixed; final lint/format passed (100 files). Self-review checked the ingestion boundary, duplicate handling, error messages, preservation of policy text, false verification claims and output overwrite protection.
+- Problems: `updated_data.csv`, `schemes_clean.json` and the notebook's index/export artifacts are not present locally, so no real dataset import is claimed. Notebook saved counts are not independently reproduced. Reviewed official URLs, rule ASTs, source-linked guidance and publication evidence still require Developer 2 curation. FAISS/OpenAI runtime integration is deferred under the core-gate rule.
+- Commit: `ai-phase-c-notebook-staging` (verified staging adapter tag).
+- Next: supply the actual cleaned JSON and run the import; curate a reviewed subset through Developer 2's existing contract. Obtain independent labels and frontend/live evidence before Phase D.
+
 ## D — Report, presentation and live demo
 - Status: PENDING
 - Files: none yet.
