@@ -9,7 +9,7 @@ only after its acceptance checks pass and its work is committed.
 | T2-02 | PostgreSQL models and Alembic migrations | COMPLETED |
 | T2-03 | Stable API DTOs and public frontend fixtures | COMPLETED |
 | T2-04 | Database indexes, publication filters, test seeding | COMPLETED |
-| T2-05 | Select and document 10–15 high-confidence schemes | BLOCKED |
+| T2-05 | Select and document 10–15 high-confidence schemes | COMPLETED |
 | T2-06 | Curate official source data, eligibility, and exclusions | BLOCKED |
 | T2-07 | Normalize codes, units, rule JSON, and conditional documents | BLOCKED |
 | T2-08 | Enforce source linkage and immutable published versions | COMPLETED |
@@ -119,7 +119,33 @@ only after its acceptance checks pass and its work is committed.
 - **Commit reference:** `7c76bd6` — `feat(db): enforce published queries and seeded fixtures`
 - **Next task:** T2-05 — Select and document 10–15 high-confidence schemes
 
-## T2-05–T2-07 and T2-09 — Real-scheme data work
+## T2-05 — Select and document the first high-confidence schemes
+
+- **Status:** COMPLETED
+- **Files created or modified:**
+  `data/curation/selected-schemes-v1.json`,
+  `services/api/tests/test_curation_selection.py`, and `PROGRESS.md`.
+- **Tests executed:** Official-source discovery was limited to primary central
+  ministry, statutory authority, or scheme portals. The selection integrity
+  test verifies exactly ten unique draft slugs, HTTPS source candidates, an
+  explicit research-pending state, and a closed official-host allowlist.
+  - `.venv/bin/pytest -q tests` — 87 passed; one upstream Starlette
+    TestClient deprecation warning
+  - `.venv/bin/ruff check .` — passed
+  - `.venv/bin/ruff format --check .` — passed (77 files)
+  - `python3 -m json.tool` — selection manifest is valid JSON
+  - `.venv/bin/mypy --strict app` — existing URL-field mismatches remain in
+    `scheme_discovery.py`, `scheme_detail.py`, and `guidance.py`; T2-05 adds
+    no typed application code
+- **Problems encountered:** The multi-scheme research job remained in a
+  non-terminal processing state, so selection evidence was gathered through
+  individual official-source searches. Several portals block automated content
+  retrieval; those records remain research-pending and cannot be treated as
+  verified until their primary documents are audited.
+- **Commit reference:** `HEAD` — `docs(data): select first official-source curation batch`
+- **Next task:** T2-06 — Verify official sources, dates, eligibility, and exclusions
+
+## T2-06–T2-07 and T2-09 — Real-scheme verification work
 
 - **Status:** BLOCKED
 - **Files created or modified:** `services/api/app/db/draft_import.py`,
@@ -146,8 +172,8 @@ only after its acceptance checks pass and its work is committed.
   official source URLs, verification dates, source-linked rules, or independent
   review. Therefore this staging import does not complete T2-05–T2-07 or T2-09
   and none of the records can be published.
-- **Commit reference:** `HEAD` — `feat(data): import SarkarSeva candidates as private drafts`
-- **Next task:** T2-08 — Enforce source linkage and immutable published versions
+- **Commit reference:** `b7e79d4` — `feat(data): import SarkarSeva candidates as private drafts`
+- **Next task:** T2-06 — Verify the selected official sources and scheme facts
 
 ## T2-08 — Enforce source linkage and immutable published versions
 
