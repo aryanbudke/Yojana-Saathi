@@ -34,7 +34,7 @@ def session() -> Generator[Session]:
 def test_seed_file_inserts_source_backed_record(session: Session) -> None:
     bundle = load_seed_file(FIXTURE)
 
-    inserted = seed_database(session, bundle)
+    inserted = seed_database(session, bundle, allow_test_urls=True)
     session.commit()
 
     assert inserted == 1
@@ -44,11 +44,11 @@ def test_seed_file_inserts_source_backed_record(session: Session) -> None:
 
 def test_seed_conflict_does_not_silently_overwrite(session: Session) -> None:
     bundle = load_seed_file(FIXTURE)
-    seed_database(session, bundle)
+    seed_database(session, bundle, allow_test_urls=True)
     session.commit()
 
     with pytest.raises(SeedConflictError, match="scheme slug already exists"):
-        seed_database(session, bundle)
+        seed_database(session, bundle, allow_test_urls=True)
 
 
 def test_seed_validation_rejects_missing_provenance() -> None:
@@ -61,7 +61,7 @@ def test_seed_validation_rejects_missing_provenance() -> None:
 
 def test_public_query_returns_latest_published_version_only(session: Session) -> None:
     bundle = load_seed_file(FIXTURE)
-    seed_database(session, bundle)
+    seed_database(session, bundle, allow_test_urls=True)
     session.add(
         SchemeVersion(
             id=UUID("51000000-0000-4000-8000-000000000002"),
@@ -83,7 +83,7 @@ def test_public_query_returns_latest_published_version_only(session: Session) ->
 
 
 def test_public_query_hides_closed_scheme(session: Session) -> None:
-    seed_database(session, load_seed_file(FIXTURE))
+    seed_database(session, load_seed_file(FIXTURE), allow_test_urls=True)
     scheme = session.scalar(select(Scheme))
     assert scheme is not None
     scheme.status = SchemeStatus.CLOSED

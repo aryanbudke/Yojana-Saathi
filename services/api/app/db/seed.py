@@ -5,6 +5,7 @@ from pathlib import Path
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from app.core.official_urls import validate_official_url
 from app.db.models import (
     ApplicationStep,
     EligibilityRule,
@@ -26,8 +27,15 @@ def load_seed_file(path: Path) -> SeedBundle:
     return SeedBundle.model_validate_json(path.read_text(encoding="utf-8"))
 
 
-def seed_database(session: Session, bundle: SeedBundle) -> int:
+def seed_database(session: Session, bundle: SeedBundle, *, allow_test_urls: bool = False) -> int:
     """Insert a validated bundle without committing the caller's transaction."""
+
+    for record in bundle.schemes:
+        for source in record.sources:
+            validate_official_url(str(source.official_url), allow_test_urls=allow_test_urls)
+        for step in record.steps:
+            if step.official_url is not None:
+                validate_official_url(str(step.official_url), allow_test_urls=allow_test_urls)
 
     inserted = 0
     for record in bundle.schemes:

@@ -56,3 +56,38 @@ guest saves:
 ```bash
 .venv/bin/python -m app.cli.sessions purge-expired
 ```
+
+## Matching-engine integration boundary
+
+Developer 3 should depend on the protocols and DTOs in
+`app.repositories.matching`, not query publication tables directly:
+
+- `CandidateRepository.list_candidates()` returns only active schemes with the
+  latest verified, published version, including `scheme_version_id`, reviewed
+  rule expressions, rule-source IDs, question templates, and official sources.
+- `MatchRunRepository.record_run(...)` accepts deterministic outcomes, validates
+  each rule/source pair against the reviewed candidate, and persists the engine
+  version and caller-provided profile digest for reproducibility.
+- `MatchRunRepository.question_candidates(...)` returns deduplicated unknown
+  fields with reviewed question templates for the requested session-owned run.
+
+The AI/rule module owns extraction, evaluation, ranking, and question selection;
+the repository owns publication filtering, provenance checks, and persistence.
+
+## Administrative roles and official links
+
+The review and publish endpoints are disabled until their separate role
+credentials are configured:
+
+- `ADMIN_REVIEW_TOKEN` (32+ characters) with `ADMIN_REVIEWER_ID`
+- `ADMIN_PUBLISH_TOKEN` (32+ characters) with `ADMIN_PUBLISHER_ID`
+
+Send the applicable secret only in `X-Admin-Token`. Reviewer credentials cannot
+publish, publisher credentials cannot review, and actor IDs come from server
+configuration rather than request data. Both transitions write audit records.
+
+Source and application links are revalidated before review/publication. They
+must use HTTPS with a reviewed named public host; reserved placeholder domains,
+embedded credentials, localhost/private targets, and raw IP hosts are rejected.
+The `allow_test_urls` override exists only for synthetic test fixtures and is
+never used by the curation CLI or administrative API.

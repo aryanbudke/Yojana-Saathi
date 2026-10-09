@@ -35,7 +35,7 @@ def guidance_client() -> Generator[TestClient]:
     factory = create_session_factory(engine)
     now = datetime.now(UTC)
     with factory.begin() as session:
-        seed_database(session, load_seed_file(FIXTURE))
+        seed_database(session, load_seed_file(FIXTURE), allow_test_urls=True)
         document = session.scalar(select(RequiredDocument))
         assert document is not None
         document.when_required = {"field": "age", "op": "gte", "value": 18}

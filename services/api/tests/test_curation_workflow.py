@@ -25,7 +25,7 @@ VERSION_ID = UUID("51000000-0000-4000-8000-000000000001")
 
 
 def _make_draft(session: Session) -> SchemeVersion:
-    seed_database(session, load_seed_file(FIXTURE))
+    seed_database(session, load_seed_file(FIXTURE), allow_test_urls=True)
     published = session.get(SchemeVersion, VERSION_ID)
     assert published is not None
     published.published_at = None
@@ -46,10 +46,18 @@ def test_review_then_publish_records_audited_transition() -> None:
             version = _make_draft(session)
 
             review_report = review_scheme_version(
-                session, version.id, reviewer="reviewer@example.test", now=reviewed_at
+                session,
+                version.id,
+                reviewer="reviewer@example.test",
+                now=reviewed_at,
+                allow_test_urls=True,
             )
             publish_report = publish_scheme_version(
-                session, version.id, actor="publisher@example.test", now=published_at
+                session,
+                version.id,
+                actor="publisher@example.test",
+                now=published_at,
+                allow_test_urls=True,
             )
             session.commit()
 
@@ -72,7 +80,7 @@ def test_publish_rejects_unreviewed_draft() -> None:
             version = _make_draft(session)
 
             with pytest.raises(InvalidReviewTransitionError):
-                publish_scheme_version(session, version.id, actor="publisher")
+                publish_scheme_version(session, version.id, actor="publisher", allow_test_urls=True)
     finally:
         engine.dispose()
 
@@ -89,7 +97,9 @@ def test_review_requires_source_backed_rule() -> None:
             session.flush()
 
             with pytest.raises(CurationValidationError, match="eligibility rule"):
-                review_scheme_version(session, version.id, reviewer="reviewer")
+                review_scheme_version(
+                    session, version.id, reviewer="reviewer", allow_test_urls=True
+                )
     finally:
         engine.dispose()
 
