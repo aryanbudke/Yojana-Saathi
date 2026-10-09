@@ -1,0 +1,1688 @@
+{
+  "components": {
+    "schemas": {
+      "ApplicationStepDetail": {
+        "additionalProperties": false,
+        "properties": {
+          "instruction": {
+            "minLength": 1,
+            "title": "Instruction",
+            "type": "string"
+          },
+          "official_url": {
+            "anyOf": [
+              {
+                "format": "uri",
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Official Url"
+          },
+          "source": {
+            "$ref": "#/components/schemas/SourceReference"
+          },
+          "step_number": {
+            "minimum": 1.0,
+            "title": "Step Number",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "step_number",
+          "instruction",
+          "source"
+        ],
+        "title": "ApplicationStepDetail",
+        "type": "object"
+      },
+      "CurationActionResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "action": {
+            "enum": [
+              "verify",
+              "publish"
+            ],
+            "title": "Action",
+            "type": "string"
+          },
+          "document_count": {
+            "title": "Document Count",
+            "type": "integer"
+          },
+          "rule_count": {
+            "title": "Rule Count",
+            "type": "integer"
+          },
+          "scheme_version_id": {
+            "format": "uuid",
+            "title": "Scheme Version Id",
+            "type": "string"
+          },
+          "source_count": {
+            "title": "Source Count",
+            "type": "integer"
+          },
+          "step_count": {
+            "title": "Step Count",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "scheme_version_id",
+          "action",
+          "source_count",
+          "rule_count",
+          "document_count",
+          "step_count"
+        ],
+        "title": "CurationActionResponse",
+        "type": "object"
+      },
+      "DocumentReadiness": {
+        "enum": [
+          "present",
+          "missing",
+          "unknown",
+          "may_be_required"
+        ],
+        "title": "DocumentReadiness",
+        "type": "string"
+      },
+      "EligibilityRuleDetail": {
+        "additionalProperties": false,
+        "properties": {
+          "explanation": {
+            "minLength": 1,
+            "title": "Explanation",
+            "type": "string"
+          },
+          "rule_key": {
+            "maxLength": 160,
+            "minLength": 1,
+            "title": "Rule Key",
+            "type": "string"
+          },
+          "severity": {
+            "$ref": "#/components/schemas/RuleSeverity"
+          },
+          "source": {
+            "$ref": "#/components/schemas/SourceReference"
+          }
+        },
+        "required": [
+          "rule_key",
+          "explanation",
+          "severity",
+          "source"
+        ],
+        "title": "EligibilityRuleDetail",
+        "type": "object"
+      },
+      "GovernmentLevel": {
+        "enum": [
+          "central",
+          "state"
+        ],
+        "title": "GovernmentLevel",
+        "type": "string"
+      },
+      "GuidanceDocument": {
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "maxLength": 255,
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          },
+          "source_id": {
+            "format": "uuid",
+            "title": "Source Id",
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/DocumentReadiness"
+          }
+        },
+        "required": [
+          "name",
+          "status",
+          "source_id"
+        ],
+        "title": "GuidanceDocument",
+        "type": "object"
+      },
+      "GuidanceResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "disclaimer": {
+            "minLength": 1,
+            "title": "Disclaimer",
+            "type": "string"
+          },
+          "documents": {
+            "items": {
+              "$ref": "#/components/schemas/GuidanceDocument"
+            },
+            "title": "Documents",
+            "type": "array"
+          },
+          "official_application_url": {
+            "format": "uri",
+            "minLength": 1,
+            "title": "Official Application Url",
+            "type": "string"
+          },
+          "scheme_id": {
+            "format": "uuid",
+            "title": "Scheme Id",
+            "type": "string"
+          },
+          "scheme_name": {
+            "maxLength": 255,
+            "minLength": 1,
+            "title": "Scheme Name",
+            "type": "string"
+          },
+          "scheme_version_id": {
+            "format": "uuid",
+            "title": "Scheme Version Id",
+            "type": "string"
+          },
+          "sources": {
+            "items": {
+              "$ref": "#/components/schemas/SourceReference"
+            },
+            "minItems": 1,
+            "title": "Sources",
+            "type": "array"
+          },
+          "steps": {
+            "items": {
+              "$ref": "#/components/schemas/GuidanceStep"
+            },
+            "title": "Steps",
+            "type": "array"
+          },
+          "unresolved_preconditions": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Unresolved Preconditions",
+            "type": "array"
+          }
+        },
+        "required": [
+          "scheme_id",
+          "scheme_version_id",
+          "scheme_name",
+          "documents",
+          "steps",
+          "official_application_url",
+          "unresolved_preconditions",
+          "sources",
+          "disclaimer"
+        ],
+        "title": "GuidanceResponse",
+        "type": "object"
+      },
+      "GuidanceStep": {
+        "additionalProperties": false,
+        "properties": {
+          "instruction": {
+            "minLength": 1,
+            "title": "Instruction",
+            "type": "string"
+          },
+          "official_url": {
+            "anyOf": [
+              {
+                "format": "uri",
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Official Url"
+          },
+          "source_id": {
+            "format": "uuid",
+            "title": "Source Id",
+            "type": "string"
+          },
+          "step_number": {
+            "minimum": 1.0,
+            "title": "Step Number",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "step_number",
+          "instruction",
+          "source_id"
+        ],
+        "title": "GuidanceStep",
+        "type": "object"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail",
+            "type": "array"
+          }
+        },
+        "title": "HTTPValidationError",
+        "type": "object"
+      },
+      "HealthResponse": {
+        "additionalProperties": false,
+        "description": "Liveness response that contains no secret or dependency details.",
+        "properties": {
+          "environment": {
+            "title": "Environment",
+            "type": "string"
+          },
+          "service": {
+            "title": "Service",
+            "type": "string"
+          },
+          "status": {
+            "default": "ok",
+            "title": "Status",
+            "type": "string"
+          },
+          "version": {
+            "title": "Version",
+            "type": "string"
+          }
+        },
+        "required": [
+          "service",
+          "version",
+          "environment"
+        ],
+        "title": "HealthResponse",
+        "type": "object"
+      },
+      "ProfileAnswerRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "field": {
+            "enum": [
+              "age",
+              "state_code",
+              "occupation",
+              "family_income_inr",
+              "land_area_acres",
+              "land_registration",
+              "category",
+              "social_category",
+              "gender",
+              "has_disability",
+              "is_student"
+            ],
+            "title": "Field",
+            "type": "string"
+          },
+          "session_id": {
+            "format": "uuid",
+            "title": "Session Id",
+            "type": "string"
+          },
+          "value": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "integer"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Value"
+          }
+        },
+        "required": [
+          "session_id",
+          "field",
+          "value"
+        ],
+        "title": "ProfileAnswerRequest",
+        "type": "object"
+      },
+      "ProfileAnswerResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "facts": {
+            "$ref": "#/components/schemas/ProfileFacts"
+          },
+          "requires_rematch": {
+            "default": true,
+            "title": "Requires Rematch",
+            "type": "boolean"
+          },
+          "session_id": {
+            "format": "uuid",
+            "title": "Session Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "session_id",
+          "facts"
+        ],
+        "title": "ProfileAnswerResponse",
+        "type": "object"
+      },
+      "ProfileFacts": {
+        "additionalProperties": false,
+        "description": "Normalized facts; omitted citizen information remains null.",
+        "properties": {
+          "age": {
+            "anyOf": [
+              {
+                "maximum": 120.0,
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Age"
+          },
+          "category": {
+            "anyOf": [
+              {
+                "maxLength": 80,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Category"
+          },
+          "family_income_inr": {
+            "anyOf": [
+              {
+                "maximum": 1000000000.0,
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Family Income Inr"
+          },
+          "gender": {
+            "anyOf": [
+              {
+                "maxLength": 40,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gender"
+          },
+          "has_disability": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Has Disability"
+          },
+          "is_student": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Is Student"
+          },
+          "land_area_acres": {
+            "anyOf": [
+              {
+                "maximum": 1000000.0,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Land Area Acres"
+          },
+          "land_registration": {
+            "anyOf": [
+              {
+                "enum": [
+                  "yes",
+                  "no",
+                  "not_sure"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Land Registration"
+          },
+          "occupation": {
+            "anyOf": [
+              {
+                "maxLength": 120,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Occupation"
+          },
+          "social_category": {
+            "anyOf": [
+              {
+                "maxLength": 80,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Social Category"
+          },
+          "state_code": {
+            "anyOf": [
+              {
+                "pattern": "^[A-Z]{2}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "State Code"
+          }
+        },
+        "title": "ProfileFacts",
+        "type": "object"
+      },
+      "ProfileSessionCreateRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "consent_version": {
+            "anyOf": [
+              {
+                "maxLength": 40,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Consent Version"
+          }
+        },
+        "title": "ProfileSessionCreateRequest",
+        "type": "object"
+      },
+      "ProfileSessionResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "expires_at": {
+            "format": "date-time",
+            "title": "Expires At",
+            "type": "string"
+          },
+          "facts": {
+            "$ref": "#/components/schemas/ProfileFacts"
+          },
+          "session_id": {
+            "format": "uuid",
+            "title": "Session Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "session_id",
+          "expires_at",
+          "facts"
+        ],
+        "title": "ProfileSessionResponse",
+        "type": "object"
+      },
+      "RequiredDocumentDetail": {
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "maxLength": 255,
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          },
+          "source": {
+            "$ref": "#/components/schemas/SourceReference"
+          },
+          "when_required": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "When Required"
+          }
+        },
+        "required": [
+          "name",
+          "source"
+        ],
+        "title": "RequiredDocumentDetail",
+        "type": "object"
+      },
+      "ReviewStatus": {
+        "enum": [
+          "draft",
+          "verified",
+          "stale",
+          "rejected"
+        ],
+        "title": "ReviewStatus",
+        "type": "string"
+      },
+      "RuleSeverity": {
+        "enum": [
+          "required",
+          "exclusion",
+          "manual_review"
+        ],
+        "title": "RuleSeverity",
+        "type": "string"
+      },
+      "SaveSchemeRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "scheme_id": {
+            "format": "uuid",
+            "title": "Scheme Id",
+            "type": "string"
+          },
+          "session_id": {
+            "format": "uuid",
+            "title": "Session Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "session_id",
+          "scheme_id"
+        ],
+        "title": "SaveSchemeRequest",
+        "type": "object"
+      },
+      "SavedSchemeItem": {
+        "additionalProperties": false,
+        "properties": {
+          "saved_at": {
+            "format": "date-time",
+            "title": "Saved At",
+            "type": "string"
+          },
+          "scheme": {
+            "$ref": "#/components/schemas/SchemeSummary"
+          }
+        },
+        "required": [
+          "saved_at",
+          "scheme"
+        ],
+        "title": "SavedSchemeItem",
+        "type": "object"
+      },
+      "SavedSchemesResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/SavedSchemeItem"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "session_id": {
+            "format": "uuid",
+            "title": "Session Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "session_id",
+          "items"
+        ],
+        "title": "SavedSchemesResponse",
+        "type": "object"
+      },
+      "SchemeDetailResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "application_steps": {
+            "items": {
+              "$ref": "#/components/schemas/ApplicationStepDetail"
+            },
+            "title": "Application Steps",
+            "type": "array"
+          },
+          "benefit_text": {
+            "minLength": 1,
+            "title": "Benefit Text",
+            "type": "string"
+          },
+          "category": {
+            "maxLength": 80,
+            "minLength": 1,
+            "title": "Category",
+            "type": "string"
+          },
+          "eligibility_rules": {
+            "items": {
+              "$ref": "#/components/schemas/EligibilityRuleDetail"
+            },
+            "title": "Eligibility Rules",
+            "type": "array"
+          },
+          "government_level": {
+            "$ref": "#/components/schemas/GovernmentLevel"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "last_verified_at": {
+            "format": "date-time",
+            "title": "Last Verified At",
+            "type": "string"
+          },
+          "name": {
+            "maxLength": 255,
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          },
+          "official_sources": {
+            "items": {
+              "$ref": "#/components/schemas/SourceReference"
+            },
+            "minItems": 1,
+            "title": "Official Sources",
+            "type": "array"
+          },
+          "required_documents": {
+            "items": {
+              "$ref": "#/components/schemas/RequiredDocumentDetail"
+            },
+            "title": "Required Documents",
+            "type": "array"
+          },
+          "review_status": {
+            "$ref": "#/components/schemas/ReviewStatus"
+          },
+          "scheme_version_id": {
+            "format": "uuid",
+            "title": "Scheme Version Id",
+            "type": "string"
+          },
+          "slug": {
+            "maxLength": 160,
+            "minLength": 1,
+            "title": "Slug",
+            "type": "string"
+          },
+          "state_code": {
+            "anyOf": [
+              {
+                "pattern": "^[A-Z]{2}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "State Code"
+          },
+          "status": {
+            "$ref": "#/components/schemas/SchemeStatus"
+          },
+          "summary": {
+            "minLength": 1,
+            "title": "Summary",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "slug",
+          "name",
+          "government_level",
+          "category",
+          "status",
+          "scheme_version_id",
+          "summary",
+          "review_status",
+          "last_verified_at",
+          "official_sources",
+          "benefit_text",
+          "eligibility_rules",
+          "required_documents",
+          "application_steps"
+        ],
+        "title": "SchemeDetailResponse",
+        "type": "object"
+      },
+      "SchemeListResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/SchemeSummary"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "next_cursor": {
+            "anyOf": [
+              {
+                "maxLength": 256,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Cursor"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "title": "SchemeListResponse",
+        "type": "object"
+      },
+      "SchemeStatus": {
+        "enum": [
+          "active",
+          "closed",
+          "unknown"
+        ],
+        "title": "SchemeStatus",
+        "type": "string"
+      },
+      "SchemeSummary": {
+        "additionalProperties": false,
+        "properties": {
+          "category": {
+            "maxLength": 80,
+            "minLength": 1,
+            "title": "Category",
+            "type": "string"
+          },
+          "government_level": {
+            "$ref": "#/components/schemas/GovernmentLevel"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "last_verified_at": {
+            "format": "date-time",
+            "title": "Last Verified At",
+            "type": "string"
+          },
+          "name": {
+            "maxLength": 255,
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          },
+          "official_sources": {
+            "items": {
+              "$ref": "#/components/schemas/SourceReference"
+            },
+            "minItems": 1,
+            "title": "Official Sources",
+            "type": "array"
+          },
+          "review_status": {
+            "$ref": "#/components/schemas/ReviewStatus"
+          },
+          "scheme_version_id": {
+            "format": "uuid",
+            "title": "Scheme Version Id",
+            "type": "string"
+          },
+          "slug": {
+            "maxLength": 160,
+            "minLength": 1,
+            "title": "Slug",
+            "type": "string"
+          },
+          "state_code": {
+            "anyOf": [
+              {
+                "pattern": "^[A-Z]{2}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "State Code"
+          },
+          "status": {
+            "$ref": "#/components/schemas/SchemeStatus"
+          },
+          "summary": {
+            "minLength": 1,
+            "title": "Summary",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "slug",
+          "name",
+          "government_level",
+          "category",
+          "status",
+          "scheme_version_id",
+          "summary",
+          "review_status",
+          "last_verified_at",
+          "official_sources"
+        ],
+        "title": "SchemeSummary",
+        "type": "object"
+      },
+      "SourceReference": {
+        "additionalProperties": false,
+        "properties": {
+          "checked_at": {
+            "format": "date-time",
+            "title": "Checked At",
+            "type": "string"
+          },
+          "document_date": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Document Date"
+          },
+          "excerpt_locator": {
+            "maxLength": 500,
+            "minLength": 1,
+            "title": "Excerpt Locator",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "official_url": {
+            "format": "uri",
+            "minLength": 1,
+            "title": "Official Url",
+            "type": "string"
+          },
+          "title": {
+            "maxLength": 500,
+            "minLength": 1,
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "official_url",
+          "checked_at",
+          "excerpt_locator"
+        ],
+        "title": "SourceReference",
+        "type": "object"
+      },
+      "ValidationError": {
+        "properties": {
+          "ctx": {
+            "title": "Context",
+            "type": "object"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "title": "Location",
+            "type": "array"
+          },
+          "msg": {
+            "title": "Message",
+            "type": "string"
+          },
+          "type": {
+            "title": "Error Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError",
+        "type": "object"
+      }
+    }
+  },
+  "info": {
+    "title": "Yojana Saathi API",
+    "version": "0.1.0"
+  },
+  "openapi": "3.1.0",
+  "paths": {
+    "/api/v1/admin/scheme-versions/{version_id}/publish": {
+      "post": {
+        "description": "Publish a reviewed version using the separate publisher role.",
+        "operationId": "publish_version_api_v1_admin_scheme_versions__version_id__publish_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "version_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Version Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Admin-Token",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Admin-Token"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CurationActionResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Publish Version",
+        "tags": [
+          "admin"
+        ]
+      }
+    },
+    "/api/v1/admin/scheme-versions/{version_id}/review": {
+      "post": {
+        "description": "Verify a complete draft using the configured reviewer identity.",
+        "operationId": "review_version_api_v1_admin_scheme_versions__version_id__review_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "version_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Version Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Admin-Token",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Admin-Token"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CurationActionResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Review Version",
+        "tags": [
+          "admin"
+        ]
+      }
+    },
+    "/api/v1/guidance/{scheme_id}": {
+      "get": {
+        "description": "Return ordered, source-backed application readiness guidance.",
+        "operationId": "scheme_guidance_api_v1_guidance__scheme_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "scheme_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Scheme Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "session_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Session Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GuidanceResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Scheme Guidance",
+        "tags": [
+          "guidance"
+        ]
+      }
+    },
+    "/api/v1/profiles/answers": {
+      "post": {
+        "description": "Persist one explicitly user-confirmed profile fact.",
+        "operationId": "answer_profile_question_api_v1_profiles_answers_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProfileAnswerRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProfileAnswerResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Answer Profile Question",
+        "tags": [
+          "profiles"
+        ]
+      }
+    },
+    "/api/v1/profiles/sessions": {
+      "post": {
+        "description": "Create a short-lived anonymous profile session.",
+        "operationId": "create_session_api_v1_profiles_sessions_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProfileSessionCreateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProfileSessionResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Create Session",
+        "tags": [
+          "profiles"
+        ]
+      }
+    },
+    "/api/v1/profiles/sessions/{session_id}": {
+      "delete": {
+        "description": "Allow a guest to delete transient profile data immediately.",
+        "operationId": "delete_session_api_v1_profiles_sessions__session_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "session_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Session Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Delete Session",
+        "tags": [
+          "profiles"
+        ]
+      }
+    },
+    "/api/v1/saved": {
+      "get": {
+        "operationId": "saved_api_v1_saved_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "session_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Session Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SavedSchemesResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Saved",
+        "tags": [
+          "saved schemes"
+        ]
+      },
+      "post": {
+        "operationId": "save_api_v1_saved_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SaveSchemeRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SavedSchemesResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Save",
+        "tags": [
+          "saved schemes"
+        ]
+      }
+    },
+    "/api/v1/saved/{scheme_id}": {
+      "delete": {
+        "operationId": "unsave_api_v1_saved__scheme_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "scheme_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Scheme Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "session_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Session Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Unsave",
+        "tags": [
+          "saved schemes"
+        ]
+      }
+    },
+    "/api/v1/schemes": {
+      "get": {
+        "description": "Search active schemes without exposing drafts or closed records.",
+        "operationId": "list_schemes_api_v1_schemes_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "q",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 200,
+                  "minLength": 1,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Q"
+            }
+          },
+          {
+            "in": "query",
+            "name": "state_code",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "pattern": "^[A-Z]{2}$",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "State Code"
+            }
+          },
+          {
+            "in": "query",
+            "name": "category",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 80,
+                  "minLength": 1,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Category"
+            }
+          },
+          {
+            "in": "query",
+            "name": "government_level",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/GovernmentLevel"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Government Level"
+            }
+          },
+          {
+            "in": "query",
+            "name": "cursor",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 256,
+                  "minLength": 1,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cursor"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 20,
+              "maximum": 20,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SchemeListResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Schemes",
+        "tags": [
+          "schemes"
+        ]
+      }
+    },
+    "/api/v1/schemes/{scheme_id}": {
+      "get": {
+        "description": "Return one latest verified, published, source-backed scheme version.",
+        "operationId": "scheme_detail_api_v1_schemes__scheme_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "scheme_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Scheme Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SchemeDetailResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Scheme Detail",
+        "tags": [
+          "schemes"
+        ]
+      }
+    },
+    "/health": {
+      "get": {
+        "description": "Report process liveness without leaking dependency or secret values.",
+        "operationId": "health_health_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Health",
+        "tags": [
+          "system"
+        ]
+      }
+    }
+  }
+}

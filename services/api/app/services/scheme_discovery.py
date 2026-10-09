@@ -50,7 +50,9 @@ def discover_schemes(session: Session, query: DiscoveryQuery) -> SchemeListRespo
     has_next = len(rows) > query.limit
     page_rows = rows[: query.limit]
     source_map = sources_for_versions(session, [version.id for _, version in page_rows])
-    items = [_to_summary(scheme, version, source_map[version.id]) for scheme, version in page_rows]
+    items = [
+        scheme_summary(scheme, version, source_map[version.id]) for scheme, version in page_rows
+    ]
     next_cursor = None
     if has_next and page_rows:
         last_scheme = page_rows[-1][0]
@@ -83,7 +85,7 @@ def decode_cursor(cursor: str) -> tuple[str, UUID]:
         raise InvalidCursorError("cursor is invalid") from exc
 
 
-def _to_summary(scheme: Scheme, version: SchemeVersion, sources: list[Source]) -> SchemeSummary:
+def scheme_summary(scheme: Scheme, version: SchemeVersion, sources: list[Source]) -> SchemeSummary:
     if version.verified_at is None:
         raise RuntimeError("published scheme version is missing verified_at")
     return SchemeSummary(

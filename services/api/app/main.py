@@ -12,6 +12,7 @@ from app.api.health import router as health_router
 from app.api.v1.admin import router as admin_router
 from app.api.v1.guidance import router as guidance_router
 from app.api.v1.profiles import router as profiles_router
+from app.api.v1.saved import router as saved_router
 from app.api.v1.schemes import router as schemes_router
 from app.core.config import Settings, get_settings
 from app.core.errors import install_error_handlers, install_request_id_middleware
@@ -61,6 +62,7 @@ def create_app(
     application.include_router(schemes_router)
     application.include_router(guidance_router)
     application.include_router(profiles_router)
+    application.include_router(saved_router)
     return application
 
 

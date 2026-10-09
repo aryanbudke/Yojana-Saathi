@@ -21,12 +21,12 @@ only after its acceptance checks pass and its work is committed.
 | T2-14 | F01 ephemeral sessions and confirmed facts | COMPLETED |
 | T2-15 | Matching and question repository/service interfaces | COMPLETED |
 | T2-16 | Admin restrictions and official URL validation | COMPLETED |
-| T2-17 | Optional F07 guest saves (after all P0 work) | PENDING |
-| T2-18 | Supabase migration/seed and real-record smoke test | PENDING |
-| T2-19 | Backend deployment and secret configuration | PENDING |
-| T2-20 | Full backend verification gate | PENDING |
-| T2-21 | Dataset/OpenAPI/runbook handoff | PENDING |
-| T2-22 | Provenance and database-design report contribution | PENDING |
+| T2-17 | Optional F07 guest saves (after all P0 work) | COMPLETED |
+| T2-18 | Supabase migration/seed and real-record smoke test | BLOCKED |
+| T2-19 | Backend deployment and secret configuration | BLOCKED |
+| T2-20 | Full backend verification gate | COMPLETED |
+| T2-21 | Dataset/OpenAPI/runbook handoff | BLOCKED |
+| T2-22 | Provenance and database-design report contribution | COMPLETED |
 
 ## T2-01 — FastAPI skeleton, configuration, health, CORS, error contract
 
@@ -304,3 +304,128 @@ only after its acceptance checks pass and its work is committed.
   suite passed after both corrections.
 - **Commit reference:** `HEAD` — `feat(admin): secure curation and validate official URLs`
 - **Next task:** T2-17 — Optional guest saved schemes
+
+## T2-17 — Optional F07 guest saved schemes
+
+- **Status:** COMPLETED
+- **Files created or modified:** `services/api/app/main.py`,
+  `services/api/app/schemas/saved.py`,
+  `services/api/app/services/saved_schemes.py`,
+  `services/api/app/services/scheme_discovery.py`,
+  `services/api/app/api/v1/saved.py`,
+  `services/api/tests/test_saved_schemes_api.py`, `services/api/README.md`, and
+  `PROGRESS.md`.
+- **Tests executed:**
+  - `.venv/bin/ruff check .` — passed
+  - `.venv/bin/ruff format --check .` — passed (68 files)
+  - `.venv/bin/mypy app tests` — passed (62 source files)
+  - `.venv/bin/pytest --cov=app --cov-report=term-missing` — 78 passed,
+    91% coverage; one upstream Starlette TestClient deprecation warning
+- **Problems encountered:** FastAPI's re-exported test client exposes an
+  untyped `post` return to mypy, so the test helper now applies one explicit
+  response cast. Import ordering and formatting were normalized before the
+  clean full-suite rerun.
+- **Commit reference:** `HEAD` — `feat(api): add guest saved schemes`
+- **Next task:** T2-18 — Supabase migration, seed, and smoke query
+
+## T2-18 — Supabase migration, seed, and real-record smoke test
+
+- **Status:** BLOCKED
+- **Files created or modified:** `PROGRESS.md` only; no database or seed data
+  was changed.
+- **Tests executed:** Read-only environment audit confirmed that
+  `services/api/.env` is absent, `DATABASE_URL` is unset, and the only seed
+  bundle is `services/api/tests/fixtures/minimal_seed.json` using reserved
+  `.invalid` URLs.
+- **Problems encountered:** A Supabase PostgreSQL connection and the
+  user-curated, reviewed real-scheme seed bundle are not available. The user
+  explicitly retained ownership of manual scheme collection, so the synthetic
+  fixture must not be migrated or presented as real guidance.
+- **Commit reference:** Not applicable — external integration is blocked
+- **Next task:** T2-19 — Backend deployment and secret configuration
+
+## T2-19 — Backend deployment and secret configuration
+
+- **Status:** BLOCKED
+- **Files created or modified:** `services/api/railway.json`,
+  `services/api/README.md`, and `PROGRESS.md`.
+- **Tests executed:** Read-only environment audit confirmed the Railway CLI and
+  `RAILWAY_TOKEN` are absent. Deployment configuration was checked against the
+  current official Railway config-as-code, FastAPI, pre-deploy migration, and
+  health-check documentation.
+  - `.venv/bin/python -m json.tool railway.json` — passed
+  - `.venv/bin/alembic upgrade head --sql` — rendered all three PostgreSQL
+    migrations successfully
+  - Production-mode Uvicorn startup with injected `PORT=8099` — passed
+  - `GET /health` — 200 with production environment response
+  - `GET /docs` in production — 404 as intended
+- **Problems encountered:** No Railway project, authenticated CLI/token,
+  Supabase PostgreSQL `DATABASE_URL`, approved real seed, or deployed API domain
+  is available. The service therefore cannot be deployed or smoke-tested
+  externally yet. No secrets were written to Git.
+- **Commit reference:** `HEAD` — `chore(deploy): prepare Railway service configuration`
+- **Next task:** T2-20 — Full backend verification gate
+
+## T2-20 — Full backend verification gate
+
+- **Status:** COMPLETED
+- **Files created or modified:** `PROGRESS.md` only.
+- **Tests executed:**
+  - `.venv/bin/ruff check .` — passed
+  - `.venv/bin/ruff format --check .` — passed (68 files)
+  - `.venv/bin/mypy app tests` — passed (62 source files)
+  - `.venv/bin/pytest --cov=app --cov-report=term-missing` — 78 passed,
+    91% coverage; one upstream Starlette TestClient deprecation warning
+  - `.venv/bin/alembic heads` — one head, `20261009_0003`
+  - `.venv/bin/alembic history` — complete three-migration chain
+  - `.venv/bin/alembic upgrade head --sql` — complete PostgreSQL DDL rendered
+  - FastAPI OpenAPI generation — 11 paths and all required backend-owned paths
+    present
+  - `git diff --check` — passed
+- **Problems encountered:** No project failures. The sole warning is an upstream
+  Starlette deprecation notice for FastAPI's current TestClient re-export on
+  Python 3.14; it does not affect runtime behavior.
+- **Commit reference:** `HEAD` — `test(api): complete backend verification gate`
+- **Next task:** T2-21 — Dataset/OpenAPI/runbook handoff
+
+## T2-21 — Dataset/OpenAPI/runbook handoff
+
+- **Status:** BLOCKED
+- **Files created or modified:** `services/api/openapi.json`,
+  `services/api/scripts/export_openapi.py`,
+  `services/api/tests/test_openapi_artifact.py`, `docs/backend-handoff.md`, and
+  `PROGRESS.md`.
+- **Tests executed:**
+  - OpenAPI exporter run twice — identical SHA-256
+    `b46acc3fc884d1635a0c6423c52f9b766b95f58617a99c2d4961b2cfb0828543`
+  - `.venv/bin/python -m json.tool openapi.json` — passed
+  - `.venv/bin/ruff check .` — passed
+  - `.venv/bin/ruff format --check .` — passed (70 files)
+  - `.venv/bin/mypy app tests` — passed (63 source files)
+  - `.venv/bin/pytest --cov=app --cov-report=term-missing` — 79 passed,
+    91% coverage; one upstream Starlette TestClient deprecation warning
+- **Problems encountered:** The code, OpenAPI, fixtures, integration interfaces,
+  and runbook are ready, but a real verified dataset snapshot and deployed API
+  URL cannot be supplied until T2-18 and T2-19 receive external credentials and
+  user-curated scheme data.
+- **Commit reference:** `HEAD` — `docs(api): add backend integration handoff`
+- **Next task:** T2-22 — Provenance and database-design report contribution
+
+## T2-22 — Provenance and database-design report contribution
+
+- **Status:** COMPLETED
+- **Files created or modified:** `docs/backend-report-contribution.md` and
+  `PROGRESS.md`.
+- **Tests executed:**
+  - `.venv/bin/ruff check .` — passed
+  - `.venv/bin/ruff format --check .` — passed (70 files)
+  - `.venv/bin/mypy app tests` — passed (63 source files)
+  - `.venv/bin/pytest --cov=app --cov-report=term-missing` — 79 passed,
+    91% coverage; one upstream Starlette TestClient deprecation warning
+  - `git diff --check` — passed
+- **Problems encountered:** No failures. The report explicitly distinguishes
+  implemented and locally verified work from the blocked real-data, Supabase,
+  and Railway integrations.
+- **Commit reference:** `HEAD` — `docs(report): add backend and provenance contribution`
+- **Next task:** Await user-curated schemes, Supabase PostgreSQL connection URL,
+  and Railway access to unblock T2-05–T2-07, T2-09, T2-18, T2-19, and T2-21.
