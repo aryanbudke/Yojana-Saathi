@@ -7,13 +7,16 @@ publication boundary, scheme discovery/detail/guidance APIs, ephemeral profile
 sessions, matching repository interfaces, secured curation routes, and guest
 saves are implemented on `feat/backend-db`.
 
-Two external deliverables remain unavailable:
+One external deliverable remains unavailable:
 
 - **Production dataset:** no user-curated real scheme bundle has been supplied.
   The only seed is the reserved `.invalid` synthetic test fixture and production
   seeding rejects it.
-- **Live API URL:** the Render Blueprint is ready, but no authenticated Render
-  service has been created. No deployment has been claimed.
+
+The production API is live at
+`https://yojana-saathi-api.onrender.com`. External smoke tests verified health,
+production documentation denial, Supabase-backed scheme listing, CORS, and the
+standard not-found error envelope.
 
 The Supabase database is migrated through Alembic revision `20261009_0004`.
 All 12 application tables have row-level security enabled, but they contain no
@@ -95,6 +98,4 @@ After the user supplies approved scheme data:
 
 1. Validate the bundle locally.
 2. Seed, query, and inspect real records through the publication boundary.
-3. Deploy the exact verified commit to Render.
-4. Record the public API URL and smoke-test `/health`, `/api/v1/schemes`, scheme
-   detail, guidance, CORS, admin denial, and error payloads.
+3. Smoke-test a real scheme through list, detail, and guidance endpoints.

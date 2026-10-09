@@ -89,6 +89,8 @@ The latest verification gate produced these results:
 - the deterministic OpenAPI artifact contains 11 paths and has a drift test;
 - production-mode startup bound to an injected platform `PORT`;
 - `/health` returned HTTP 200 and production `/docs` returned HTTP 404; and
+- the deployed Render API returned typed Supabase-backed responses at
+  `https://yojana-saathi-api.onrender.com`;
 - CORS, fixed error envelopes, source integrity, publication hiding,
   immutability, role denial, session expiry, and duplicate bookmark behavior
   have automated tests.
@@ -100,11 +102,12 @@ variables rather than committed files.
 ## Honest limitations and remaining integration
 
 The implementation has been migrated to Supabase through revision
-`20261009_0004`, but it has not been deployed to Render. An authenticated
-Render service and public domain are absent.
+`20261009_0004` and deployed to Render at
+`https://yojana-saathi-api.onrender.com`. The free service can sleep after
+inactivity, so its first request can experience a cold-start delay.
 
 The user retained ownership of manual scheme collection. Consequently, no real
 verified production dataset snapshot exists yet. The backend is designed to
 reject its synthetic fixture in production. Real-data research, independent
-review, Supabase real-data seeding, deployed smoke tests, and the final public
-API URL must be completed before claiming an end-to-end production deployment.
+review and Supabase real-data seeding must be completed before claiming an
+end-to-end production dataset.

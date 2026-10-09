@@ -23,7 +23,7 @@ only after its acceptance checks pass and its work is committed.
 | T2-16 | Admin restrictions and official URL validation | COMPLETED |
 | T2-17 | Optional F07 guest saves (after all P0 work) | COMPLETED |
 | T2-18 | Supabase migration/seed and real-record smoke test | BLOCKED |
-| T2-19 | Backend deployment and secret configuration | BLOCKED |
+| T2-19 | Backend deployment and secret configuration | COMPLETED |
 | T2-20 | Full backend verification gate | COMPLETED |
 | T2-21 | Dataset/OpenAPI/runbook handoff | BLOCKED |
 | T2-22 | Provenance and database-design report contribution | COMPLETED |
@@ -364,7 +364,7 @@ only after its acceptance checks pass and its work is committed.
 
 ## T2-19 — Backend deployment and secret configuration
 
-- **Status:** BLOCKED
+- **Status:** COMPLETED
 - **Files created or modified:** root `render.yaml`,
   `services/api/.python-version`, `services/api/pyproject.toml`,
   `services/api/README.md`, `services/api/tests/test_render_deployment.py`,
@@ -383,13 +383,19 @@ only after its acceptance checks pass and its work is committed.
   - `.venv/bin/mypy app tests` — passed (65 source files)
   - `.venv/bin/pytest --cov=app --cov-report=term-missing` — 82 passed,
     91% coverage; one upstream Starlette TestClient deprecation warning
+- **External Render smoke tests** against
+  `https://yojana-saathi-api.onrender.com`:
+  - `GET /health` — 200 with production environment response
+  - `GET /docs` — 404 as intended in production
+  - `GET /api/v1/schemes` — 200 with an empty typed collection from Supabase
+  - configured-origin CORS header — present and exact
+  - missing scheme — 404 with the standard error envelope and request ID
 - **Problems encountered:** Render's dedicated pre-deploy command is paid-only,
   so the free single-instance Blueprint runs Alembic before Uvicorn in its start
-  command. An authenticated Render service and generated public domain are not
-  available yet, so external deployment and URL smoke tests remain blocked. No
-  secrets were written to Git.
-- **Commit reference:** `HEAD` — `chore(deploy): add Render deployment blueprint`
-- **Next task:** T2-20 — Full backend verification gate
+  command. Free instances can sleep after inactivity and incur a cold-start
+  delay. No secrets were written to Git.
+- **Commit reference:** `e109668` — `chore(deploy): add Render deployment blueprint`
+- **Next task:** T2-21 — Complete the dataset handoff after real-data seeding
 
 ## T2-20 — Full backend verification gate
 
@@ -430,9 +436,8 @@ only after its acceptance checks pass and its work is committed.
   - `.venv/bin/pytest --cov=app --cov-report=term-missing` — 79 passed,
     91% coverage; one upstream Starlette TestClient deprecation warning
 - **Problems encountered:** The code, OpenAPI, fixtures, integration interfaces,
-  and runbook are ready, but a real verified dataset snapshot and deployed API
-  URL cannot be supplied until T2-18 and T2-19 receive external credentials and
-  user-curated scheme data.
+  runbook, and deployed API URL are ready, but a real verified dataset snapshot
+  cannot be supplied until T2-18 receives user-curated scheme data.
 - **Commit reference:** `HEAD` — `docs(api): add backend integration handoff`
 - **Next task:** T2-22 — Provenance and database-design report contribution
 
@@ -452,5 +457,5 @@ only after its acceptance checks pass and its work is committed.
   implemented and locally verified work from the blocked real-data and Render
   deployment integrations.
 - **Commit reference:** `HEAD` — `docs(report): add backend and provenance contribution`
-- **Next task:** Await user-curated schemes and Render access to unblock
-  T2-05–T2-07, T2-09, T2-18, T2-19, and T2-21.
+- **Next task:** Await user-curated schemes to unblock T2-05–T2-07, T2-09,
+  T2-18, and T2-21.
