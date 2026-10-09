@@ -4,6 +4,7 @@ Results are discovery leads for curation. They never feed matching, questions or
 """
 
 import json
+import math
 import time
 from collections.abc import Mapping, Sequence
 from functools import lru_cache
@@ -12,7 +13,7 @@ from typing import Literal, cast
 from urllib.error import HTTPError
 from urllib.request import Request, urlopen
 
-from pydantic import BaseModel, Field, ValidationError
+from pydantic import BaseModel, ConfigDict, Field, ValidationError
 from sqlalchemy import delete, select
 from sqlalchemy.orm import Session
 
@@ -45,6 +46,7 @@ class AnswerUnavailable(RuntimeError):
 
 
 class _AnswerDraft(BaseModel):
+    model_config = ConfigDict(strict=True, extra="forbid")
     answer: str = Field(min_length=1, max_length=6000)
     cited_slugs: list[str] = Field(max_length=50)
 
@@ -92,19 +94,40 @@ def _post_batch(
     for attempt in range(retries + 1):
         try:
             with urlopen(request, timeout=30) as response:
-                embeddings = json.loads(response.read())["embeddings"]
-            vectors = [[float(value) for value in item["values"]] for item in embeddings]
+                limit = expected * STAGING_EMBEDDING_DIMENSIONS * 32 + 4096
+                raw = response.read(limit + 1)
+            if len(raw) > limit:
+                raise ValueError("Oversized embedding response")
+            embeddings = json.loads(raw)["embeddings"]
+            vectors = [item["values"] for item in embeddings]
             if len(vectors) != expected or any(
-                len(vector) != STAGING_EMBEDDING_DIMENSIONS for vector in vectors
+                len(vector) != STAGING_EMBEDDING_DIMENSIONS
+                or any(
+                    isinstance(value, bool)
+                    or not isinstance(value, (int, float))
+                    or not math.isfinite(value)
+                    for value in vector
+                )
+                or not any(vector)
+                for vector in vectors
             ):
-                raise ValueError("Unexpected embedding shape")
-            return vectors
+                raise ValueError("Invalid embedding values or shape")
+            return [[float(value) for value in vector] for vector in vectors]
         except HTTPError as error:
             if error.code == 429 and attempt < retries:
                 time.sleep(_RATE_LIMIT_WAIT_SECONDS)
                 continue
             raise EmbeddingUnavailable(f"Gemini embedding request failed ({error.code})") from None
-        except (OSError, HTTPException, ValueError, TypeError, KeyError):
+        except (
+            OSError,
+            HTTPException,
+            ValueError,
+            TypeError,
+            KeyError,
+            AttributeError,
+            RecursionError,
+            OverflowError,
+        ):
             raise EmbeddingUnavailable("Gemini embedding request failed") from None
     raise EmbeddingUnavailable("Gemini embedding rate limit persisted")
 
@@ -135,14 +158,16 @@ def search(
     session: Session, query_vector: Sequence[float], limit: int
 ) -> list[tuple[StagingScheme, float]]:
     distance = StagingScheme.embedding.cosine_distance(list(query_vector)).label("distance")
-    rows = session.execute(select(StagingScheme, distance).order_by(distance).limit(limit))
+    rows = session.execute(
+        select(StagingScheme, distance).order_by(distance, StagingScheme.slug).limit(limit)
+    )
     return [(row[0], 1.0 - cast(float, row[1])) for row in rows]
 
 
 def answer(
     settings: AISettings, question: str, hits: Sequence[StagingScheme]
 ) -> tuple[str, list[str]]:
-    """Gemini answer grounded in retrieved records; citations outside them are dropped."""
+    """Curator draft answer; reject unknown citations and replace uncited claims with abstention."""
 
     key = settings.api_key
     if key is None or not key.get_secret_value().strip() or settings.model is None:
@@ -168,7 +193,7 @@ def answer(
             "temperature": 0.2,
             "maxOutputTokens": 2048,
             "responseFormat": {
-                "text": {"mimeType": "APPLICATION_JSON", "schema": _AnswerDraft.model_json_schema()}
+                "text": {"mimeType": "application/json", "schema": _AnswerDraft.model_json_schema()}
             },
         },
     }
@@ -180,17 +205,35 @@ def answer(
     )
     try:
         with urlopen(request, timeout=30) as response:
-            candidates = json.loads(response.read())["candidates"]
+            raw = response.read(64001)
+        if len(raw) > 64000:
+            raise ValueError("Oversized answer response")
+        candidates = json.loads(raw)["candidates"]
         if len(candidates) != 1 or candidates[0]["finishReason"] != "STOP":
             raise ValueError("Incomplete generation")
         output = "".join(
             part["text"] for part in candidates[0]["content"]["parts"] if not part.get("thought")
         )
         draft = _AnswerDraft.model_validate_json(output)
-    except (OSError, HTTPException, ValueError, TypeError, KeyError, IndexError):
+        if not draft.answer.strip() or set(draft.cited_slugs) - {hit.slug for hit in hits}:
+            raise ValueError("Empty answer or unsupported citations")
+    except (
+        OSError,
+        HTTPException,
+        ValueError,
+        TypeError,
+        KeyError,
+        IndexError,
+        AttributeError,
+        RecursionError,
+    ):
         raise AnswerUnavailable("Gemini answer request failed") from None
-    allowed = {hit.slug for hit in hits}
-    return draft.answer, list(dict.fromkeys(s for s in draft.cited_slugs if s in allowed))
+    if not draft.cited_slugs:
+        return (
+            "The retrieved draft records do not provide enough evidence to answer this question.",
+            [],
+        )
+    return draft.answer.strip(), list(dict.fromkeys(draft.cited_slugs))
 
 
 @lru_cache

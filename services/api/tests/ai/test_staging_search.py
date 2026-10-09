@@ -6,10 +6,13 @@ STAGING_SEARCH_PG_URL (e.g. postgresql+psycopg://...) to run it.
 
 import json
 import os
+import time
 from collections.abc import Generator
+from email.message import Message
 from io import BytesIO
 from pathlib import Path
 from typing import Any
+from urllib.error import HTTPError
 from urllib.request import Request
 
 import pytest
@@ -110,7 +113,7 @@ def test_answer_keeps_only_citations_from_retrieved_records(
 
     def transport(request: Request, *, timeout: int) -> BytesIO:
         calls.append(json.loads(request.data))  # type: ignore[arg-type]
-        output = {"answer": "- farm-aid covers tractors", "cited_slugs": ["farm-aid", "invented"]}
+        output = {"answer": "- farm-aid covers tractors", "cited_slugs": ["farm-aid", "farm-aid"]}
         return generation(output)
 
     monkeypatch.setattr(staging_search, "urlopen", transport)
@@ -125,12 +128,49 @@ def test_answer_keeps_only_citations_from_retrieved_records(
     assert text == "- farm-aid covers tractors"
     assert cited == ["farm-aid"]
     payload = calls[0]
-    assert payload["generationConfig"]["responseFormat"]["text"]["mimeType"] == "APPLICATION_JSON"
+    assert payload["generationConfig"]["responseFormat"]["text"]["mimeType"] == "application/json"
     system = payload["systemInstruction"]["parts"][0]["text"]
     assert "untrusted" in system and injected not in system
     user = json.loads(payload["contents"][0]["parts"][0]["text"])
     assert user["question"] == "tractor help?"
     assert [record["slug"] for record in user["records"]] == ["farm-aid", "pension"]
+
+
+def test_answer_rejects_fabricated_citations(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(
+        staging_search,
+        "urlopen",
+        lambda *a, **k: generation(
+            {"answer": "Invented policy", "cited_slugs": ["farm-aid", "invented"]}
+        ),
+    )
+    with pytest.raises(staging_search.AnswerUnavailable):
+        staging_search.answer(configured(), "question", [hit("farm-aid")])
+
+
+def test_uncited_answer_returns_fixed_insufficient_evidence(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(
+        staging_search,
+        "urlopen",
+        lambda *a, **k: generation(
+            {"answer": "Unsupported guaranteed approval", "cited_slugs": []}
+        ),
+    )
+    text, cited = staging_search.answer(configured(), "question", [hit("farm-aid")])
+    assert (
+        text
+        == "The retrieved draft records do not provide enough evidence to answer this question."
+    )
+    assert cited == []
+
+
+def test_answer_rejects_oversized_provider_response(monkeypatch: pytest.MonkeyPatch) -> None:
+    raw = generation({"answer": "Text", "cited_slugs": ["farm-aid"]}).read()
+    monkeypatch.setattr(staging_search, "urlopen", lambda *a, **k: BytesIO(b" " * 64001 + raw))
+    with pytest.raises(staging_search.AnswerUnavailable):
+        staging_search.answer(configured(), "question", [hit("farm-aid")])
 
 
 @pytest.mark.parametrize(
@@ -139,6 +179,8 @@ def test_answer_keeps_only_citations_from_retrieved_records(
         lambda: generation({"answer": "cut off", "cited_slugs": []}, finish="MAX_TOKENS"),
         lambda: generation({"cited_slugs": ["farm-aid"]}),
         lambda: BytesIO(b"not json"),
+        lambda: generation({"answer": "   ", "cited_slugs": ["farm-aid"]}),
+        lambda: generation({"answer": "Text", "cited_slugs": ["farm-aid"], "extra": True}),
     ],
 )
 def test_answer_rejects_incomplete_or_malformed_output(
@@ -180,6 +222,104 @@ def test_embed_rejects_wrong_shape(monkeypatch: pytest.MonkeyPatch) -> None:
 
     with pytest.raises(staging_search.EmbeddingUnavailable):
         staging_search.embed(configured(), ["text"], "RETRIEVAL_QUERY")
+
+
+@pytest.mark.parametrize("value", [float("nan"), float("inf"), True, "0.1"])
+def test_embed_rejects_invalid_values(monkeypatch: pytest.MonkeyPatch, value: Any) -> None:
+    vector = [value] + [0.0] * (DIMENSIONS - 1)
+    monkeypatch.setattr(
+        staging_search,
+        "urlopen",
+        lambda *a, **k: BytesIO(json.dumps({"embeddings": [{"values": vector}]}).encode()),
+    )
+    with pytest.raises(staging_search.EmbeddingUnavailable):
+        staging_search.embed(configured(), ["text"], "RETRIEVAL_QUERY")
+
+
+def test_embed_rejects_zero_vector(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(
+        staging_search,
+        "urlopen",
+        lambda *a, **k: BytesIO(
+            json.dumps({"embeddings": [{"values": [0.0] * DIMENSIONS}]}).encode()
+        ),
+    )
+    with pytest.raises(staging_search.EmbeddingUnavailable):
+        staging_search.embed(configured(), ["text"], "RETRIEVAL_QUERY")
+
+
+@pytest.mark.parametrize("path,body", [(SEARCH, None), (ASK, {"question": "  "})])
+def test_blank_queries_rejected_before_model_calls(
+    sqlite_client: TestClient, path: str, body: Any
+) -> None:
+    if body is None:
+        response = sqlite_client.get(
+            path, params={"q": "  "}, headers={"X-Admin-Token": REVIEW_TOKEN}
+        )
+    else:
+        response = sqlite_client.post(path, json=body, headers={"X-Admin-Token": REVIEW_TOKEN})
+    assert response.status_code == 422
+
+
+@pytest.mark.parametrize("raw", [b"{}", b"null", b'{"embeddings": []}', b" " * 28673])
+def test_embed_rejects_malformed_count_and_oversized_output(
+    monkeypatch: pytest.MonkeyPatch, raw: bytes
+) -> None:
+    monkeypatch.setattr(staging_search, "urlopen", lambda *a, **k: BytesIO(raw))
+    with pytest.raises(staging_search.EmbeddingUnavailable):
+        staging_search.embed(configured(), ["synthetic text"], "RETRIEVAL_QUERY")
+
+
+@pytest.mark.parametrize("code,retries,expected_calls", [(429, 2, 3), (500, 2, 1)])
+def test_embed_retries_only_rate_limits_with_a_finite_budget(
+    monkeypatch: pytest.MonkeyPatch, code: int, retries: int, expected_calls: int
+) -> None:
+    calls: list[int] = []
+    waits: list[int] = []
+
+    def transport(*args: Any, **kwargs: Any) -> BytesIO:
+        calls.append(code)
+        raise HTTPError("https://test.invalid", code, "synthetic failure", Message(), None)
+
+    monkeypatch.setattr(staging_search, "urlopen", transport)
+    monkeypatch.setattr(time, "sleep", waits.append)
+    with pytest.raises(staging_search.EmbeddingUnavailable):
+        staging_search.embed(
+            configured(), ["synthetic text"], "RETRIEVAL_DOCUMENT", retries=retries
+        )
+    assert len(calls) == expected_calls
+    assert len(waits) == expected_calls - 1
+
+
+def test_embed_recovers_after_rate_limit(monkeypatch: pytest.MonkeyPatch) -> None:
+    responses = iter([429, 200])
+
+    def transport(*args: Any, **kwargs: Any) -> BytesIO:
+        if next(responses) == 429:
+            raise HTTPError("https://test.invalid", 429, "synthetic limit", Message(), None)
+        return BytesIO(json.dumps({"embeddings": [{"values": unit_vector(0)}]}).encode())
+
+    monkeypatch.setattr(staging_search, "urlopen", transport)
+    monkeypatch.setattr(time, "sleep", lambda seconds: None)
+    assert staging_search.embed(configured(), ["synthetic text"], "RETRIEVAL_QUERY", retries=1) == [
+        unit_vector(0)
+    ]
+
+
+def test_answer_without_configuration_is_unavailable() -> None:
+    with pytest.raises(staging_search.AnswerUnavailable):
+        staging_search.answer(
+            AISettings(_env_file=None, api_key=None, model=None), "synthetic question", []
+        )
+
+
+def test_answer_timeout_is_sanitized(monkeypatch: pytest.MonkeyPatch) -> None:
+    def transport(*args: Any, **kwargs: Any) -> BytesIO:
+        raise TimeoutError("synthetic-test-key must never leak")
+
+    monkeypatch.setattr(staging_search, "urlopen", transport)
+    with pytest.raises(staging_search.AnswerUnavailable, match="^Gemini answer request failed$"):
+        staging_search.answer(configured(), "synthetic question", [hit("synthetic-farm")])
 
 
 @pytest.fixture
@@ -264,7 +404,7 @@ def test_ask_answers_from_retrieved_records_with_checked_citations(
         lambda *a, **k: generation(
             {
                 "answer": "- Synthetic Farm Aid covers tractors",
-                "cited_slugs": ["synthetic-farm", "x"],
+                "cited_slugs": ["synthetic-farm"],
             }
         ),
     )

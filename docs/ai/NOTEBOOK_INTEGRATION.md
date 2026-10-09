@@ -41,7 +41,7 @@ After a reviewed bundle is available, use the existing candidate repository, det
 Reviewers can semantically search the unverified notebook records to decide which schemes to curate first. This replaces the notebook's FAISS index with PostgreSQL `pgvector` and Gemini embeddings. It is a discovery aid only: results never feed matching, questions, guidance or publication.
 
 1. Run migrations (`20261009_0005` enables the `vector` extension, creates `staging_schemes` and turns on row-level security for it, matching `0004`). Supabase supports `vector`; other hosts must provide it.
-2. Set `GEMINI_API_KEY` and `GEMINI_EMBEDDING_MODEL` (verified with `gemini-embedding-001`, 768 dimensions).
+2. Set `GEMINI_API_KEY` and `GEMINI_EMBEDDING_MODEL` (configured for 768 dimensions). Live provider compatibility still requires verification.
 3. From `services/api`, index the export. Each run validates it with the staging importer above and replaces the whole staging table:
 
    ```bash
@@ -63,7 +63,7 @@ Reviewers can semantically search the unverified notebook records to decide whic
      http://127.0.0.1:8000/api/v1/admin/staging-schemes/ask
    ```
 
-   The response has `answer`, `cited_slugs` and the retrieved `sources`. The server drops any cited slug that was not retrieved, and the prompt treats record text as untrusted. If the records don't cover the question, the answer says so and cites nothing. Answers come from unverified drafts, so they are triage notes for curators, never citizen guidance. If the model is overloaded or unconfigured, the endpoint returns 503.
+   The response has `answer`, `cited_slugs` and the retrieved `sources`. The server rejects the entire generated answer if any citation was not retrieved, and the prompt treats record text as untrusted. Uncited output is replaced with a fixed insufficient-evidence message. Citation membership does not prove each statement is supported; curator review remains required. Answers come from unverified drafts, so they are triage notes for curators, never citizen guidance. If the model is overloaded or unconfigured, the endpoint returns 503.
 
 Every result carries `review_status: draft`, its `missing_fields` and the raw record; the response has `publication_allowed: false`. Similarity is a cosine score for ordering, not relevance or eligibility evidence. The embedded text is name, level, category, details, benefits, eligibility and tags. Search queries are sent to Gemini, so curators should not paste citizen data into them.
 
