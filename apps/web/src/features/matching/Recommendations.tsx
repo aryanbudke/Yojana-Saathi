@@ -1,5 +1,5 @@
 "use client";
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import Link from "next/link";
 import {
   Badge,
@@ -13,9 +13,12 @@ import { useProfile } from "@/features/profile/hooks";
 import { ModeNotice } from "@/features/profile/ProfileComposer";
 import { fields, states } from "@/features/profile/types";
 import { useMatching } from "./hooks";
+import { verdictLabels } from "./types";
+import type { SchemeMatch } from "@/lib/api/contracts";
 import { MatchCard } from "./MatchCard";
 import { FollowUpCard } from "@/features/questions/FollowUpCard";
 export function Recommendations() {
+  const [filter, setFilter] = useState<SchemeMatch["status"] | "all">("all");
   const p = useProfile();
   const matching = useMatching();
   const { rematch } = matching;
@@ -30,6 +33,9 @@ export function Recommendations() {
     matching.key === JSON.stringify({ sessionId, facts: p.draft.facts })
       ? matching.matches
       : r.data;
+  const visibleMatches =
+    results?.results.filter((m) => filter === "all" || m.status === filter) ??
+    [];
   return (
     <>
       <ModeNotice />
@@ -77,7 +83,36 @@ export function Recommendations() {
                     {results.results.length === 1 ? "" : "s"}
                   </span>
                 </div>
-                {results.results.map((m) => (
+                <div className="recommendation-toolbar">
+                  <label htmlFor="match-filter">Show conditions</label>
+                  <select
+                    id="match-filter"
+                    className="input"
+                    value={filter}
+                    onChange={(e) =>
+                      setFilter(e.target.value as SchemeMatch["status"] | "all")
+                    }
+                  >
+                    <option value="all">All statuses</option>
+                    {Object.entries(verdictLabels).map(([status, label]) => (
+                      <option key={status} value={status}>
+                        {label.text}
+                      </option>
+                    ))}
+                  </select>
+                  <span className="small muted" aria-live="polite">
+                    {visibleMatches.length} shown
+                  </span>
+                </div>
+                {!visibleMatches.length && (
+                  <div className="empty">
+                    <h3>No schemes with this status</h3>
+                    <Button variant="quiet" onClick={() => setFilter("all")}>
+                      Show all statuses
+                    </Button>
+                  </div>
+                )}
+                {visibleMatches.map((m) => (
                   <MatchCard key={m.scheme_id} match={m} />
                 ))}
               </>

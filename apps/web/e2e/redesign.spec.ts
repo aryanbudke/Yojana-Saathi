@@ -53,3 +53,26 @@ test("primary action stays in initial laptop viewport and workspace never overfl
     }
   }
 });
+
+test("recommendation status filter and clear use the actual matches", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: "Try an example" }).click();
+  await page.getByRole("button", { name: "Find my schemes" }).click();
+  await page.getByRole("button", { name: "Confirm my details" }).click();
+  await page.getByRole("link", { name: "See my recommendations" }).click();
+  await expect(
+    page.getByRole("heading", { name: "Contract Fixture Scheme" }),
+  ).toBeVisible();
+  await page.getByLabel("Show conditions").selectOption("not_eligible");
+  await expect(page.getByText("No schemes with this status")).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "Contract Fixture Scheme" }),
+  ).toHaveCount(0);
+  await page.getByRole("button", { name: "Show all statuses" }).click();
+  await expect(
+    page.getByRole("heading", { name: "Contract Fixture Scheme" }),
+  ).toBeVisible();
+  await expect(page.getByText("Mock mode", { exact: true })).toBeVisible();
+});

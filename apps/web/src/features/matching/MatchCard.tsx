@@ -2,12 +2,12 @@
 import { useCallback } from "react";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
-import { Badge, SourceLink } from "@/components/ui";
+import { SourceLink } from "@/components/ui";
 import { api } from "@/lib/api";
 import { useResource } from "@/lib/api/use-resource";
 import type { SchemeMatch } from "@/lib/api/contracts";
 import { displayDate } from "@/lib/format";
-import { verdictLabels } from "./types";
+import { EligibilityBadge } from "./EligibilityBadge";
 import { RuleChecklist } from "./RuleChecklist";
 export function MatchCard({ match }: { match: SchemeMatch }) {
   const load = useCallback(
@@ -15,13 +15,12 @@ export function MatchCard({ match }: { match: SchemeMatch }) {
     [match.scheme_id],
   );
   const d = useResource(load);
-  const label = verdictLabels[match.status];
   const current =
     d.data?.scheme_version_id === match.scheme_version_id ? d.data : null;
   return (
     <article className="panel match-card">
       <div className="row">
-        <Badge tone={label.tone}>{label.text}</Badge>
+        <EligibilityBadge status={match.status} />
         {current && <span className="small muted">{current.category}</span>}
       </div>
       <h2>

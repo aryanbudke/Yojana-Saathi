@@ -16,7 +16,9 @@ test("answer, rematch, explain change and edit previous answer", async ({
   await page.getByRole("radio", { name: "Yes", exact: true }).check();
   await page.getByRole("button", { name: "Update my matches" }).click();
   await expect(
-    page.getByText("All checked conditions met", { exact: true }),
+    page
+      .locator(".match-card")
+      .getByText("All checked conditions met", { exact: true }),
   ).toBeVisible();
   await expect(
     page.getByText("Needs verification → All checked conditions met", {
@@ -26,7 +28,9 @@ test("answer, rematch, explain change and edit previous answer", async ({
   await page.getByRole("button", { name: "Edit my previous answer" }).click();
   await page.getByRole("radio", { name: "No", exact: true }).check();
   await page.getByRole("button", { name: "Update my matches" }).click();
-  await expect(page.getByText("Not eligible", { exact: true })).toBeVisible();
+  await expect(
+    page.locator(".match-card").getByText("Not eligible", { exact: true }),
+  ).toBeVisible();
 });
 test("not sure stays unknown and does not repeat the question", async ({
   page,
@@ -38,7 +42,9 @@ test("not sure stays unknown and does not repeat the question", async ({
     page.getByText("No scheme status changed", { exact: false }),
   ).toBeVisible();
   await expect(
-    page.getByText("Needs verification", { exact: true }),
+    page
+      .locator(".match-card")
+      .getByText("Needs verification", { exact: true }),
   ).toBeVisible();
   await expect(page.getByRole("radio")).toHaveCount(0);
 });

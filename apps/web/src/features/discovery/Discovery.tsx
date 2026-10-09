@@ -7,6 +7,7 @@ import { useResource } from "@/lib/api/use-resource";
 import { Button, InlineAlert, Input, Skeleton } from "@/components/ui";
 import { states } from "@/features/profile/types";
 import { categories, queryFromSearch } from "./types";
+import { CategoryChip } from "./CategoryChip";
 import { SchemeCard } from "./SchemeCard";
 export function Discovery() {
   const search = useSearchParams();
@@ -30,27 +31,25 @@ export function Discovery() {
     >
       <div className="section-heading">
         <div>
-          <p className="eyebrow">Explore the possibilities</p>
-          <h2 id="browse-title">A starting point for every story</h2>
+          <p className="eyebrow">Browse by category</p>
+          <h2 id="browse-title">Explore schemes</h2>
         </div>
         <span className="small muted">Browse without sharing a profile</span>
       </div>
       <div className="category-chips" aria-label="Support categories">
         {categories.map((c) => (
-          <Button
+          <CategoryChip
             key={c.value}
-            variant="secondary"
-            aria-pressed={search.get("category") === c.value}
+            label={c.label}
+            icon={c.icon}
+            selected={search.get("category") === c.value}
             onClick={() => {
               const next = new URLSearchParams(query);
               if (next.get("category") === c.value) next.delete("category");
               else next.set("category", c.value);
               update(next);
             }}
-          >
-            <c.icon size={16} aria-hidden="true" />
-            {c.label}
-          </Button>
+          />
         ))}
       </div>
       <form
@@ -115,7 +114,7 @@ export function Discovery() {
         {r.loading
           ? "Finding schemes…"
           : r.data
-            ? `${r.data.items.length} ${r.data.items.length === 1 ? "scheme" : "schemes"} in this page`
+            ? `${r.data.items.length} ${r.data.items.length === 1 ? "scheme" : "schemes"} on this page`
             : ""}
       </div>
       {r.error && (

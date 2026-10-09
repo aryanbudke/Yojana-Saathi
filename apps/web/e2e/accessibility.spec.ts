@@ -36,7 +36,9 @@ for (const width of [320, 375, 768, 1024, 1440]) {
     await page.getByRole("button", { name: "Confirm my details" }).click();
     await page.getByRole("link", { name: "See my recommendations" }).click();
     await expect(
-      page.getByText("Needs verification", { exact: true }),
+      page
+        .locator(".match-card")
+        .getByText("Needs verification", { exact: true }),
     ).toBeVisible();
     await expect(
       page.getByText("Is the land registered to your family?", { exact: true }),
@@ -47,7 +49,9 @@ for (const width of [320, 375, 768, 1024, 1440]) {
     await page.getByRole("button", { name: "Update my matches" }).focus();
     await page.keyboard.press("Enter");
     await expect(
-      page.getByText("All checked conditions met", { exact: true }),
+      page
+        .locator(".match-card")
+        .getByText("All checked conditions met", { exact: true }),
     ).toBeVisible();
     await page.getByRole("link", { name: "Explore this scheme" }).click();
     await expect(

@@ -12,7 +12,9 @@ test("only matches after confirmation and explains source-linked unknowns withou
   await page.getByRole("button", { name: "Confirm my details" }).click();
   await page.getByRole("link", { name: "See my recommendations" }).click();
   await expect(
-    page.getByText("Needs verification", { exact: true }),
+    page
+      .locator(".match-card")
+      .getByText("Needs verification", { exact: true }),
   ).toBeVisible();
   await expect(
     page.getByText("Land registration has not been confirmed.", {

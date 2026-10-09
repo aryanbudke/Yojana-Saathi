@@ -164,3 +164,12 @@ The remaining dependency order is packaging/handoff → live API verification �
 - Problems/dependencies: First CTA check failed; combined example/counter row and moved extraction explanation below action, then reran successfully. Catalogue chips are refined in UI-04.
 - Commit reference: resolve with `git log --oneline --grep="UI-03"`.
 - Next task: UI-04
+
+## UI-04 — Discovery and recommendation cards
+
+- Status: COMPLETED
+- Files: src/features/discovery/{CategoryChip,Discovery,SchemeCard}.tsx, src/features/matching/{EligibilityBadge,MatchCard,Recommendations}.tsx, src/app/globals.css, e2e/{redesign,matching,questions,accessibility}.spec.ts, PROGRESS.md
+- Tests/verification: Lint/type checks,19 unit and contract tests,and five browser regressions passed. URL category/state/search filters,history,clear,status filtering,source/unknown rendering and profile deletion verified. Inspected desktop discovery and recommendations screenshots.
+- Problems/dependencies: New select options duplicated verdict text in older test locators; scoped assertions to actual match cards and reran. Mock data remains explicitly synthetic; live dependency is unchanged.
+- Commit reference: resolve with `git log --oneline --grep="UI-04"`.
+- Next task: UI-05
