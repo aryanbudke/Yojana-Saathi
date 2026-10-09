@@ -1,2 +1,2 @@
-import Link from 'next/link';
-export default function Home(){return <section className="hero"><p className="eyebrow">A little clarity. A new possibility.</p><h1>Support you didn’t<br/>know you had<span className="green">.</span></h1><p className="hero-copy">Find government schemes that fit your life.<br/>Understand the requirements. Take your next step.</p><Link className="button primary" href="/help">See how it works</Link></section>;}
+import { ProfileComposer } from '@/features/profile/ProfileComposer';
+export default function Home(){return <ProfileComposer/>;}

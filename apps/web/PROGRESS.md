@@ -8,7 +8,7 @@ Strict order: no next task begins until the current implementation passes its ch
 |---|---|---|
 | T1-01 | Next.js foundation, design tokens, shared UI and accessible shell | COMPLETED |
 | T1-02 | Typed client, runtime contracts, mock fixtures and session boundary | COMPLETED |
-| T1-03 | F01 composer and editable confirmed profile | PENDING |
+| T1-03 | F01 composer and editable confirmed profile | COMPLETED |
 | T1-04 | F02 discovery filters, URL state and result states | PENDING |
 | T1-05 | F03 recommendations and rule checklists | PENDING |
 | T1-06 | F04 follow-up, skip/edit and rematching | PENDING |
@@ -38,3 +38,12 @@ Optional saved and Hindi features depend on the complete P0 live flow and are no
 - Problems: JSON inference narrowed empty arrays incorrectly; parsing fixtures through the DTO schema fixed typing. Session contract confirmed from Developer 2 implementation; no cross-chat message sent.
 - Commit reference: commit containing this entry; resolve with `git log --format="%h %s" --grep="T1-02"`.
 - Next task: T1-03 profile intake
+
+## T1-03 — F01 composer and editable confirmed profile
+
+- Status: COMPLETED
+- Files: `apps/web/AGENTS.md`, `apps/web/e2e/profile.spec.ts`, `apps/web/next.config.ts`, `apps/web/playwright.config.ts`, `apps/web/src/features/profile/ProfileComposer.tsx`, `apps/web/src/features/profile/hooks.tsx`, `apps/web/src/features/profile/model.test.ts`, `apps/web/src/features/profile/model.ts`, `apps/web/src/features/profile/types.ts`, `apps/web/next-env.d.ts`, `apps/web/src/app/globals.css`, `apps/web/src/app/layout.tsx`, `apps/web/src/app/page.tsx`
+- Verification: Lint, strict typecheck and 13 unit/contract tests passed. Two browser journeys passed: extraction/correction/re-extraction/confirmation/deletion and manual entry.
+- Problems: Next.js 16 development-origin protection prevented hydration in first browser run; explicitly allowed localhost/127.0.0.1 and both tests passed after restart. Profile stays in memory and server session; no long-term local storage.
+- Commit reference: commit containing this entry; resolve with `git log --format="%h %s" --grep="T1-03"`.
+- Next task: T1-04 scheme discovery
