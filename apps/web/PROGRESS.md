@@ -155,3 +155,12 @@ The remaining dependency order is packaging/handoff → live API verification �
 - Problems/dependencies: English is the actual current language. Unimplemented optional navigation remains gated; no dead destinations added.
 - Commit reference: resolve with `git log --oneline --grep="UI-02"`.
 - Next task: UI-03
+
+## UI-03 — Compact homepage and profile discovery input
+
+- Status: COMPLETED
+- Files: src/app/page.tsx, src/features/profile/ProfileComposer.tsx, src/app/globals.css, e2e/redesign.spec.ts, scripts/capture-redesign.mjs, PROGRESS.md
+- Tests/verification: Lint/type checks and four browser checks passed. CTA bottoms: 665px at1024, 675px at1280, 681px at1440 in720px viewports. Six widths have no page overflow; captured and inspected laptop homepage. Extraction, override, confirmation, deletion and manual entry preserved.
+- Problems/dependencies: First CTA check failed; combined example/counter row and moved extraction explanation below action, then reran successfully. Catalogue chips are refined in UI-04.
+- Commit reference: resolve with `git log --oneline --grep="UI-03"`.
+- Next task: UI-04

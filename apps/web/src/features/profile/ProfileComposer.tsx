@@ -2,10 +2,8 @@
 import { useState, useEffect, useRef } from "react";
 import {
   ArrowRight,
-  ArrowUpRight,
   ShieldCheck,
   Sparkles,
-  Check,
   SlidersHorizontal,
 } from "lucide-react";
 import {
@@ -62,164 +60,81 @@ export function ProfileComposer() {
     }
   }
   return (
-    <>
-      <ModeNotice />
-      <section className="hero home-hero">
-        <div>
-          <p className="eyebrow">
-            <span className="tiny-line" />
-            Possibilities, made personal
-          </p>
-          <h1>
-            Support you didn’t
-            <br />
-            know you had<span className="green">.</span>
-          </h1>
-          <p className="hero-copy">
-            A little about you. A clearer view of the support available.
-            <br className="desktop-break" /> Discover schemes, understand the
-            conditions, find your next step.
-          </p>
+    <div className="profile-workspace">
+      <GlassPanel className="composer-shell">
+        <div className="section-heading">
+          <h2>Tell us about your situation</h2>
+          <Badge>Your profile</Badge>
         </div>
-        <div className="hero-side">
-          <ShieldCheck size={22} />
-          <span>
-            Clear conditions.
-            <br />
-            Sources you can check.
-          </span>
-        </div>
-      </section>
-      <div className="discovery-grid">
-        <GlassPanel className="composer-shell">
-          <div className="section-heading">
-            <h2>Let’s start with you</h2>
-            <Badge>01 / YOUR PROFILE</Badge>
-          </div>
-          <p className="muted composer-description">
-            You don’t need to know a scheme’s name.
-            <br />
-            Just tell us a little about your situation.
-          </p>
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              void run("extract");
-            }}
-          >
-            <label className="sr-only" htmlFor="profile-text">
-              Tell us about yourself
-            </label>
-            <TextArea
-              id="profile-text"
-              maxLength={1000}
-              placeholder="I’m a farmer in Maharashtra looking for support for my family…"
-              value={p.text}
-              onChange={(e) => p.setText(e.target.value)}
-              aria-describedby="profile-privacy profile-counter"
-            />
-            <div className="composer-meta">
-              <span className="small muted">
-                Your words are a good starting point.
-              </span>
-              <span id="profile-counter" className="small muted">
-                {p.text.length}/1000
-              </span>
-            </div>
-            <div className="example-row">
-              <Sparkles size={15} aria-hidden="true" />
-              <span>Need a starting point?</span>
-              <Button
-                type="button"
-                variant="quiet"
-                onClick={() => p.setText(example)}
-              >
-                Try an example
-                <ArrowUpRight size={14} />
-              </Button>
-            </div>
-            {isMock && (
-              <p className="small muted mock-extract-note">
-                Mock extraction always returns the sample farmer profile. Use
-                manual entry for your own details.
-              </p>
-            )}
-            <Button
-              type="submit"
-              className="wide"
-              busy={busy === "extract"}
-              disabled={!p.text.trim() || busy !== null}
-            >
-              {busy === "extract"
-                ? "Reviewing your details…"
-                : "Find my schemes"}
-              <ArrowRight size={18} />
-            </Button>
+        <p className="muted composer-description">
+          You don’t need to know a scheme’s name. Just share a few details about
+          yourself.
+        </p>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            void run("extract");
+          }}
+        >
+          <label className="sr-only" htmlFor="profile-text">
+            Tell us about yourself
+          </label>
+          <TextArea
+            id="profile-text"
+            maxLength={1000}
+            placeholder="I’m a farmer in Maharashtra looking for support for my family…"
+            value={p.text}
+            onChange={(e) => p.setText(e.target.value)}
+            aria-describedby="profile-privacy profile-counter"
+          />
+          <div className="composer-meta">
             <Button
               type="button"
               variant="quiet"
-              className="wide"
-              disabled={busy !== null}
-              onClick={() => {
-                p.setReviewing(true);
-                setError("");
-              }}
+              onClick={() => p.setText(example)}
             >
-              Enter details manually
-              <SlidersHorizontal size={15} />
+              <Sparkles size={15} aria-hidden="true" />
+              Try an example
             </Button>
-            <p id="profile-privacy" className="privacy-note">
-              <ShieldCheck size={15} aria-hidden="true" />
-              Only share what’s needed. Don’t enter Aadhaar numbers.
-            </p>
-          </form>
-          {error && !p.reviewing && <InlineAlert error>{error}</InlineAlert>}
-        </GlassPanel>
-        <aside className="path-panel">
-          <div className="path-top">
-            <span className="eyebrow">A little less searching</span>
-            <span className="path-symbol" aria-hidden="true">
-              ↗
+            <span id="profile-counter" className="small muted">
+              {p.text.length}/1000 characters
             </span>
           </div>
-          <h2>
-            More clarity.
-            <br />
-            More possibility.
-          </h2>
-          <p>
-            Good support starts with knowing where to look. We’ll help you
-            connect the dots.
+          <Button
+            type="submit"
+            className="wide"
+            busy={busy === "extract"}
+            disabled={!p.text.trim() || busy !== null}
+          >
+            {busy === "extract" ? "Reviewing your details…" : "Find my schemes"}
+            <ArrowRight size={18} />
+          </Button>
+          <Button
+            type="button"
+            variant="quiet"
+            className="wide"
+            disabled={busy !== null}
+            onClick={() => {
+              p.setReviewing(true);
+              setError("");
+            }}
+          >
+            Enter details manually
+            <SlidersHorizontal size={15} />
+          </Button>
+          {isMock && (
+            <p className="small muted mock-extract-note">
+              Mock extraction returns the sample farmer profile. Use manual
+              entry for your own details.
+            </p>
+          )}
+          <p id="profile-privacy" className="privacy-note">
+            <ShieldCheck size={15} aria-hidden="true" />
+            Only share what’s needed. Don’t enter Aadhaar numbers.
           </p>
-          <ol className="path-list">
-            <li>
-              <span>01</span>
-              <div>
-                <h3>Tell your story</h3>
-                <p>A few details about your life and needs.</p>
-              </div>
-            </li>
-            <li>
-              <span>02</span>
-              <div>
-                <h3>Understand your options</h3>
-                <p>See conditions met and what’s still unknown.</p>
-              </div>
-            </li>
-            <li>
-              <span>03</span>
-              <div>
-                <h3>Take an informed next step</h3>
-                <p>Prepare your checklist. Visit the official portal.</p>
-              </div>
-            </li>
-          </ol>
-          <div className="path-footer">
-            <Check size={16} />
-            Your pace. Your decisions.
-          </div>
-        </aside>
-      </div>
+        </form>
+        {error && !p.reviewing && <InlineAlert error>{error}</InlineAlert>}
+      </GlassPanel>
       {p.reviewing && (
         <section
           className="panel profile-review"
@@ -365,32 +280,6 @@ export function ProfileComposer() {
             ? "Saving confirmed details"
             : ""}
       </div>
-      <div className="trust-strip">
-        <div>
-          <ShieldCheck size={20} />
-          <span>
-            <strong>You stay in control</strong>
-            <br />
-            Review and edit every detail.
-          </span>
-        </div>
-        <div>
-          <SlidersHorizontal size={20} />
-          <span>
-            <strong>Unknown means unknown</strong>
-            <br />
-            We help you see what’s missing.
-          </span>
-        </div>
-        <div>
-          <ArrowUpRight size={20} />
-          <span>
-            <strong>A clear next step</strong>
-            <br />
-            Apply through official channels.
-          </span>
-        </div>
-      </div>
-    </>
+    </div>
   );
 }

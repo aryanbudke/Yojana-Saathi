@@ -30,3 +30,26 @@ test("sticky navigation, active route and keyboard mobile menu", async ({
   await page.evaluate(() => window.scrollTo(0, 400));
   expect((await page.locator("header.header").boundingBox())?.y).toBe(0);
 });
+
+test("primary action stays in initial laptop viewport and workspace never overflows", async ({
+  page,
+}) => {
+  for (const width of [320, 390, 768, 1024, 1280, 1440]) {
+    await page.setViewportSize({ width, height: 720 });
+    await page.goto("/");
+    await expect(
+      page.getByRole("heading", { name: "Tell us about your situation" }),
+    ).toBeVisible();
+    expect(
+      await page.evaluate(
+        () => document.documentElement.scrollWidth <= window.innerWidth,
+      ),
+    ).toBe(true);
+    if (width >= 1024) {
+      const cta = await page
+        .getByRole("button", { name: "Find my schemes" })
+        .boundingBox();
+      expect(cta!.y + cta!.height).toBeLessThanOrEqual(720);
+    }
+  }
+});
