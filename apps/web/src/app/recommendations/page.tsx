@@ -1,2 +1,4 @@
-import { Recommendations } from '@/features/matching/Recommendations';
-export default function Page(){return <Recommendations/>;}
+import { Recommendations } from "@/features/matching/Recommendations";
+export default function Page() {
+  return <Recommendations />;
+}

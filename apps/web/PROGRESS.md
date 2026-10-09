@@ -4,20 +4,20 @@ Scope: `apps/web/`, branch `feat/frontend`. Documentation read before implementa
 
 Strict order: no next task begins until the current implementation passes its checks and is committed. Mock verification and live verification are recorded separately.
 
-| ID | Task | Status |
-|---|---|---|
-| T1-01 | Next.js foundation, design tokens, shared UI and accessible shell | COMPLETED |
+| ID    | Task                                                                | Status    |
+| ----- | ------------------------------------------------------------------- | --------- |
+| T1-01 | Next.js foundation, design tokens, shared UI and accessible shell   | COMPLETED |
 | T1-02 | Typed client, runtime contracts, mock fixtures and session boundary | COMPLETED |
-| T1-03 | F01 composer and editable confirmed profile | COMPLETED |
-| T1-04 | F02 discovery filters, URL state and result states | COMPLETED |
-| T1-05 | F03 recommendations and rule checklists | COMPLETED |
-| T1-06 | F04 follow-up, skip/edit and rematching | COMPLETED |
-| T1-07 | F05 detail, exclusions and source provenance | COMPLETED |
-| T1-08 | F06 application readiness and checklist | COMPLETED |
-| T1-09 | F10 explanations and responsive/accessibility gate | PENDING |
-| T1-10 | Live integration verification | PENDING |
-| T1-11 | Vercel deployment and live demo | PENDING |
-| T1-12 | Screenshots, startup instructions and handoff | PENDING |
+| T1-03 | F01 composer and editable confirmed profile                         | COMPLETED |
+| T1-04 | F02 discovery filters, URL state and result states                  | COMPLETED |
+| T1-05 | F03 recommendations and rule checklists                             | COMPLETED |
+| T1-06 | F04 follow-up, skip/edit and rematching                             | COMPLETED |
+| T1-07 | F05 detail, exclusions and source provenance                        | COMPLETED |
+| T1-08 | F06 application readiness and checklist                             | COMPLETED |
+| T1-09 | F10 explanations and responsive/accessibility gate                  | PENDING   |
+| T1-10 | Live integration verification                                       | PENDING   |
+| T1-11 | Vercel deployment and live demo                                     | PENDING   |
+| T1-12 | Screenshots, startup instructions and handoff                       | PENDING   |
 
 Optional saved and Hindi features depend on the complete P0 live flow and are not started before that gate. No citizen-facing admin UI is required.
 
@@ -92,3 +92,14 @@ Optional saved and Hindi features depend on the complete P0 live flow and are no
 - Problems: Verified guidance and scheme versions are compared before an external application action. Requirement statuses remain server-provided and personal checkboxes do not assert official verification. Ensured the detail-to-checklist action is visible on mobile.
 - Commit reference: commit containing this entry; resolve with `git log --format="%h %s" --grep="T1-08"`.
 - Next task: T1-09 responsive/accessibility and explanation gate
+
+The remaining dependency order is packaging/handoff → live API verification → deployment/live demo. Packaging does not require unavailable external services; deployment does. Pending task IDs were reordered before starting them to preserve strict sequential execution.
+
+## T1-09 — F10 explanations and responsive/accessibility gate
+
+- Status: COMPLETED
+- Files: `apps/web/.prettierignore`, `apps/web/e2e/accessibility.spec.ts`, `apps/web/e2e/keyboard.spec.ts`, `apps/web/src/lib/urls.ts`, `apps/web/.env.example`, `apps/web/PROGRESS.md`, `apps/web/e2e/details.spec.ts`, `apps/web/e2e/discovery.spec.ts`, `apps/web/e2e/guidance.spec.ts`, `apps/web/e2e/matching.spec.ts`, `apps/web/e2e/profile.spec.ts`, `apps/web/e2e/questions.spec.ts`, `apps/web/eslint.config.mjs`, `apps/web/next.config.ts`, `apps/web/package-lock.json`, `apps/web/package.json`, `apps/web/playwright.config.ts`, `apps/web/postcss.config.mjs`, `apps/web/src/app/discover/page.tsx`, `apps/web/src/app/globals.css`, `apps/web/src/app/help/page.tsx`, `apps/web/src/app/layout.tsx`, `apps/web/src/app/page.tsx`, `apps/web/src/app/recommendations/page.tsx`, `apps/web/src/app/schemes/[schemeId]/apply/page.tsx`, `apps/web/src/app/schemes/[schemeId]/page.tsx`, `apps/web/src/components/ui/index.tsx`, `apps/web/src/features/discovery/Discovery.tsx`, `apps/web/src/features/discovery/SchemeCard.tsx`, `apps/web/src/features/discovery/query.test.ts`, `apps/web/src/features/discovery/types.ts`, `apps/web/src/features/guidance/DocumentChecklist.tsx`, `apps/web/src/features/guidance/GuidancePage.tsx`, `apps/web/src/features/matching/MatchCard.tsx`, `apps/web/src/features/matching/Recommendations.tsx`, `apps/web/src/features/matching/RuleChecklist.tsx`, `apps/web/src/features/matching/hooks.tsx`, `apps/web/src/features/matching/types.ts`, `apps/web/src/features/profile/ProfileComposer.tsx`, `apps/web/src/features/profile/hooks.tsx`, `apps/web/src/features/profile/model.test.ts`, `apps/web/src/features/profile/model.ts`, `apps/web/src/features/profile/types.ts`, `apps/web/src/features/questions/FollowUpCard.tsx`, `apps/web/src/features/questions/model.test.ts`, `apps/web/src/features/questions/model.ts`, `apps/web/src/features/schemes/SchemeDetail.tsx`, `apps/web/src/lib/api/client.test.ts`, `apps/web/src/lib/api/client.ts`, `apps/web/src/lib/api/contracts.ts`, `apps/web/src/lib/api/index.ts`, `apps/web/src/lib/api/mock.ts`, `apps/web/src/lib/api/use-resource.ts`, `apps/web/src/lib/format.ts`, `apps/web/tsconfig.json`, `apps/web/vitest.config.ts`
+- Verification: 19 unit/contract tests passed; 14 browser regression tests passed plus one complete keyboard-only journey. Twenty axe scans across home/recommendations/detail/guidance at 320/375/768/1024/1440px found no WCAG A/AA violations. No horizontal overflow. Reduced motion checked. Lint, strict typecheck and production build passed. Production dependency audit: zero vulnerabilities.
+- Problems: Next.js build TypeScript subprocess output was interrupted by the restricted sandbox; the build passed with subprocess access. Added placeholder rejection in live mode, citation membership validation, error visibility, focus management and input locking during confirmation. Five dev-only upstream ESLint findings remain; no compatible fix offered. Automated accessibility does not replace human screen-reader testing.
+- Commit reference: commit containing this entry; resolve with `git log --format="%h %s" --grep="T1-09"`.
+- Next task: T1-10 screenshots and handoff
