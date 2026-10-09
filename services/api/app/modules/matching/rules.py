@@ -5,7 +5,7 @@ from __future__ import annotations
 import math
 import operator
 from dataclasses import dataclass
-from typing import Annotated, Any, Literal, Self
+from typing import Annotated, Any, Literal, Self, cast
 from uuid import UUID
 
 from pydantic import (
@@ -81,7 +81,7 @@ All.model_rebuild()
 AnyOf.model_rebuild()
 Not.model_rebuild()
 # Pydantic accepts runtime aliases; its type stub only accepts concrete classes.
-ADAPTER: TypeAdapter[Expression] = TypeAdapter(Expression)  # type: ignore[arg-type]
+ADAPTER: TypeAdapter[Expression] = TypeAdapter(cast(Any, Expression))
 COMPARATORS = {
     "eq": operator.eq,
     "lt": operator.lt,

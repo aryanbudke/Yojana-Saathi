@@ -301,3 +301,77 @@ def test_injected_source_text_never_becomes_a_policy_or_instruction(
         "evil.example" not in row["reason"] and "guaranteed" not in row["reason"]
         for row in result["failed_rules"]
     )
+
+
+def test_complete_extraction_confirmation_question_answer_and_guidance_flow(
+    context: tuple[TestClient, Session, str],
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    import json
+    from io import BytesIO
+    from urllib.request import Request
+
+    from fastapi import FastAPI
+
+    from app.db.enums import RuleSeverity
+    from app.db.models import EligibilityRule
+    from app.modules.ai.gemini import get_extractor
+    from tests.ai.test_gemini import EVIDENCE, FACTS, MESSAGE, configured, envelope
+
+    client, db, sid = context
+    version = db.get(SchemeVersion, VERSION)
+    assert version is not None
+    land = {"field": "land_registration", "op": "eq", "value": "yes"}
+    version.eligibility_json = {
+        "schema_version": "1.0",
+        "all": [{"field": "age", "op": "gte", "value": 18}, land],
+    }
+    source_id = UUID("52000000-0000-4000-8000-000000000001")
+    db.add(
+        EligibilityRule(
+            scheme_version_id=VERSION,
+            rule_key="land_record",
+            expression=land,
+            severity=RuleSeverity.REQUIRED,
+            source_id=source_id,
+            question_template="Is the land recorded in your family's name?",
+        )
+    )
+    db.commit()
+    calls = []
+
+    def transport(request: Request, *, timeout: int) -> BytesIO:
+        calls.append(request)
+        assert len(calls) == 1, "Only extraction may call the model"
+        return BytesIO(envelope(json.dumps({"facts": FACTS, "evidence": EVIDENCE})))
+
+    assert isinstance(client.app, FastAPI)
+    client.app.dependency_overrides[get_extractor] = configured
+    monkeypatch.setattr("app.modules.ai.gemini.urlopen", transport)
+    extracted = client.post("/api/v1/profiles/extract", json={"text": MESSAGE})
+    assert extracted.status_code == 200 and extracted.json()["needs_review"]
+    assert db.scalars(select(ProfileFact)).all() == []
+    # Explicit human correction precedes confirmation; draft registration remains unknown.
+    initial = match(client, sid, extracted.json()["facts"] | {"age": 25})
+    assert initial["results"][0]["status"] == "needs_information"
+    question = client.post(
+        "/api/v1/questions/next", json={"session_id": sid, "run_id": initial["run_id"]}
+    )
+    assert question.status_code == 200 and question.json()["field"] == "land_registration"
+    answer = client.post(
+        "/api/v1/profiles/answers",
+        json={"session_id": sid, "field": "land_registration", "value": "yes"},
+    )
+    assert answer.status_code == 200 and answer.json()["requires_rematch"]
+    updated = match(client, sid, {})
+    result = updated["results"][0]
+    assert result["status"] == "all_checked_conditions_met"
+    assert {rule["source_id"] for rule in result["matched_rules"]} == {str(source_id)}
+    guidance = client.get(f"/api/v1/guidance/{SCHEME}", params={"session_id": sid})
+    assert guidance.status_code == 200
+    assert guidance.json()["steps"][0]["source_id"] == str(source_id)
+    assert guidance.json()["documents"][0]["source_id"] == str(source_id)
+    db.expire_all()
+    confirmed_age = db.get(ProfileFact, (UUID(sid), "age"))
+    assert confirmed_age is not None and confirmed_age.value_json == 25
+    assert len(db.scalars(select(MatchResult)).all()) == 2 and len(calls) == 1
