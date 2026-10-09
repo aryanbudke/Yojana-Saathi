@@ -146,3 +146,12 @@ The remaining dependency order is packaging/handoff → live API verification �
 - Problems/dependencies: Browser launch required sandbox escalation; the authorized retry succeeded. Existing live backend gate remains blocked.
 - Commit reference: resolve with `git log --oneline --grep="UI-01"`.
 - Next task: UI-02
+
+## UI-02 — Design foundation and accessible navigation
+
+- Status: COMPLETED
+- Files: src/app/globals.css, src/components/AppHeader.tsx, src/components/ui/index.tsx, e2e/redesign.spec.ts, PROGRESS.md
+- Tests/verification: Lint, strict TypeScript and sticky/active/mobile-menu browser check passed; Escape returns focus and route selection closes menu.
+- Problems/dependencies: English is the actual current language. Unimplemented optional navigation remains gated; no dead destinations added.
+- Commit reference: resolve with `git log --oneline --grep="UI-02"`.
+- Next task: UI-03

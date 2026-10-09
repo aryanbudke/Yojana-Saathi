@@ -1,4 +1,4 @@
-import Link from "next/link";
+export { AppHeader } from "@/components/AppHeader";
 import { ExternalLink, Info, LoaderCircle } from "lucide-react";
 import type {
   ButtonHTMLAttributes,
@@ -111,30 +111,45 @@ export function SourceLink({
     </span>
   );
 }
-export function AppHeader() {
-  return (
-    <header className="header">
-      <div className="header-inner">
-        <Link className="brand" href="/" aria-label="yojana saathi home">
-          <span className="brand-mark" aria-hidden="true">
-            y
-          </span>
-          yojana saathi<span className="brand-dot">.</span>
-        </Link>
-        <nav aria-label="Main navigation">
-          <Link href="/discover">Discover</Link>
-          <Link href="/help">How it works</Link>
-        </nav>
-        <span className="header-note">Independent. Here to help.</span>
-      </div>
-    </header>
-  );
-}
 export function Disclaimer() {
   return (
     <p className="disclaimer">
       An independent project. This is preliminary guidance; the government
       portal makes final decisions. We do not submit or approve applications.
     </p>
+  );
+}
+
+export function SectionHeading({
+  title,
+  description,
+  children,
+}: {
+  title: string;
+  description?: string;
+  children?: ReactNode;
+}) {
+  return (
+    <div className="section-heading">
+      <div>
+        <h2>{title}</h2>
+        {description && <p className="section-description">{description}</p>}
+      </div>
+      {children}
+    </div>
+  );
+}
+export function EmptyState({
+  title,
+  children,
+}: {
+  title: string;
+  children: ReactNode;
+}) {
+  return (
+    <div className="empty">
+      <h2>{title}</h2>
+      <div className="empty-content">{children}</div>
+    </div>
   );
 }
