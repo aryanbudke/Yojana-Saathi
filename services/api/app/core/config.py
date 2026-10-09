@@ -27,6 +27,11 @@ class Settings(BaseSettings):
         validation_alias="ALLOWED_ORIGINS",
     )
     session_ttl_hours: int = Field(default=24, ge=1, le=168)
+    database_url: str = Field(
+        default="postgresql+psycopg://postgres:postgres@localhost:5432/yojana_saathi",
+        min_length=1,
+        validation_alias="DATABASE_URL",
+    )
 
     @field_validator("allowed_origins_csv")
     @classmethod

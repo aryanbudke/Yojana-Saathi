@@ -8,8 +8,11 @@ version = "0.1.0"
 description = "Source-backed backend API for Yojana Saathi"
 requires-python = ">=3.12,<3.15"
 dependencies = [
+  "alembic>=1.14,<2.0",
   "fastapi>=0.115,<1.0",
   "pydantic-settings>=2.6,<3.0",
+  "psycopg[binary]>=3.2,<4.0",
+  "sqlalchemy>=2.0.36,<3.0",
   "uvicorn[standard]>=0.32,<1.0",
 ]
 
@@ -40,4 +43,3 @@ select = ["E", "F", "I", "UP", "B", "SIM"]
 python_version = "3.12"
 strict = true
 plugins = ["pydantic.mypy"]
-

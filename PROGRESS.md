@@ -6,7 +6,7 @@ only after its acceptance checks pass and its work is committed.
 | ID | Task | Status |
 |---|---|---|
 | T2-01 | FastAPI skeleton, configuration, health, CORS, error contract | COMPLETED |
-| T2-02 | PostgreSQL models and Alembic migrations | PENDING |
+| T2-02 | PostgreSQL models and Alembic migrations | COMPLETED |
 | T2-03 | Stable API DTOs and public frontend fixtures | PENDING |
 | T2-04 | Database indexes, publication filters, test seeding | PENDING |
 | T2-05 | Select and document 10–15 high-confidence schemes | PENDING |
@@ -48,5 +48,29 @@ only after its acceptance checks pass and its work is committed.
   Starlette 404-handler compatibility issues; both were corrected and all
   checks rerun successfully. Dependency installation initially lacked sandbox
   network access and completed after explicit approval.
-- **Commit reference:** `HEAD` — `feat(api): establish backend service foundation`
+- **Commit reference:** `336f751` — `feat(api): establish backend service foundation`
 - **Next task:** T2-02 — PostgreSQL models and Alembic migrations
+
+## T2-02 — PostgreSQL models and Alembic migrations
+
+- **Status:** COMPLETED
+- **Files created or modified:** `services/api/pyproject.toml`,
+  `services/api/.env.example`, `services/api/app/core/config.py`,
+  `services/api/app/db/{base,enums,models,types}.py`, `services/api/alembic.ini`,
+  `services/api/migrations/env.py`, migration templates and README,
+  `services/api/migrations/versions/20261009_0001_initial_schema.py`,
+  `services/api/tests/test_database_schema.py`, and `PROGRESS.md`.
+- **Tests executed:**
+  - `.venv/bin/ruff check .` — passed
+  - `.venv/bin/ruff format --check .` — passed (22 files)
+  - `.venv/bin/mypy app tests` — passed (19 source files)
+  - `.venv/bin/pytest --cov=app --cov-report=term-missing` — 15 passed,
+    98% coverage; one upstream Starlette TestClient deprecation warning
+  - `.venv/bin/alembic upgrade head --sql` — passed; generated PostgreSQL DDL
+    includes enum, publication, expiry, score, state, version, and step checks
+- **Problems encountered:** Initial strict checks identified import formatting, model
+  metadata typing, and enum persistence mismatches. Enum columns now persist their
+  lowercase public values and emit database check constraints; all checks passed
+  after correction.
+- **Commit reference:** `HEAD` — `feat(db): add source-backed PostgreSQL schema`
+- **Next task:** T2-03 — Stable API DTOs and public frontend fixtures
