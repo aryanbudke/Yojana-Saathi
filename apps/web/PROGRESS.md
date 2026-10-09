@@ -266,18 +266,18 @@ Brief: complete 10-section GovTech landing page in the confirmed direction (ivor
 - Commit: commit containing this entry, resolve with `git log --oneline --grep=SR-04`.
 - Next: SR-05 scheme finder and matching preview.
 
-| Task | Status |
-| --- | --- |
-| SR-01 Inspect/map | COMPLETED |
-| SR-02 Tokens/navigation | COMPLETED |
-| SR-03 Hero/benefits | COMPLETED |
-| SR-04 How it works | COMPLETED |
-| SR-05 Interactive finder | COMPLETED |
-| SR-06 Categories/sources | COMPLETED |
-| SR-07 Guidance/footer | COMPLETED |
-| SR-08 Responsive | COMPLETED |
-| SR-09 API journeys | COMPLETED |
-| SR-10 Visual/accessibility polish | PENDING |
+| Task                              | Status    |
+| --------------------------------- | --------- |
+| SR-01 Inspect/map                 | COMPLETED |
+| SR-02 Tokens/navigation           | COMPLETED |
+| SR-03 Hero/benefits               | COMPLETED |
+| SR-04 How it works                | COMPLETED |
+| SR-05 Interactive finder          | COMPLETED |
+| SR-06 Categories/sources          | COMPLETED |
+| SR-07 Guidance/footer             | COMPLETED |
+| SR-08 Responsive                  | COMPLETED |
+| SR-09 API journeys                | COMPLETED |
+| SR-10 Visual/accessibility polish | COMPLETED |
 
 ## SR-05 — Interactive finder and matching preview
 
@@ -324,3 +324,29 @@ Brief: complete 10-section GovTech landing page in the confirmed direction (ivor
 - Integration dependency: localhost:8000 health check refused the connection; no deployed live origin or independently reviewed dataset was supplied. Historical T1-11 stays BLOCKED. No backend-owned file changed, no synthetic fixture passed off as live evidence. Screenshot reference remains absent; written brief used.
 - Commit: commit containing this entry, resolve with `git log --oneline --grep=SR-09`.
 - Next: SR-10 final desktop/mobile screenshot inspection, Impeccable polish and production checks.
+
+## SR-10 — Final visual polish, accessibility and production gate
+
+- Status: COMPLETED against the confirmed written brief. Supplied-reference image comparison could not be performed because no image was provided.
+- Files: src/app/globals.css, src/styles/shell.css, src/components/AppHeader.tsx, src/features/landing/{MatchingPreview.tsx,landing.module.css,sections.module.css}, e2e/{keyboard,landing}.spec.ts, scripts/capture-redesign.mjs, .prettierignore, README.md, HANDOFF.md, UI-REDESIGN.md, artifacts/full-site/*, PROGRESS.md.
+- Verification: lint (zero warnings), strict TypeScript,21 unit/contract tests, all28 browser journeys, formatting and optimized production build passed. The affected keyboard journey reran with explicit focus-visible/outline assertions at each action target and passed. Thirty-five axe scans across320/375/390/768/1024/1280/1440 reported no A/AA violations or overflow; reduced motion verified. Single light theme only.
+- Visual evidence: production mock preview at localhost:3001;20 PNG captures at375/1280 plus metrics. Inspected representative desktop/mobile hero, finder, categories, recommendations, details, guidance, help and catalogue surfaces. Capture self-checks found no overflow or browser runtime/console errors across14 page states; hero CTA bottom603.25px at1280×720 (591.44px at375). The full landing page supplies all ten sections in order. Existing keyboard-only flow reaches confirmation, question/answer/rematch, details and checkbox without mouse input.
+- Polish: consolidated recurring secondary text into a semantic token, displayed “Not sure” instead of raw `not_sure`, and used the shared conditional-class helper in navigation. Preserved the approved asymmetric process and layered hero. Impeccable's active hook reported no deterministic issues; independent rendered review and frontend-ui restraint pass completed. No duplicate detector run, new dependency or backend edit.
+- Problems: the earlier capture helper waited for catalogue content that moved off home; updated it to the actual landing flow, explicit mock gate and production-preview support. Formatting initially flagged generated Impeccable cache; excluded that cache, then the complete formatting check passed. Removed automatic Next build declaration churn from the source diff.
+- Limits: Chromium checked; no manual screen-reader, Safari/Firefox or physical-device validation. Reference image unavailable. Live API/CORS/reviewed dataset/deployment remain unverified and separate from the completed frontend scope; synthetic results are visibly labeled.
+- Commit: commit containing this entry, resolve with `git log --oneline --grep=SR-10`.
+- Next: frontend brief complete; live gate requires a supplied running API and reviewed scheme records.
+
+## Full-site implementation commit references
+
+| Task                     | Commit                                                          |
+| ------------------------ | --------------------------------------------------------------- |
+| SR-02 Tokens/navigation  | `3b25e13`                                                       |
+| SR-03 Hero/benefits      | `f7b5297`                                                       |
+| SR-04 How it works       | `a1ba55d`                                                       |
+| SR-05 Interactive finder | `77b1fac`                                                       |
+| SR-06 Categories/sources | `7719ddd`                                                       |
+| SR-07 Guidance/footer    | `ffef785`                                                       |
+| SR-08 Responsive         | `9d18aca`                                                       |
+| SR-09 API journeys       | `0009c7f`                                                       |
+| SR-10 Final polish       | Commit containing this entry (`git log --oneline --grep=SR-10`) |

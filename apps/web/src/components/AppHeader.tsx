@@ -5,6 +5,7 @@ import { Brand } from "./Brand";
 import { usePathname } from "next/navigation";
 import { useRef, useState } from "react";
 import { ArrowRight, Globe2, Menu, X } from "lucide-react";
+import { cn } from "@/lib/classes";
 
 type NavLink = {
   href: string;
@@ -56,7 +57,7 @@ export function AppHeader() {
         </Link>
         <nav
           id="main-navigation"
-          className={open ? "is-open" : ""}
+          className={cn(open && "is-open")}
           aria-label="Main navigation"
         >
           {links.map((link) => (

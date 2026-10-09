@@ -39,7 +39,7 @@ body {
   border-radius: 10px;
   font-size: 14px;
   font-weight: 550;
-  color: #37443e;
+  color: var(--secondary-ink);
   background: transparent;
   transition: color var(--duration) var(--ease);
 }
@@ -78,7 +78,7 @@ body {
 }
 .header-actions .header-language {
   margin-left: 0;
-  color: #37443e;
+  color: var(--secondary-ink);
 }
 .header-cta {
   min-height: 44px;

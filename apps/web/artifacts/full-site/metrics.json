@@ -1,0 +1,74 @@
+[
+  {
+    "name": "home",
+    "overflow": false,
+    "width": 375,
+    "ctaBottom": 591.4375
+  },
+  {
+    "name": "home",
+    "overflow": false,
+    "width": 1280,
+    "ctaBottom": 603.25
+  },
+  {
+    "name": "profile-review",
+    "overflow": false,
+    "width": 1280
+  },
+  {
+    "name": "profile-review",
+    "overflow": false,
+    "width": 375
+  },
+  {
+    "name": "recommendations",
+    "overflow": false,
+    "width": 1280
+  },
+  {
+    "name": "recommendations",
+    "overflow": false,
+    "width": 375
+  },
+  {
+    "name": "scheme-detail",
+    "overflow": false,
+    "width": 1280
+  },
+  {
+    "name": "scheme-detail",
+    "overflow": false,
+    "width": 375
+  },
+  {
+    "name": "guidance",
+    "overflow": false,
+    "width": 1280
+  },
+  {
+    "name": "guidance",
+    "overflow": false,
+    "width": 375
+  },
+  {
+    "name": "help",
+    "overflow": false,
+    "width": 1280
+  },
+  {
+    "name": "help",
+    "overflow": false,
+    "width": 375
+  },
+  {
+    "name": "discover",
+    "overflow": false,
+    "width": 1280
+  },
+  {
+    "name": "discover",
+    "overflow": false,
+    "width": 375
+  }
+]

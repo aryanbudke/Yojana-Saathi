@@ -3,6 +3,7 @@
 import { useProfile } from "@/features/profile/hooks";
 import { fields, states } from "@/features/profile/types";
 import { Recommendations } from "@/features/matching/Recommendations";
+import { humanize } from "@/lib/format";
 
 export function MatchingPreview() {
   const p = useProfile();
@@ -28,7 +29,9 @@ export function MatchingPreview() {
                   : key === "state_code"
                     ? (states.find(([code]) => code === value)?.[1] ??
                       String(value))
-                    : String(value)}
+                    : key === "land_registration"
+                      ? humanize(String(value))
+                      : String(value)}
               </dd>
             </div>
           );

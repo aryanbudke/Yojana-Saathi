@@ -122,7 +122,7 @@
 .stepLead .stepText {
   max-width: 44ch;
   font-size: 16px;
-  color: #37443e;
+  color: var(--secondary-ink);
 }
 
 .stepLabel {

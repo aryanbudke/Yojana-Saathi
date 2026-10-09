@@ -40,8 +40,8 @@ The checked-in backend now includes extract, match and next-question routers, mo
 
 ## Verification evidence
 
-- 19 unit/contract checks passed, including API errors, malformed responses, correction priority, unknowns, citations and source links.
-- 21 browser checks verified: seven responsive journeys and profile, discovery, recommendations, follow-up, detail, guidance, keyboard, navigation, status filtering, empty-state and reduced-motion regressions.
+- 21 unit/contract checks passed, including API errors, malformed responses, correction priority, unknowns, explicit-null answers, citations and source links.
+- 28 browser checks verified: seven responsive journeys and profile, discovery, recommendations, follow-up, detail, guidance, keyboard, navigation, status filtering, empty-state, landing sections/footer and reduced-motion regressions.
 - 35 axe scans (five core screens × seven widths) reported no WCAG A/AA violations after correcting glass-header contrast. No horizontal overflow at 320, 375, 390, 768, 1024, 1280 or 1440px. Reduced-motion mode was exercised.
 - ESLint with zero warnings, strict TypeScript, formatting and production build passed.
 - Production dependency audit reported zero vulnerabilities. Five dev-only findings remain in ESLint's `fast-glob`/`micromatch`/`braces` chain; the audit offers no compatible fix without downgrading the framework's lint configuration. The test runner's original findings were resolved by upgrading.
@@ -63,8 +63,8 @@ Saved UI and reviewed Hindi copy remain optional after the real P0 flow passes. 
 
 ## UI redesign handoff
 
-The existing frontend now uses a compact two-column discovery workspace, six visible category controls, a sticky glass header with keyboard-accessible mobile navigation, consistent scheme cards and a working recommendation-status filter. Profile review expands across the desktop workspace; questions appear beside the shortlist; source-backed details and personal application checklists share the same typography and spacing.
+The home route now supplies the complete ten-section written brief: sticky navigation, explicit mock banner, layered scheme-example hero, four benefits, asymmetric three-step process, interactive finder/preview, six category destinations, four official-source destinations, application guidance and full footer. The existing catalogue workspace remains on `/discover`. Profile review, matching, questions, source-backed details and personal checklists reuse the existing hooks and API client. Glass is limited to navigation, hero examples and the composer; other surfaces stay opaque.
 
-The primary discovery action is inside a 720px desktop viewport: approximately 665px at 1024px wide, 675px at 1280px and 681px at 1440px. All values and verdicts still come from the existing typed client or explicitly labeled fixtures. No backend, session contract, eligibility algorithm or dependency changed. English is displayed as the current language; optional Saved, Hindi, authentication and an applications dashboard are not advertised before their existing integration gate.
+The hero finder action is inside the initial720px desktop viewport; the actual form sits below How it works. All verdicts come from the existing typed client or explicitly labeled fixtures. Example scheme cards link to official destinations and do not claim checked eligibility. No backend, session contract, eligibility algorithm or dependency changed. English is displayed as the current language; optional Saved, Hindi, authentication, Contact/Terms, subscriptions and an applications dashboard are not advertised. About/Privacy/Disclaimer and Help/FAQ are real routes.
 
-Seven sequential UI commits are tracked in `PROGRESS.md`. The audit is `UI-REDESIGN.md`; final visual evidence and measurements are under `artifacts/redesign/after/`, with baseline captures under `before/`. Run `node scripts/capture-redesign.mjs` against a running mock preview to reproduce them. Live API verification and deployment retain the previously documented external dependencies.
+The sequential SR-01–SR-10 work is tracked in `PROGRESS.md`. Current captures are under `artifacts/full-site/`; older workspace before/after captures remain under `artifacts/redesign/`. Run `node scripts/capture-redesign.mjs` against a running mock preview to reproduce current evidence. No reference image was supplied, so the final visual review uses the confirmed written direction. Live API verification and deployment remain external dependencies.

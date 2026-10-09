@@ -87,6 +87,12 @@ test("landing finder confirms, asks and rematches without leaving the page", asy
   });
   await finder
     .getByLabel("Land registered to your family", { exact: true })
+    .selectOption("not_sure");
+  await expect(
+    finder.locator(".preview-facts").getByText("Not sure", { exact: true }),
+  ).toBeVisible();
+  await finder
+    .getByLabel("Land registered to your family", { exact: true })
     .selectOption("");
   await finder.getByRole("button", { name: "Confirm my details" }).click();
   await expect(

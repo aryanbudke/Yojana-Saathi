@@ -1,5 +1,6 @@
 node_modules
 .next
+.impeccable
 package-lock.json
 next-env.d.ts
 test-results

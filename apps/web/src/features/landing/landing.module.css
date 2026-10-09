@@ -59,7 +59,7 @@
   list-style: none;
   font-size: 14px;
   font-weight: 550;
-  color: #37443e;
+  color: var(--secondary-ink);
 }
 
 .valueProps li {
@@ -167,7 +167,7 @@
   font-weight: 650;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: #37443e;
+  color: var(--secondary-ink);
 }
 
 .categoryTag {
@@ -200,7 +200,7 @@
   margin-top: 12px;
   font-size: 13px;
   font-weight: 550;
-  color: #37443e;
+  color: var(--secondary-ink);
 }
 
 .previewPurpose {
