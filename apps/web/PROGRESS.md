@@ -137,3 +137,12 @@ The remaining dependency order is packaging/handoff → live API verification �
 | T1-08 | `e144f68` |
 | T1-09 | `1f51b69` |
 | T1-10 | `1689a1b` |
+
+## UI-01 — UI audit and prioritized checklist
+
+- Status: COMPLETED
+- Files: UI-REDESIGN.md, artifacts/redesign/before, scripts/redesign-progress.py, PROGRESS.md
+- Tests/verification: Read approved documentation, inspected components/routes/styles and actual seven-route baseline captures; audit order and integration boundary verified.
+- Problems/dependencies: Browser launch required sandbox escalation; the authorized retry succeeded. Existing live backend gate remains blocked.
+- Commit reference: resolve with `git log --oneline --grep="UI-01"`.
+- Next task: UI-02
