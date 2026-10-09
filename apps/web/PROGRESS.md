@@ -13,7 +13,7 @@ Strict order: no next task begins until the current implementation passes its ch
 | T1-05 | F03 recommendations and rule checklists | COMPLETED |
 | T1-06 | F04 follow-up, skip/edit and rematching | COMPLETED |
 | T1-07 | F05 detail, exclusions and source provenance | COMPLETED |
-| T1-08 | F06 application readiness and checklist | PENDING |
+| T1-08 | F06 application readiness and checklist | COMPLETED |
 | T1-09 | F10 explanations and responsive/accessibility gate | PENDING |
 | T1-10 | Live integration verification | PENDING |
 | T1-11 | Vercel deployment and live demo | PENDING |
@@ -83,3 +83,12 @@ Optional saved and Hindi features depend on the complete P0 live flow and are no
 - Problems: Corrected a hook dependency warning. Error test initially selected the framework route announcer too; scoped it to main content. Initial matches now populate shared context so checked outcomes survive detail navigation only for the same scheme version.
 - Commit reference: commit containing this entry; resolve with `git log --format="%h %s" --grep="T1-07"`.
 - Next task: T1-08 application guidance
+
+## T1-08 — F06 application readiness and checklist
+
+- Status: COMPLETED
+- Files: `apps/web/e2e/guidance.spec.ts`, `apps/web/src/app/schemes/[schemeId]/apply/page.tsx`, `apps/web/src/features/guidance/DocumentChecklist.tsx`, `apps/web/src/features/guidance/GuidancePage.tsx`, `apps/web/src/app/globals.css`, `apps/web/src/features/schemes/SchemeDetail.tsx`
+- Verification: Lint, strict typecheck, 17 unit/contract tests and guidance browser journey passed. Checked/un-checked personal readiness, unresolved preconditions, print action and no placeholder apply CTA.
+- Problems: Verified guidance and scheme versions are compared before an external application action. Requirement statuses remain server-provided and personal checkboxes do not assert official verification. Ensured the detail-to-checklist action is visible on mobile.
+- Commit reference: commit containing this entry; resolve with `git log --format="%h %s" --grep="T1-08"`.
+- Next task: T1-09 responsive/accessibility and explanation gate
