@@ -173,3 +173,24 @@ The remaining dependency order is packaging/handoff → live API verification �
 - Problems/dependencies: New select options duplicated verdict text in older test locators; scoped assertions to actual match cards and reran. Mock data remains explicitly synthetic; live dependency is unchanged.
 - Commit reference: resolve with `git log --oneline --grep="UI-04"`.
 - Next task: UI-05
+
+## Redesign task status
+
+| ID | Task | Status |
+| --- | --- | --- |
+| UI-01 | Audit | COMPLETED |
+| UI-02 | Foundation and navigation | COMPLETED |
+| UI-03 | Homepage and input | COMPLETED |
+| UI-04 | Discovery and recommendation cards | COMPLETED |
+| UI-05 | Profile, questions, details and guidance | COMPLETED |
+| UI-06 | Interactions and feedback | IN PROGRESS |
+| UI-07 | Responsive and release verification | PENDING |
+
+## UI-05 — Profile, questions, scheme details and application guidance
+
+- Status: COMPLETED
+- Files: src/features/{profile/ProfileComposer,matching/Recommendations,questions/FollowUpCard,schemes/SchemeDetail,guidance/GuidancePage}.tsx, src/app/globals.css, scripts/{capture-redesign.mjs,redesign-progress.py}, PROGRESS.md
+- Tests/verification: Lint/type checks and ten browser regressions passed: extraction/correction/manual/clear,answer/rematch/edit/not-sure,source/version disclosures,reversible checklist,print and unsafe portal handling. Inspected desktop profile/guidance and mobile recommendation/detail captures.
+- Problems/dependencies: Full-page screenshots placed sticky elements at the current scrolled offset; capture helper now resets scroll and focus before screenshots. This was a capture artifact,not a layout failure. Existing backend gate unchanged.
+- Commit reference: resolve with `git log --oneline --grep="UI-05"`.
+- Next task: UI-06

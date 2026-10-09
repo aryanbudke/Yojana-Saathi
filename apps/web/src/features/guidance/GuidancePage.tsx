@@ -36,9 +36,7 @@ export function GuidancePage({ id }: { id: string }) {
         </Link>
         <p className="eyebrow">A prepared next step</p>
         <h1>
-          Know what to take.
-          <br />
-          Know where to go<span className="green">.</span>
+          Know what to take. Know where to go<span className="green">.</span>
         </h1>
         <p className="muted">
           Application guidance, with a checklist you can work through at your

@@ -22,7 +22,7 @@ import { ModeNotice } from "@/features/profile/ProfileComposer";
 import { useMatching } from "@/features/matching/hooks";
 import { useProfile } from "@/features/profile/hooks";
 import { RuleChecklist } from "@/features/matching/RuleChecklist";
-import { verdictLabels } from "@/features/matching/types";
+import { EligibilityBadge } from "@/features/matching/EligibilityBadge";
 export function SchemeDetail({ id }: { id: string }) {
   const load = useCallback(() => api.detail(id), [id]);
   const r = useResource(load);
@@ -91,11 +91,7 @@ export function SchemeDetail({ id }: { id: string }) {
                 ? "Applications closed"
                 : "Application status unknown"}
           </Badge>
-          {match && (
-            <Badge tone={verdictLabels[match.status].tone}>
-              {verdictLabels[match.status].text}
-            </Badge>
-          )}
+          {match && <EligibilityBadge status={match.status} />}
         </div>
         <h1>{scheme.name}</h1>
         <p className="muted">{scheme.summary}</p>

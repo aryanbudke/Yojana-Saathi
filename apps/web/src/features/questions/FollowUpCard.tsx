@@ -45,12 +45,16 @@ export function FollowUpCard({ matches }: { matches: MatchesResponse }) {
     }
   }
   return (
-    <section className="question-card" aria-labelledby="question-title">
+    <section
+      className="question-card"
+      aria-labelledby="question-title"
+      aria-busy={busy}
+    >
       <div className="row">
         <HelpCircle size={18} />
         <p className="eyebrow">One helpful question</p>
       </div>
-      <h3 id="question-title">A small detail can make things clearer</h3>
+      <h3 id="question-title">Check a missing detail</h3>
       {notice && <InlineAlert>{notice}</InlineAlert>}
       {error && <InlineAlert error>{error}</InlineAlert>}
       {r.loading && !editing ? (

@@ -129,6 +129,7 @@ export function Recommendations() {
             )}
           </div>
           <aside className="stack">
+            {results && <FollowUpCard matches={results} />}
             <GlassPanel className="profile-snapshot">
               <div className="section-heading">
                 <h3>Your profile</h3>
@@ -163,7 +164,6 @@ export function Recommendations() {
                 Your corrections take priority over extracted details.
               </p>
             </GlassPanel>
-            {results && <FollowUpCard matches={results} />}
             <div className="next-step-note">
               <p className="eyebrow">A match is a starting point</p>
               <h3>

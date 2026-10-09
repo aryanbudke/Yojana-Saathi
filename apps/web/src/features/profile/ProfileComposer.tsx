@@ -144,7 +144,7 @@ export function ProfileComposer() {
             <div>
               <p className="eyebrow">02 / CHECK YOUR DETAILS</p>
               <h2 id="review-heading" ref={reviewHeading} tabIndex={-1}>
-                A quick check before we search
+                Check your details
               </h2>
             </div>
             <Badge tone={p.confirmed ? "success" : "warning"}>
@@ -155,6 +155,16 @@ export function ProfileComposer() {
             Correct anything that doesn’t look right. Blank fields stay unknown;
             nothing is assumed.
           </p>
+          <div className="review-summary" aria-live="polite">
+            <span>
+              {fields.filter((f) => p.draft.facts[f.key] !== null).length}{" "}
+              details provided
+            </span>
+            <span>
+              {fields.filter((f) => p.draft.facts[f.key] === null).length} still
+              unknown
+            </span>
+          </div>
           <form
             onSubmit={(e) => {
               e.preventDefault();
@@ -178,6 +188,7 @@ export function ProfileComposer() {
                       f.kind === "boolean" ? (
                         <select
                           id={id}
+                          aria-describedby={`${id}-origin`}
                           className="input"
                           value={
                             v === null
@@ -212,6 +223,7 @@ export function ProfileComposer() {
                       ) : (
                         <Input
                           id={id}
+                          aria-describedby={`${id}-origin`}
                           type={f.kind === "number" ? "number" : "text"}
                           min={f.kind === "number" ? 0 : undefined}
                           max={f.max}
@@ -230,7 +242,7 @@ export function ProfileComposer() {
                           }
                         />
                       )}
-                      <span className="field-origin">
+                      <span id={`${id}-origin`} className="field-origin">
                         {p.draft.origins[f.key] === "user"
                           ? "Edited or confirmed by you"
                           : v === null
