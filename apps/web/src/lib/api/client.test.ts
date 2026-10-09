@@ -127,4 +127,15 @@ describe("contract boundary", () => {
       "https://pmkisan.gov.in/",
     );
   });
+  it("treats an explicit null answer as answered, matching the backend contract", async () => {
+    const api = createMockApi(0);
+    const s = await api.createSession();
+    expect((await api.nextQuestion(s.session_id, "unused")).question).not.toBe(
+      null,
+    );
+    await api.answer(s.session_id, "land_registration", null);
+    expect((await api.nextQuestion(s.session_id, "unused")).question).toBe(
+      null,
+    );
+  });
 });

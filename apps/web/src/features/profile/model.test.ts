@@ -1,6 +1,28 @@
 import { expect, it } from "vitest";
 import { blankFacts, profileSchema } from "@/lib/api/contracts";
-import { fieldValue, mergeExtraction } from "./model";
+import { fieldsToConfirm, fieldValue, mergeExtraction } from "./model";
+it("leaves new unknowns unanswered while saving false, zero and cleared known facts", () => {
+  expect(fieldsToConfirm(blankFacts, blankFacts)).toEqual([]);
+  expect(
+    fieldsToConfirm(
+      {
+        ...blankFacts,
+        age: 0,
+        is_student: false,
+        land_registration: "not_sure",
+      },
+      blankFacts,
+    ),
+  ).toEqual(["age", "land_registration", "is_student"]);
+  expect(
+    fieldsToConfirm(blankFacts, {
+      ...blankFacts,
+      age: 0,
+      is_student: false,
+      land_registration: "yes",
+    }),
+  ).toEqual(["age", "land_registration", "is_student"]);
+});
 it("keeps citizen corrections, including explicit unknown, over repeat extraction", () => {
   const draft = {
     facts: { ...blankFacts, age: 40, family_income_inr: null },

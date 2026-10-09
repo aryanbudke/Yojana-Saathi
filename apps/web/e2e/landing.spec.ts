@@ -85,6 +85,20 @@ test("landing finder confirms, asks and rematches without leaving the page", asy
     path: "test-results/finder-1280.png",
     fullPage: true,
   });
+  await finder
+    .getByLabel("Land registered to your family", { exact: true })
+    .selectOption("");
+  await finder.getByRole("button", { name: "Confirm my details" }).click();
+  await expect(
+    finder
+      .locator(".match-card")
+      .getByText("Needs verification", { exact: true }),
+  ).toBeVisible();
+  await expect(
+    finder.getByText("There are no further questions right now.", {
+      exact: false,
+    }),
+  ).toBeVisible();
   await finder.getByRole("button", { name: "Clear my details" }).click();
   await expect(finder.locator(".match-card")).toHaveCount(0);
 });

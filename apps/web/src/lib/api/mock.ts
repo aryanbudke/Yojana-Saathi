@@ -59,7 +59,7 @@ export function createMockApi(delay = 350): Api {
       await wait();
       const s = session(session_id);
       s.facts = { ...s.facts, [field]: value };
-      if (field === "land_registration") s.answered = value !== null;
+      if (field === "land_registration") s.answered = true;
       return answerSchema.parse({
         session_id,
         facts: s.facts,

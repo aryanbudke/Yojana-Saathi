@@ -26,7 +26,7 @@ The base URL is an origin, **without `/api/v1`**. Restart development or rebuild
 
 Configure backend CORS to allow the exact frontend origin. HTTPS is required for deployed services. Set `NEXT_PUBLIC_REVIEWED_OFFICIAL_HOSTS` only for additional exact public source hosts independently approved by the curator; `gov.in` and `nic.in` links are accepted by the navigation filter by default, but domain acceptance alone does not certify policy correctness.
 
-The current repository implements sessions, answers, scheme discovery/details and guidance. Extraction, matching and question selection still require Developer 3's routes. Do not describe mock-mode success as live integration.
+The current backend source implements sessions, answers, scheme discovery/details, guidance, extraction, matching and question selection. A running API origin, CORS and reviewed published records are still required for a live verification run. Do not describe mock-mode success as live integration.
 
 ## Verification
 

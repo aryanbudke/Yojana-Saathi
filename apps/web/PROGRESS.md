@@ -276,7 +276,7 @@ Brief: complete 10-section GovTech landing page in the confirmed direction (ivor
 | SR-06 Categories/sources | COMPLETED |
 | SR-07 Guidance/footer | COMPLETED |
 | SR-08 Responsive | COMPLETED |
-| SR-09 API journeys | PENDING |
+| SR-09 API journeys | COMPLETED |
 | SR-10 Visual/accessibility polish | PENDING |
 
 ## SR-05 — Interactive finder and matching preview
@@ -314,3 +314,13 @@ Brief: complete 10-section GovTech landing page in the confirmed direction (ivor
 - Problems: initial matrix found low-contrast decorative step numerals and4.4:1 secondary text on sage. Used accent-ink for numerals and a scoped sage-ink token for preview text. Enlarged example/brand/text-link/match-title/footer link targets to44px. Test diagnostic output now records compact actionable targets. No reference image exists; comparison remains against the approved written direction.
 - Commit: commit containing this entry, resolve with `git log --oneline --grep=SR-08`.
 - Next: SR-09 complete API-client/user-flow regression gate.
+
+## SR-09 — API contracts and existing user journeys
+
+- Status: COMPLETED (frontend wiring and mock/contract verification; live integration remains unverified).
+- Files: src/features/profile/{hooks.tsx,model.ts,model.test.ts}, src/lib/api/{mock.ts,client.test.ts}, e2e/landing.spec.ts, scripts/check_backend.py, artifacts/backend-readiness.json, README.md, HANDOFF.md, PROGRESS.md.
+- Verification: lint and strict TypeScript passed; 21 unit/contract tests and all 28 browser journeys passed. The affected landing flow also passed after adding an explicit clear-after-follow-up assertion. Existing extraction/review/manual/confirmation, filters/history, question yes/no/not-sure/edit/skip/rematch, clear, details, guidance, keyboard and responsive/axe coverage passed. Static backend audit self-check confirms every core route exists in fetched main f14fb2c, including the mounted AI routes; this is not a live test.
+- Problems/fix: initial confirmation submitted null for every unanswered field, suppressing real backend questions. Submit provided values and previously saved fields only, retaining zero/false and sending null when clearing known facts. Successful writes update the session snapshot, including follow-up answers and partial saves. Mock explicit-null behavior now follows the backend answered-field contract, so browser regressions expose this bug rather than masking it.
+- Integration dependency: localhost:8000 health check refused the connection; no deployed live origin or independently reviewed dataset was supplied. Historical T1-11 stays BLOCKED. No backend-owned file changed, no synthetic fixture passed off as live evidence. Screenshot reference remains absent; written brief used.
+- Commit: commit containing this entry, resolve with `git log --oneline --grep=SR-09`.
+- Next: SR-10 final desktop/mobile screenshot inspection, Impeccable polish and production checks.

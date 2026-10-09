@@ -22,7 +22,7 @@ Contracts were read directly from Developer 2's `services/api/app/schemas` and f
 | Guidance          | `GET /api/v1/guidance/{id}`             | Optional `session_id` for a confirmed profile                              |
 | Delete session    | `DELETE /api/v1/profiles/sessions/{id}` | Clear control; 204 and already-expired 404 both permit local clearing      |
 
-The checked-in backend currently lacks the extract, match and next-question routers. Their live behavior, CORS, deployed URL and real reviewed dataset remain external integration dependencies. The proposed Markdown API examples are abridged; the implemented DTOs include `manual_review_rules`, richer sources, all profile fields and `may_be_required` document status. Frontend types retain those fields.
+The checked-in backend now includes extract, match and next-question routers, mounted in `app/main.py`. Their live behavior, CORS, deployed URL and real reviewed dataset remain external integration dependencies. The proposed Markdown API examples are abridged; the implemented DTOs include `manual_review_rules`, richer sources, all profile fields and `may_be_required` document status. Frontend types retain those fields.
 
 ## Error and trust boundaries
 
@@ -30,6 +30,7 @@ The checked-in backend currently lacks the extract, match and next-question rout
 - No silent switch from live failure to mocks.
 - Model extraction can fail while manual entry remains available.
 - Explicit unknown and Not sure do not become zero, false or assumed ownership.
+- Initial blank fields are not submitted as answers, so backend follow-up questions remain available. Clearing a previously saved field submits null; each successful write updates the session snapshot even if a later write fails.
 - Citizen corrections override repeated extraction, including deliberately cleared fields.
 - Confirmed fields are locked during saving; extraction/confirmation/answer loading is visible and announced.
 - Match cache is keyed by session and exact facts. Detail checks are reused only for the matching scheme version.
@@ -49,7 +50,7 @@ These are frontend/contract checks. They do not measure eligibility accuracy, ce
 
 ## Release dependencies
 
-1. Developer 3 implements and validates extract/matches/questions against the frozen DTOs.
+1. Verify the implemented extract/matches/questions routes against the frozen DTOs on the running backend.
 2. Backend owner provides the deployed HTTPS origin, CORS allowlist, session retention job and reviewed published scheme records.
 3. Run extract → review → confirm → match → question → answer → rematch → details → guidance against that real API, including failure/expiry paths.
 4. Deploy the verified branch to Vercel with `apps/web` as project root and public live environment settings, then run the same live smoke demo.
@@ -58,7 +59,7 @@ Saved UI and reviewed Hindi copy remain optional after the real P0 flow passes. 
 
 ## Current backend readiness audit
 
-`artifacts/backend-readiness.json` records the latest fetched backend main and its route decorators. On 9 October 2026, the three missing core routes were extract, matches and next-question; the documented local health endpoint was unavailable and no deployed API origin was supplied. T1-11 is BLOCKED; T1-12 has not started. Use `python3 scripts/check_backend.py` after fetching main to refresh the static audit, then run an actual live smoke test once the service exists. The static audit alone must never be treated as a live pass.
+`artifacts/backend-readiness.json` records the fetched backend main and its route decorators. The 10 October 2026 static review includes Developer 3's mounted AI router and finds all core routes. A read-only health check still found no service on localhost:8000, and no deployed API origin was supplied. The historical T1-11 live gate remains BLOCKED; T1-12 has not started. Use `python3 scripts/check_backend.py` after fetching main to refresh the static audit, then run an actual live smoke test once the service exists. The static audit alone must never be treated as a live pass.
 
 ## UI redesign handoff
 
