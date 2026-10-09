@@ -79,29 +79,29 @@ supports reproducible explanations without model calls.
 
 The latest verification gate produced these results:
 
-- 81 pytest tests passed with 91% line coverage;
-- Ruff lint and format checks passed across 72 Python files;
-- strict mypy passed across 64 application/test source files;
+- 82 pytest tests passed with 91% line coverage;
+- Ruff lint and format checks passed across 73 Python files;
+- strict mypy passed across 65 application/test source files;
 - Alembic reported one head (`20261009_0004`) and rendered the complete
   PostgreSQL upgrade chain;
 - Supabase runs that head with all 12 application tables present and protected
   by row-level security;
 - the deterministic OpenAPI artifact contains 11 paths and has a drift test;
-- production-mode startup bound to an injected Railway `PORT`;
+- production-mode startup bound to an injected platform `PORT`;
 - `/health` returned HTTP 200 and production `/docs` returned HTTP 404; and
 - CORS, fixed error envelopes, source integrity, publication hiding,
   immutability, role denial, session expiry, and duplicate bookmark behavior
   have automated tests.
 
-Railway configuration uses a pre-deploy Alembic migration, Uvicorn start command,
-deploy-time `/health` check, and bounded restart policy. Secrets are configured
-through environment variables rather than committed files.
+The Render Blueprint uses a migration-gated Uvicorn start command and a
+deploy-time `/health` check. Secrets are configured through environment
+variables rather than committed files.
 
 ## Honest limitations and remaining integration
 
 The implementation has been migrated to Supabase through revision
-`20261009_0004`, but it has not been deployed to Railway. Railway project
-credentials and a public domain are absent.
+`20261009_0004`, but it has not been deployed to Render. An authenticated
+Render service and public domain are absent.
 
 The user retained ownership of manual scheme collection. Consequently, no real
 verified production dataset snapshot exists yet. The backend is designed to

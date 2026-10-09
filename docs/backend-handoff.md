@@ -12,8 +12,8 @@ Two external deliverables remain unavailable:
 - **Production dataset:** no user-curated real scheme bundle has been supplied.
   The only seed is the reserved `.invalid` synthetic test fixture and production
   seeding rejects it.
-- **Live API URL:** no authenticated Railway project/token has been supplied.
-  No deployment has been claimed.
+- **Live API URL:** the Render Blueprint is ready, but no authenticated Render
+  service has been created. No deployment has been claimed.
 
 The Supabase database is migrated through Alembic revision `20261009_0004`.
 All 12 application tables have row-level security enabled, but they contain no
@@ -51,7 +51,7 @@ Verification commands:
 - Contract fixtures: `packages/contracts/fixtures/`
 - Synthetic seed: `services/api/tests/fixtures/minimal_seed.json`
 - Environment template: `services/api/.env.example`
-- Railway config: `services/api/railway.json`
+- Render Blueprint: `render.yaml`
 
 Regenerate OpenAPI after route or DTO changes:
 
@@ -86,15 +86,15 @@ Validate, seed, review, and publish only independently reviewed bundles:
 .venv/bin/python -m app.cli.curation publish VERSION_UUID --actor PUBLISHER_ID
 ```
 
-For Railway, configure the service root as `services/api`. Add production
-variables in Railway, including the database URL, CORS allowlist, and separate
-reviewer/publisher credentials. The checked-in config runs migrations before
-starting and gates traffic on `/health`.
+Import the repository's `render.yaml` as a Render Blueprint. Supply the
+database URL and CORS allowlist when prompted; add separate reviewer/publisher
+credentials only if admin APIs are enabled. The checked-in config runs
+migrations before starting and gates traffic on `/health`.
 
 After the user supplies approved scheme data:
 
 1. Validate the bundle locally.
 2. Seed, query, and inspect real records through the publication boundary.
-3. Deploy the exact verified commit to Railway.
+3. Deploy the exact verified commit to Render.
 4. Record the public API URL and smoke-test `/health`, `/api/v1/schemes`, scheme
    detail, guidance, CORS, admin denial, and error payloads.
