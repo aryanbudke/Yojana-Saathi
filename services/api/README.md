@@ -91,3 +91,11 @@ must use HTTPS with a reviewed named public host; reserved placeholder domains,
 embedded credentials, localhost/private targets, and raw IP hosts are rejected.
 The `allow_test_urls` override exists only for synthetic test fixtures and is
 never used by the curation CLI or administrative API.
+
+## Guest saved schemes
+
+Active anonymous sessions can call `GET /api/v1/saved`, `POST /api/v1/saved`,
+and `DELETE /api/v1/saved/{scheme_id}`. Saves are idempotent, capped at 50 per
+session, isolated by session ID, and only return schemes that still pass the
+verified public-publication boundary. Deleting or purging the parent session
+cascades to its saved rows in PostgreSQL.

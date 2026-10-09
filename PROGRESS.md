@@ -21,7 +21,7 @@ only after its acceptance checks pass and its work is committed.
 | T2-14 | F01 ephemeral sessions and confirmed facts | COMPLETED |
 | T2-15 | Matching and question repository/service interfaces | COMPLETED |
 | T2-16 | Admin restrictions and official URL validation | COMPLETED |
-| T2-17 | Optional F07 guest saves (after all P0 work) | PENDING |
+| T2-17 | Optional F07 guest saves (after all P0 work) | COMPLETED |
 | T2-18 | Supabase migration/seed and real-record smoke test | PENDING |
 | T2-19 | Backend deployment and secret configuration | PENDING |
 | T2-20 | Full backend verification gate | PENDING |
@@ -304,3 +304,26 @@ only after its acceptance checks pass and its work is committed.
   suite passed after both corrections.
 - **Commit reference:** `HEAD` — `feat(admin): secure curation and validate official URLs`
 - **Next task:** T2-17 — Optional guest saved schemes
+
+## T2-17 — Optional F07 guest saved schemes
+
+- **Status:** COMPLETED
+- **Files created or modified:** `services/api/app/main.py`,
+  `services/api/app/schemas/saved.py`,
+  `services/api/app/services/saved_schemes.py`,
+  `services/api/app/services/scheme_discovery.py`,
+  `services/api/app/api/v1/saved.py`,
+  `services/api/tests/test_saved_schemes_api.py`, `services/api/README.md`, and
+  `PROGRESS.md`.
+- **Tests executed:**
+  - `.venv/bin/ruff check .` — passed
+  - `.venv/bin/ruff format --check .` — passed (68 files)
+  - `.venv/bin/mypy app tests` — passed (62 source files)
+  - `.venv/bin/pytest --cov=app --cov-report=term-missing` — 78 passed,
+    91% coverage; one upstream Starlette TestClient deprecation warning
+- **Problems encountered:** FastAPI's re-exported test client exposes an
+  untyped `post` return to mypy, so the test helper now applies one explicit
+  response cast. Import ordering and formatting were normalized before the
+  clean full-suite rerun.
+- **Commit reference:** `HEAD` — `feat(api): add guest saved schemes`
+- **Next task:** T2-18 — Supabase migration, seed, and smoke query
