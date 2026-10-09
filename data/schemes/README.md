@@ -28,5 +28,6 @@ with exit code2; it never creates a replacement synthetic dataset.
 `staging-review.json` is a review artifact, not a published seed or indexing input.
 Use the original cleaned JSON for indexing. Do not import `schemes.index`,
 `scheme_embeddings.npy`, `indexed_documents.json`, `scheme_documents.json` or the
-CSV into pgvector. See `docs/ai/NOTEBOOK_INTEGRATION.md` for the existing protected indexing/search
-workflow; live verification remains blocked.
+CSV into pgvector. See [the data workflow](../../docs/rag/DATA_WORKFLOW.md) for compatibility preflight,
+transactional indexing and protected retrieval verification; live checks remain
+blocked.

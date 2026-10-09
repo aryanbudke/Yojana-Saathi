@@ -77,7 +77,7 @@ These local prerequisites are authorized by the dataset follow-up. Complete A be
 | Task | Status | Dependency |
 | --- | --- | --- |
 | RAG-04-A Locate exports and prepare canonical import | COMPLETED | Search whole repository; if missing, document `data/schemes/schemes_clean.json` and verify fail-closed import command |
-| RAG-04-B Embedding compatibility and verification workflow | PENDING | A committed; reuse existing pipeline, reject384-dimensional vectors, read-only database preflight before indexing, synthetic automated checks |
+| RAG-04-B Embedding compatibility and verification workflow | COMPLETED | A committed; reuse existing pipeline, reject384-dimensional vectors, read-only database preflight before indexing, synthetic automated checks |
 | RAG-04-C Actual dataset/database verification | BLOCKED | Actual CSV/export, authorized pgvector database and server environment; no frontend changes |
 
 ### RAG-04-A — Locate exports and prepare canonical import
@@ -89,5 +89,24 @@ These local prerequisites are authorized by the dataset follow-up. Complete A be
 - Command: existing importer expects `../../data/schemes/schemes_clean.json` from `services/api`; new artifact filename `../../data/schemes/staging-review.json`. Import command is credential-free and cannot publish or overwrite output.
 - Tests: canonical missing-input command exited2 as expected; no output/dataset created. Existing importer tests10 passed; relevant Ruff/mypy and diff checks passed. No Python code changes in this task.
 - Problems: dataset still absent; historical count3,397 is not reproduced or asserted.
-- Commit: task commit `docs(ai): prepare missing notebook dataset handoff` (exact reference recorded in next task update).
+- Commit: `0bc05dc` — `docs(ai): prepare missing notebook dataset handoff`.
 - Next task: RAG-04-B after commit.
+
+### RAG-04-B — Embedding compatibility and verification workflow
+
+- Status: COMPLETED (prepared/tested locally; live workflow not executed)
+- Scope/files: compatibility regression in existing indexing tests, `docs/rag/DATA_WORKFLOW.md`, dataset README/runbook links and this progress file. Reuse existing importer/indexer/search/ask; no new models, providers, dimensions or frontend code.
+- Compatibility: notebook MiniLM/FAISS384 versus backend Gemini retrieval768. No FAISS import, vector padding/truncation or mixed-model index. Backend validates provider dimensionality and finite nonzero float32 values before replacement; re-embed raw cleaned records using the same configured model as queries.
+- Workflow: offline validation/quality summary, read-only pgvector schema and environment preflight, transactional indexing, count/hash validation and protected retrieval/citation checks. No live command will run against absent data/credentials.
+- Tests: added synthetic384-dimension regression; existing replacement validator rejected it before deletion and preserved the old snapshot. Focused indexing/retrieval65 passed,2 PostgreSQL skips; full backend323 passed,2 skips,94% app coverage. Ruff lint/format and strict mypy97 files passed. All4 documented Python blocks parse/compile; offline quality-summary block executed with a labeled synthetic export and correctly counted missing eligibility/official_url. No live database/provider/API assertions in the new workflow were executed. Diff/unchanged-frontend checks passed.
+- Problems: database/model identity metadata is not stored in existing staging table. Keep document/query configuration identical; model changes require full re-embedding and coordinated backend configuration/restart, even if dimensions match. No schema ownership changes authorized.
+- Commit: task commit `test(ai): verify notebook vector incompatibility and data workflow` (reference by title in branch history).
+- Next task: RAG-04-C real-data/database gate, blocked until inputs exist.
+
+### RAG-04-C — Actual dataset/database verification
+
+- Status: BLOCKED
+- Files: this progress file only; no real dataset or database mutation.
+- Required resources remain absent: actual cleaned JSON or CSV and authorized pgvector/server configuration. The previous Render health/read-only observations remain historical evidence, not new real-data verification. Two actual PostgreSQL tests skipped; no source authenticity, real count3,397, semantic retrieval quality or real Gemini answer support claimed.
+- Ready command expects repository-root `data/schemes/schemes_clean.json`; supply the actual file there and configure secrets server-side to resume the documented workflow. No further credentials requested in chat.
+- Next task: execute real preflight/index/retrieval gates once resources are available; record actual results and denominators before completion.

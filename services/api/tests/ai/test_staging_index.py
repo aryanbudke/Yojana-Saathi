@@ -78,7 +78,14 @@ def slugs(engine: Engine) -> list[str]:
 
 @pytest.mark.parametrize(
     "vectors",
-    [[], [[0.0] * DIMENSIONS], [[1.0]], [[float("nan")] * DIMENSIONS], [[1e100] * DIMENSIONS]],
+    [
+        [],
+        [[0.0] * DIMENSIONS],
+        [[1.0]],
+        [[float("nan")] * DIMENSIONS],
+        [[1e100] * DIMENSIONS],
+        [[1.0] + [0.0] * 383],
+    ],
 )
 def test_invalid_vectors_fail_before_snapshot_delete(
     database: Engine, export: Path, vectors: list[list[float]]

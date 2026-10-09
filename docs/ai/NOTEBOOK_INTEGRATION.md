@@ -89,3 +89,13 @@ Use a fresh environment installed from this checkout for actual CLI execution. T
 The adapter tests use explicitly synthetic temporary records. They verify that raw text is preserved, false verification claims cannot publish, missing eligibility remains visible, invalid/duplicate inputs fail, CLI import works and failures do not overwrite existing output.
 
 The real export is still needed to run the actual import. The recorded Render backend health is reachable, but curator search currently returns503 because its administrative role is unconfigured; this is not a successful RAG verification. Phase C also requires independent profile labels, real guidance review and frontend/live evidence. This connection does not establish official source authenticity, matching accuracy or a completed live integration.
+
+## Canonical dataset handoff
+
+The expected input is now repository-root `data/schemes/schemes_clean.json`; no
+actual dataset is present. Follow [the sequential data workflow](../rag/DATA_WORKFLOW.md)
+for offline schema/count/quality review, read-only database/provider compatibility
+preflight, indexing and protected retrieval checks. The notebook's384-dimensional
+MiniLM/FAISS artifacts are incompatible with this768-dimensional Gemini index:
+re-embed the cleaned JSON using the query server's configured model. Never pad,
+truncate or mix old vectors, and keep all records as curator-only drafts.
