@@ -24,7 +24,7 @@ only after its acceptance checks pass and its work is committed.
 | T2-17 | Optional F07 guest saves (after all P0 work) | COMPLETED |
 | T2-18 | Supabase migration/seed and real-record smoke test | BLOCKED |
 | T2-19 | Backend deployment and secret configuration | BLOCKED |
-| T2-20 | Full backend verification gate | PENDING |
+| T2-20 | Full backend verification gate | COMPLETED |
 | T2-21 | Dataset/OpenAPI/runbook handoff | PENDING |
 | T2-22 | Provenance and database-design report contribution | PENDING |
 
@@ -365,3 +365,25 @@ only after its acceptance checks pass and its work is committed.
   externally yet. No secrets were written to Git.
 - **Commit reference:** `HEAD` — `chore(deploy): prepare Railway service configuration`
 - **Next task:** T2-20 — Full backend verification gate
+
+## T2-20 — Full backend verification gate
+
+- **Status:** COMPLETED
+- **Files created or modified:** `PROGRESS.md` only.
+- **Tests executed:**
+  - `.venv/bin/ruff check .` — passed
+  - `.venv/bin/ruff format --check .` — passed (68 files)
+  - `.venv/bin/mypy app tests` — passed (62 source files)
+  - `.venv/bin/pytest --cov=app --cov-report=term-missing` — 78 passed,
+    91% coverage; one upstream Starlette TestClient deprecation warning
+  - `.venv/bin/alembic heads` — one head, `20261009_0003`
+  - `.venv/bin/alembic history` — complete three-migration chain
+  - `.venv/bin/alembic upgrade head --sql` — complete PostgreSQL DDL rendered
+  - FastAPI OpenAPI generation — 11 paths and all required backend-owned paths
+    present
+  - `git diff --check` — passed
+- **Problems encountered:** No project failures. The sole warning is an upstream
+  Starlette deprecation notice for FastAPI's current TestClient re-export on
+  Python 3.14; it does not affect runtime behavior.
+- **Commit reference:** `HEAD` — `test(api): complete backend verification gate`
+- **Next task:** T2-21 — Dataset/OpenAPI/runbook handoff
