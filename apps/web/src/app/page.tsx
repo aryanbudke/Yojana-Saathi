@@ -3,6 +3,8 @@ import { FeatureStrip } from "@/features/landing/FeatureStrip";
 import { HeroSection } from "@/features/landing/HeroSection";
 import { HowItWorks } from "@/features/landing/HowItWorks";
 import { SchemeFinder } from "@/features/landing/SchemeFinder";
+import { PopularCategories } from "@/features/landing/PopularCategories";
+import { OfficialSources } from "@/features/landing/OfficialSources";
 
 export default function Home() {
   return (
@@ -12,6 +14,8 @@ export default function Home() {
       <FeatureStrip />
       <HowItWorks />
       <SchemeFinder />
+      <PopularCategories />
+      <OfficialSources />
     </>
   );
 }

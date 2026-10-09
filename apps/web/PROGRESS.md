@@ -273,7 +273,7 @@ Brief: complete 10-section GovTech landing page in the confirmed direction (ivor
 | SR-03 Hero/benefits | COMPLETED |
 | SR-04 How it works | COMPLETED |
 | SR-05 Interactive finder | COMPLETED |
-| SR-06 Categories/sources | PENDING |
+| SR-06 Categories/sources | COMPLETED |
 | SR-07 Guidance/footer | PENDING |
 | SR-08 Responsive | PENDING |
 | SR-09 API journeys | PENDING |
@@ -287,3 +287,12 @@ Brief: complete 10-section GovTech landing page in the confirmed direction (ivor
 - Problems: corrected an exact-label test selector and reran the affected suite serially after overlapping Playwright artifact cleanup caused a test-runner error. Reused existing hooks, MatchCard and FollowUpCard rather than duplicating business logic. Discovery stays functional on /discover; screenshot reference absent. Mock mode remains explicit, and no live success is claimed.
 - Commit: commit containing this entry, resolve with `git log --oneline --grep=SR-05`.
 - Next: SR-06 categories and verified external destinations.
+
+## SR-06 — Categories and official sources
+
+- Status: COMPLETED
+- Files: src/features/landing/{PopularCategories,OfficialSources}.tsx, sections.module.css, src/app/page.tsx, e2e/landing.spec.ts, PROGRESS.md.
+- Verification: lint and strict TypeScript passed; two new browser journeys passed at375/1280. Six category links reach existing /discover URL filters; four HTTPS government destinations use the existing safe external-link component with new-tab announcements and noreferrer. Actual category/source screenshots inspected. National Portal and Gazette primary web evidence checked; local direct reachability of directory/Gazette links failed in this network, so no current availability guarantee is claimed. Links were also checked in the earlier SR-01 review.
+- Problems: source destinations are discovery references, not proof of synthetic-record verification or official endorsement. No government seals, scraped policy or new backend categories are invented. Reference image absent; written brief used.
+- Commit: commit containing this entry, resolve with `git log --oneline --grep=SR-06`.
+- Next: SR-07 application guidance, complete footer and honest informational routes.
