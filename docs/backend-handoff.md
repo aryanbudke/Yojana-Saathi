@@ -9,9 +9,10 @@ saves are implemented on `feat/backend-db`.
 
 One external deliverable remains unavailable:
 
-- **Production dataset:** no user-curated real scheme bundle has been supplied.
-  The only seed is the reserved `.invalid` synthetic test fixture and production
-  seeding rejects it.
+- **Production dataset:** 3,397 SarkarSeva candidates are stored in Supabase as
+  private `draft` versions for future curation. None has official provenance or
+  independent review, so there are zero verified public schemes. The reserved
+  `.invalid` synthetic test fixture was not loaded into production.
 
 The production API is live at
 `https://yojana-saathi-api.onrender.com`. External smoke tests verified health,
@@ -19,8 +20,9 @@ production documentation denial, Supabase-backed scheme listing, CORS, and the
 standard not-found error envelope.
 
 The Supabase database is migrated through Alembic revision `20261009_0004`.
-All 12 application tables have row-level security enabled, but they contain no
-production records because the reviewed real-scheme bundle is still pending.
+All 12 application tables have row-level security enabled. Draft candidates are
+excluded from every public query until official sources, source-linked rules,
+independent review, and publication metadata are present.
 
 ## Local runbook
 
@@ -53,6 +55,7 @@ Verification commands:
 - Generated OpenAPI: `services/api/openapi.json`
 - Contract fixtures: `packages/contracts/fixtures/`
 - Synthetic seed: `services/api/tests/fixtures/minimal_seed.json`
+- Draft importer: `services/api/app/cli/import_drafts.py`
 - Environment template: `services/api/.env.example`
 - Render Blueprint: `render.yaml`
 

@@ -122,14 +122,31 @@ only after its acceptance checks pass and its work is committed.
 ## T2-05–T2-07 and T2-09 — Real-scheme data work
 
 - **Status:** BLOCKED
-- **Files created or modified:** `PROGRESS.md`
-- **Tests executed:** Not applicable; no real scheme data was committed.
-- **Problems encountered:** On 2026-10-09 the user explicitly took ownership
-  of choosing schemes and manually collecting/scraping their official source
-  material. The stopped research produced no repository data. These tasks must
-  resume only after the user supplies that reviewed input; synthetic fixtures
-  remain clearly labeled and cannot satisfy this gate.
-- **Commit reference:** Pending progress-only record
+- **Files created or modified:** `services/api/app/db/draft_import.py`,
+  `services/api/app/cli/import_drafts.py`,
+  `services/api/tests/test_draft_import.py`, `services/api/README.md`, and
+  `PROGRESS.md`.
+- **Tests executed:** The supplied SarkarSeva archive validated at exactly
+  3,397 unique cleaned rows. Importer tests prove deterministic IDs,
+  idempotency, explicit-unverified enforcement, and exclusion from public
+  publication queries.
+  - First Supabase import — 3,397 inserted, zero skipped
+  - Second Supabase import — zero inserted, 3,397 skipped
+  - Live database inspection — 3,397 schemes, 3,397 draft versions, zero
+    sources/rules/documents/steps, and zero public candidates
+  - Deployed `GET /api/v1/schemes` — 200 with an empty typed collection
+  - `.venv/bin/ruff check .` — passed
+  - `.venv/bin/ruff format --check .` — passed (76 files)
+  - `.venv/bin/mypy app tests` — passed (68 source files)
+  - `.venv/bin/pytest --cov=app --cov-report=term-missing` — 86 passed,
+    91% coverage; one upstream Starlette TestClient deprecation warning
+- **Problems encountered:** At the user's direction, all 3,397 records were
+  imported to Supabase as `unknown` schemes with private `draft` versions.
+  Their raw text is retained for future curation, but the archive has no
+  official source URLs, verification dates, source-linked rules, or independent
+  review. Therefore this staging import does not complete T2-05–T2-07 or T2-09
+  and none of the records can be published.
+- **Commit reference:** `HEAD` — `feat(data): import SarkarSeva candidates as private drafts`
 - **Next task:** T2-08 — Enforce source linkage and immutable published versions
 
 ## T2-08 — Enforce source linkage and immutable published versions
@@ -346,7 +363,8 @@ only after its acceptance checks pass and its work is committed.
   - Live immutability inspection — five triggers and two trigger functions
     present
   - Live RLS inspection — enabled on 12/12 application tables
-  - Live data inspection — zero schemes, versions, sources, or audit rows
+  - Initial live data inspection before draft import — zero schemes, versions,
+    sources, or audit rows
   - `.venv/bin/ruff check .` — passed
   - `.venv/bin/ruff format --check .` — passed (72 files)
   - `.venv/bin/mypy app tests` — passed (64 source files)
@@ -354,10 +372,11 @@ only after its acceptance checks pass and its work is committed.
     91% coverage; one upstream Starlette TestClient deprecation warning
 - **Problems encountered:** Blank optional admin variables initially prevented
   settings startup; empty values are now ignored and regression-tested. The
-  schema migration and security checks are complete, but the user-curated,
-  independently reviewed real-scheme bundle has not been supplied. The
-  synthetic `.invalid` fixture was deliberately not inserted into production,
-  so real-record seeding and API smoke tests remain blocked.
+  schema migration and security checks are complete. Supabase now contains
+  3,397 private draft candidates, but none has official provenance or review
+  evidence. The synthetic `.invalid` fixture was deliberately not inserted into
+  production, so verified-record seeding and public API smoke tests remain
+  blocked.
 - **Commit reference:** `HEAD` — `feat(db): migrate and secure Supabase schema`
 - **Next task:** Supply and review the real scheme seed bundle, then validate,
   seed, and smoke-query it before marking T2-18 complete
