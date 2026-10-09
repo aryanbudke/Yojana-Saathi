@@ -100,14 +100,20 @@ session, isolated by session ID, and only return schemes that still pass the
 verified public-publication boundary. Deleting or purging the parent session
 cascades to its saved rows in PostgreSQL.
 
-## Railway deployment
+## Render deployment
 
-The checked-in `railway.json` uses Railpack, runs `alembic upgrade head` as a
-pre-deploy command, starts Uvicorn on Railway's injected `PORT`, and gates
-traffic on `GET /health`. When connecting this monorepo, set the Railway service
-root directory to `services/api`.
+The root `render.yaml` Blueprint configures a free Python web service in
+Singapore with `services/api` as its monorepo root. The startup command applies
+`alembic upgrade head` before starting Uvicorn on Render's injected `PORT`, and
+Render gates traffic on `GET /health`. Migration failure therefore prevents an
+unmigrated release from serving requests.
 
-Configure secrets as Railway service variables, never repository files:
+Render's dedicated pre-deploy command requires a paid service, so the free-plan
+Blueprint intentionally performs the migration in the start command. Keep the
+service at one instance while using this configuration.
+
+During Blueprint creation, provide these secret variables in Render, never in
+repository files:
 
 - `APP_ENV=production`
 - `DATABASE_URL` using the Supabase PostgreSQL session pooler URL and the
@@ -116,6 +122,7 @@ Configure secrets as Railway service variables, never repository files:
 - separate `ADMIN_REVIEW_TOKEN`/`ADMIN_REVIEWER_ID` and
   `ADMIN_PUBLISH_TOKEN`/`ADMIN_PUBLISHER_ID` pairs if admin APIs are enabled
 
-After deployment, generate a Railway domain and smoke-test `/health`, `/docs`
-(non-production only), and one verified `/api/v1/schemes` query. Production
-OpenAPI UI is intentionally disabled.
+Deploy from the `feat/backend-db` branch while this work is under review. After
+merging, change the Blueprint branch to `main`. Smoke-test the generated
+`onrender.com` URL at `/health`, confirm `/docs` returns 404 in production, and
+query one verified `/api/v1/schemes` record after real data is seeded.
