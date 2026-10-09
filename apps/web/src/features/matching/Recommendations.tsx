@@ -5,6 +5,7 @@ import {
   Badge,
   Button,
   GlassPanel,
+  EmptyState,
   InlineAlert,
   Skeleton,
 } from "@/components/ui";
@@ -49,8 +50,7 @@ export function Recommendations() {
         </p>
       </section>
       {!sessionId ? (
-        <div className="empty">
-          <h2>Start with your details</h2>
+        <EmptyState title="Start with your details">
           <p>
             Review and confirm a profile before checking scheme conditions.
             Profile data stays in this tab’s memory.
@@ -58,7 +58,7 @@ export function Recommendations() {
           <Link className="button primary" href="/discover">
             Create my profile
           </Link>
-        </div>
+        </EmptyState>
       ) : (
         <div className="recommendation-layout">
           <div className="stack">
@@ -117,15 +117,14 @@ export function Recommendations() {
                 ))}
               </>
             ) : (
-              <div className="empty">
-                <h3>No matches found yet</h3>
+              <EmptyState title="No matches found yet">
                 <p>
                   Try correcting your details or explore the scheme catalogue.
                 </p>
                 <Link className="button secondary" href="/discover">
                   Edit profile or browse
                 </Link>
-              </div>
+              </EmptyState>
             )}
           </div>
           <aside className="stack">

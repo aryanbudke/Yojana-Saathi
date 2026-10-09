@@ -2391,3 +2391,134 @@ section[id] {
     grid-template-columns: 1fr;
   }
 }
+
+/* Purposeful interaction and feedback */
+.button,
+.category-chip,
+.header nav a,
+.input,
+.radio-option,
+.scheme-card,
+.match-card {
+  transition:
+    background-color 180ms ease,
+    border-color 180ms ease,
+    box-shadow 180ms ease,
+    transform 180ms ease;
+}
+.button:active:not(:disabled) {
+  transform: translateY(0);
+}
+.button.primary:active:not(:disabled) {
+  background: var(--deep);
+}
+.button:disabled:hover {
+  transform: none;
+}
+.button[aria-busy="true"] {
+  cursor: progress;
+}
+.input:focus-visible {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px rgb(31 90 58 / 8%);
+}
+.header nav a:hover {
+  background: var(--sage);
+  color: var(--primary);
+}
+.radio-option:focus-within {
+  outline: 2px solid var(--primary);
+  outline-offset: 3px;
+}
+.profile-review h2:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 6px;
+  border-radius: 4px;
+}
+.skeleton {
+  height: auto;
+  min-height: 180px;
+  border: 1px solid var(--line);
+  background: rgb(255 255 255 / 75%);
+  border-radius: var(--radius);
+  padding: 24px;
+  display: grid;
+  gap: 14px;
+  animation: none;
+}
+.skeleton-line {
+  display: block;
+  border-radius: 5px;
+  background: #dfe8df;
+  height: 10px;
+  width: 100%;
+  animation: pulse 1.4s ease-in-out infinite;
+}
+.skeleton-line.short {
+  width: 24%;
+}
+.skeleton-line.title {
+  width: 70%;
+  height: 18px;
+}
+.skeleton-line.medium {
+  width: 85%;
+}
+.skeleton-line.action {
+  width: 35%;
+  height: 32px;
+  margin-top: 8px;
+}
+.empty p {
+  margin-bottom: 16px;
+  max-width: 680px;
+  font-size: 14px;
+}
+.empty .button {
+  margin-top: 8px;
+}
+.explanation[open] > div,
+.detail-section[open] > div,
+.question-reason[open] > p {
+  animation: reveal 180ms ease-out;
+}
+@keyframes reveal {
+  from {
+    opacity: 0.4;
+    transform: translateY(3px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@media (hover: hover) and (pointer: fine) {
+  .scheme-card:hover,
+  .match-card:hover {
+    border-color: #b8cbbd;
+    box-shadow: 0 6px 20px rgb(18 61 42 / 4%);
+  }
+  .category-chip:hover {
+    border-color: #91ae97;
+    background: #f1f6ed;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+  .button:hover {
+    transform: none;
+  }
+}
+@supports not (backdrop-filter: blur(16px)) {
+  .header,
+  .glass,
+  .profile-snapshot {
+    background: var(--surface);
+  }
+}

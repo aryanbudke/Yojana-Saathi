@@ -183,8 +183,8 @@ The remaining dependency order is packaging/handoff → live API verification �
 | UI-03 | Homepage and input | COMPLETED |
 | UI-04 | Discovery and recommendation cards | COMPLETED |
 | UI-05 | Profile, questions, details and guidance | COMPLETED |
-| UI-06 | Interactions and feedback | IN PROGRESS |
-| UI-07 | Responsive and release verification | PENDING |
+| UI-06 | Interactions and feedback | COMPLETED |
+| UI-07 | Responsive and release verification | IN PROGRESS |
 
 ## UI-05 — Profile, questions, scheme details and application guidance
 
@@ -194,3 +194,12 @@ The remaining dependency order is packaging/handoff → live API verification �
 - Problems/dependencies: Full-page screenshots placed sticky elements at the current scrolled offset; capture helper now resets scroll and focus before screenshots. This was a capture artifact,not a layout failure. Existing backend gate unchanged.
 - Commit reference: resolve with `git log --oneline --grep="UI-05"`.
 - Next task: UI-06
+
+## UI-06 — Interactions, loading and recovery states
+
+- Status: COMPLETED
+- Files: src/components/ui/index.tsx, src/features/{discovery/Discovery,matching/Recommendations,guidance/DocumentChecklist}.tsx, src/app/globals.css, e2e/{keyboard,redesign}.spec.ts, PROGRESS.md
+- Tests/verification: Lint/strict TypeScript and seven browser checks passed. Complete core flow operated with Tab/Enter/Space; empty catalogue clears filters; reduced-motion styles disable transitions; mobile menu Escape/focus verified.
+- Problems/dependencies: Updated keyboard verdict locator to the actual card because filter options share its text. No animation dependency added.
+- Commit reference: resolve with `git log --oneline --grep="UI-06"`.
+- Next task: UI-07

@@ -82,6 +82,11 @@ export function Skeleton() {
   return (
     <div className="skeleton" role="status" aria-label="Loading">
       <span className="sr-only">Loading…</span>
+      <span className="skeleton-line short" aria-hidden="true" />
+      <span className="skeleton-line title" aria-hidden="true" />
+      <span className="skeleton-line" aria-hidden="true" />
+      <span className="skeleton-line medium" aria-hidden="true" />
+      <span className="skeleton-line action" aria-hidden="true" />
     </div>
   );
 }

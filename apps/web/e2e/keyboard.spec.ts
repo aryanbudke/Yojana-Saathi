@@ -35,7 +35,9 @@ test("complete the core journey using Tab, text input, Enter and Space", async (
   await tabTo(page.getByRole("button", { name: "Update my matches" }));
   await page.keyboard.press("Enter");
   await expect(
-    page.getByText("All checked conditions met", { exact: true }),
+    page
+      .locator(".match-card")
+      .getByText("All checked conditions met", { exact: true }),
   ).toBeVisible();
   await tabTo(page.getByRole("link", { name: "Explore this scheme" }));
   await page.keyboard.press("Enter");

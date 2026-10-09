@@ -76,3 +76,25 @@ test("recommendation status filter and clear use the actual matches", async ({
   ).toBeVisible();
   await expect(page.getByText("Mock mode", { exact: true })).toBeVisible();
 });
+
+test("empty state clears filters and reduced motion disables transitions", async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/discover?category=education");
+  await expect(
+    page.getByRole("heading", { name: "No schemes found for these filters" }),
+  ).toBeVisible();
+  await page
+    .locator(".empty")
+    .getByRole("button", { name: "Clear filters" })
+    .click();
+  await expect(
+    page.getByRole("heading", { name: "Contract Fixture Scheme" }),
+  ).toBeVisible();
+  expect(
+    await page
+      .getByRole("button", { name: "Find my schemes" })
+      .evaluate((el) => getComputedStyle(el).transitionDuration),
+  ).toBe("0s");
+});

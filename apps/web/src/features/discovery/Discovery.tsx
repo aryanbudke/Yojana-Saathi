@@ -4,7 +4,13 @@ import { usePathname, useSearchParams } from "next/navigation";
 import { Search, ArrowRight } from "lucide-react";
 import { api } from "@/lib/api";
 import { useResource } from "@/lib/api/use-resource";
-import { Button, InlineAlert, Input, Skeleton } from "@/components/ui";
+import {
+  Button,
+  EmptyState,
+  InlineAlert,
+  Input,
+  Skeleton,
+} from "@/components/ui";
 import { states } from "@/features/profile/types";
 import { categories, queryFromSearch } from "./types";
 import { CategoryChip } from "./CategoryChip";
@@ -157,8 +163,7 @@ export function Discovery() {
         </>
       ) : (
         !r.error && (
-          <div className="empty">
-            <h3>No schemes found for these filters</h3>
+          <EmptyState title="No schemes found for these filters">
             <p>
               Try another category or broaden your search. National schemes are
               included when relevant.
@@ -169,7 +174,7 @@ export function Discovery() {
             >
               Clear filters
             </Button>
-          </div>
+          </EmptyState>
         )
       )}
     </section>

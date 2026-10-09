@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { Badge, SourceLink } from "@/components/ui";
+import { Badge, SectionHeading, SourceLink } from "@/components/ui";
 import type { Guidance } from "@/lib/api/contracts";
 const labels = {
   present: "Reported present",
@@ -13,15 +13,12 @@ export function DocumentChecklist({ guidance }: { guidance: Guidance }) {
   const total = guidance.documents.length;
   return (
     <section className="panel checklist">
-      <div className="section-heading">
-        <div>
-          <p className="eyebrow">Get your documents together</p>
-          <h2>Your personal checklist</h2>
-        </div>
+      <p className="eyebrow">Get your documents together</p>
+      <SectionHeading title="Your personal checklist">
         <Badge>
           {checked.size} / {total} marked ready
         </Badge>
-      </div>
+      </SectionHeading>
       <p className="small muted">
         “I have it” is your own note. It does not verify a document or indicate
         government approval. These notes stay in this page only.
