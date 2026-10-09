@@ -63,9 +63,31 @@ Scope: curator-only notebook RAG; unverified drafts never feed citizen matching 
 - Missing inputs: actual cleaned export (or original CSV to regenerate it), authorized disposable PostgreSQL test database with vector already provisioned, existing server database/configuration for indexing, Gemini key/model/embedding-model and reviewer token/actor. Locally none supplied; deployed Gemini/database secrets are unknown, and reviewer role is confirmed unconfigured. Never use public/synthetic fixtures as government data.
 - External input requested after finishing local work: actual export path and authorized test-database configuration path; credentials must remain in environment configuration. Existing production database/migration/deployment belongs to Developer2; coordinate any live deployment/migration and never migrate Supabase ahead of deployed code.
 - Verification still required: execute the two real PostgreSQL integration tests; validate/hash the actual export; index to an authorized staging database; run protected search/ask on real records; inspect citations against record text, measure retrieval usefulness, and record exact denominators/results. No fake successful outputs or omitted integration steps.
-- Commit reference: evidence commit `docs(ai): record RAG verification evidence and external blockers` (resolve by title in branch history).
+- Commit reference: `4bd2aff` — `docs(ai): record RAG verification evidence and external blockers`.
 - Next task: resume RAG-04 when these external resources are available. Original Developer3 independent-review, matching-accuracy and live-demo gates remain outstanding.
 
 ## Delivery state
 
 RAG-01 through RAG-03 are verified and committed in sequence on `feat/rag-workbench`; RAG-04 remains blocked. No frontend file changes relative to base and no edits to upstream's concurrent changes. Local tests used an existing shared venv through a temporary symlink without reinstalling or changing dependencies; removed that link at completion. Recreate a fresh local venv installed from this worktree before continuing development.
+
+## RAG-04 prerequisite delivery — notebook handoff follow-up
+
+These local prerequisites are authorized by the dataset follow-up. Complete A before B; the real-data gate remains blocked throughout.
+
+| Task | Status | Dependency |
+| --- | --- | --- |
+| RAG-04-A Locate exports and prepare canonical import | COMPLETED | Search whole repository; if missing, document `data/schemes/schemes_clean.json` and verify fail-closed import command |
+| RAG-04-B Embedding compatibility and verification workflow | PENDING | A committed; reuse existing pipeline, reject384-dimensional vectors, read-only database preflight before indexing, synthetic automated checks |
+| RAG-04-C Actual dataset/database verification | BLOCKED | Actual CSV/export, authorized pgvector database and server environment; no frontend changes |
+
+### RAG-04-A — Locate exports and prepare canonical import
+
+- Status: COMPLETED
+- Files: `data/schemes/README.md`, this progress file.
+- Search: entire repository/root and all workspaces, excluding dependency/build/Git folders, for `updated_data.csv`, `schemes_clean.*`, `scheme_documents*`, `indexed_documents*`, `*.index`, notebooks. Only the original notebook was found; no actual export or CSV. No record-count/schema/data-quality result can be reported for absent files.
+- Inspected notebook cells1/11/14/17/18: CSV input, cleaned JSON export, document flattening, SentenceTransformer model, normalized vectors, FAISS IndexFlatIP and index/metadata exports. Kept notebook source/output untouched; no notebook execution or inferred government records.
+- Command: existing importer expects `../../data/schemes/schemes_clean.json` from `services/api`; new artifact filename `../../data/schemes/staging-review.json`. Import command is credential-free and cannot publish or overwrite output.
+- Tests: canonical missing-input command exited2 as expected; no output/dataset created. Existing importer tests10 passed; relevant Ruff/mypy and diff checks passed. No Python code changes in this task.
+- Problems: dataset still absent; historical count3,397 is not reproduced or asserted.
+- Commit: task commit `docs(ai): prepare missing notebook dataset handoff` (exact reference recorded in next task update).
+- Next task: RAG-04-B after commit.
