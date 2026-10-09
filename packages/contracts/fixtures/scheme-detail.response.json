@@ -1,0 +1,68 @@
+{
+  "id": "20000000-0000-4000-8000-000000000001",
+  "slug": "contract-fixture-scheme",
+  "name": "Contract Fixture Scheme",
+  "government_level": "central",
+  "state_code": null,
+  "category": "agriculture",
+  "status": "active",
+  "scheme_version_id": "30000000-0000-4000-8000-000000000001",
+  "summary": "A non-production fixture used to validate the public contract.",
+  "review_status": "verified",
+  "last_verified_at": "2026-09-20T00:00:00Z",
+  "official_sources": [
+    {
+      "id": "40000000-0000-4000-8000-000000000001",
+      "title": "Reserved example source",
+      "official_url": "https://scheme.example.invalid/source",
+      "checked_at": "2026-09-20T00:00:00Z",
+      "document_date": "2026-09-01",
+      "excerpt_locator": "Contract fixture section 1"
+    }
+  ],
+  "benefit_text": "Example benefit text for contract validation only.",
+  "eligibility_rules": [
+    {
+      "rule_key": "state",
+      "explanation": "Applicant must live in the specified state.",
+      "severity": "required",
+      "source": {
+        "id": "40000000-0000-4000-8000-000000000001",
+        "title": "Reserved example source",
+        "official_url": "https://scheme.example.invalid/source",
+        "checked_at": "2026-09-20T00:00:00Z",
+        "document_date": "2026-09-01",
+        "excerpt_locator": "Contract fixture section 1"
+      }
+    }
+  ],
+  "required_documents": [
+    {
+      "name": "Example supporting record",
+      "when_required": null,
+      "source": {
+        "id": "40000000-0000-4000-8000-000000000001",
+        "title": "Reserved example source",
+        "official_url": "https://scheme.example.invalid/source",
+        "checked_at": "2026-09-20T00:00:00Z",
+        "document_date": "2026-09-01",
+        "excerpt_locator": "Contract fixture section 1"
+      }
+    }
+  ],
+  "application_steps": [
+    {
+      "step_number": 1,
+      "instruction": "Review the requirements on the official application page.",
+      "official_url": "https://scheme.example.invalid/apply",
+      "source": {
+        "id": "40000000-0000-4000-8000-000000000001",
+        "title": "Reserved example source",
+        "official_url": "https://scheme.example.invalid/source",
+        "checked_at": "2026-09-20T00:00:00Z",
+        "document_date": "2026-09-01",
+        "excerpt_locator": "Contract fixture section 1"
+      }
+    }
+  ]
+}

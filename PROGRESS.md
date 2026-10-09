@@ -7,7 +7,7 @@ only after its acceptance checks pass and its work is committed.
 |---|---|---|
 | T2-01 | FastAPI skeleton, configuration, health, CORS, error contract | COMPLETED |
 | T2-02 | PostgreSQL models and Alembic migrations | COMPLETED |
-| T2-03 | Stable API DTOs and public frontend fixtures | PENDING |
+| T2-03 | Stable API DTOs and public frontend fixtures | COMPLETED |
 | T2-04 | Database indexes, publication filters, test seeding | PENDING |
 | T2-05 | Select and document 10–15 high-confidence schemes | PENDING |
 | T2-06 | Curate official source data, eligibility, and exclusions | PENDING |
@@ -72,5 +72,25 @@ only after its acceptance checks pass and its work is committed.
   metadata typing, and enum persistence mismatches. Enum columns now persist their
   lowercase public values and emit database check constraints; all checks passed
   after correction.
-- **Commit reference:** `HEAD` — `feat(db): add source-backed PostgreSQL schema`
+- **Commit reference:** `fe33e56` — `feat(db): add source-backed PostgreSQL schema`
 - **Next task:** T2-03 — Stable API DTOs and public frontend fixtures
+
+## T2-03 — Stable API DTOs and public frontend fixtures
+
+- **Status:** COMPLETED
+- **Files created or modified:** `services/api/app/schemas/common.py`,
+  `services/api/app/schemas/{profile,scheme,matching,question,guidance}.py`,
+  `packages/contracts/README.md`, seven response fixtures under
+  `packages/contracts/fixtures`, `services/api/tests/test_contract_fixtures.py`,
+  and `PROGRESS.md`.
+- **Tests executed:**
+  - `.venv/bin/ruff check .` — passed
+  - `.venv/bin/ruff format --check .` — passed (28 files)
+  - `.venv/bin/mypy app tests` — passed (25 source files)
+  - `.venv/bin/pytest --cov=app --cov-report=term-missing` — 26 passed,
+    98% coverage; one upstream Starlette TestClient deprecation warning
+- **Problems encountered:** The first verification pass found only import order
+  and formatter differences. Contract coverage was expanded to include the
+  scheme-detail response, and question validation now rejects orphaned options.
+- **Commit reference:** `HEAD` — `feat(api): define public DTO contracts and fixtures`
+- **Next task:** T2-04 — Database indexes, publication filters, and test seeding

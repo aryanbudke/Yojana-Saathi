@@ -1,0 +1,7 @@
+{
+  "field": "land_registration",
+  "question": "Is the land registered to your family?",
+  "answer_type": "single_choice",
+  "options": ["yes", "no", "not_sure"],
+  "reason": "A leading scheme has an unresolved ownership condition."
+}
