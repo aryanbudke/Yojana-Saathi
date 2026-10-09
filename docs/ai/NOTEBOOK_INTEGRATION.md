@@ -88,4 +88,4 @@ Use a fresh environment installed from this checkout for actual CLI execution. T
 
 The adapter tests use explicitly synthetic temporary records. They verify that raw text is preserved, false verification claims cannot publish, missing eligibility remains visible, invalid/duplicate inputs fail, CLI import works and failures do not overwrite existing output.
 
-The real export is still needed to run the actual import. Phase C also requires independent profile labels, real guidance review and frontend/live evidence. This connection does not establish official source authenticity, matching accuracy or a completed live integration.
+The real export is still needed to run the actual import. The recorded Render backend health is reachable, but curator search currently returns503 because its administrative role is unconfigured; this is not a successful RAG verification. Phase C also requires independent profile labels, real guidance review and frontend/live evidence. This connection does not establish official source authenticity, matching accuracy or a completed live integration.
