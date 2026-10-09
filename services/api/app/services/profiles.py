@@ -46,7 +46,7 @@ def update_confirmed_fact(
 ) -> ProfileFacts:
     """Validate and persist a user answer with precedence over extracted data."""
 
-    _require_active_session(session, session_id, now=now)
+    require_active_session(session, session_id, now=now)
     normalized = _validated_value(field, value)
     fact = session.get(ProfileFact, (session_id, field))
     if fact is None:
@@ -74,7 +74,7 @@ def store_extracted_facts(
 ) -> ProfileFacts:
     """Store model-extracted facts without replacing user-confirmed answers."""
 
-    _require_active_session(session, session_id, now=now)
+    require_active_session(session, session_id, now=now)
     for field, value in facts.model_dump(exclude_none=True).items():
         existing = session.get(ProfileFact, (session_id, field))
         if existing is not None and existing.origin == FactOrigin.USER:
@@ -112,7 +112,7 @@ def delete_profile_session(
 ) -> None:
     """Delete an active anonymous session and its cascading transient data."""
 
-    _require_active_session(session, session_id, now=now)
+    require_active_session(session, session_id, now=now)
     session.execute(delete(ProfileSession).where(ProfileSession.id == session_id))
     session.flush()
 
@@ -126,9 +126,11 @@ def purge_expired_sessions(session: Session, *, now: datetime | None = None) -> 
     return int(result.rowcount or 0)  # type: ignore[attr-defined]
 
 
-def _require_active_session(
+def require_active_session(
     session: Session, session_id: UUID, *, now: datetime | None = None
 ) -> ProfileSession:
+    """Return an active session or raise the shared expiry-safe error."""
+
     profile_session = session.get(ProfileSession, session_id)
     current_time = _as_utc(now or datetime.now(UTC))
     if profile_session is None or _as_utc(profile_session.expires_at) <= current_time:

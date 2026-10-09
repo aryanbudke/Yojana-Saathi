@@ -19,7 +19,7 @@ only after its acceptance checks pass and its work is committed.
 | T2-12 | F05 scheme detail API | COMPLETED |
 | T2-13 | F06 application guidance API | COMPLETED |
 | T2-14 | F01 ephemeral sessions and confirmed facts | COMPLETED |
-| T2-15 | Matching and question repository/service interfaces | PENDING |
+| T2-15 | Matching and question repository/service interfaces | COMPLETED |
 | T2-16 | Admin restrictions and official URL validation | PENDING |
 | T2-17 | Optional F07 guest saves (after all P0 work) | PENDING |
 | T2-18 | Supabase migration/seed and real-record smoke test | PENDING |
@@ -259,3 +259,24 @@ only after its acceptance checks pass and its work is committed.
   rerun. User-origin facts are explicitly protected from model overwrites.
 - **Commit reference:** `HEAD` — `feat(api): add ephemeral profile sessions`
 - **Next task:** T2-15 — Matching and question repository interfaces
+
+## T2-15 — Matching and question repository/service interfaces
+
+- **Status:** COMPLETED
+- **Files created or modified:**
+  `services/api/app/repositories/matching.py`,
+  `services/api/app/services/profiles.py`,
+  `services/api/tests/test_matching_repository.py`, `services/api/README.md`,
+  and `PROGRESS.md`.
+- **Tests executed:**
+  - `.venv/bin/ruff check .` — passed
+  - `.venv/bin/ruff format --check .` — passed (59 files)
+  - `.venv/bin/mypy app tests` — passed (53 source files)
+  - `.venv/bin/pytest --cov=app --cov-report=term-missing` — 65 passed,
+    91% coverage; one upstream Starlette TestClient deprecation warning
+- **Problems encountered:** A reused local name confused strict SQLAlchemy type
+  inference, and one import block needed canonical ordering. Both were corrected
+  before the full suite reran. Match writes are prevalidated so an invalid
+  rule/source pair cannot leave a partially flushed run.
+- **Commit reference:** `HEAD` — `feat(db): add matching integration repositories`
+- **Next task:** T2-16 — Admin restrictions and official URL validation

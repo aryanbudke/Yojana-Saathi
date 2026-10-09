@@ -56,3 +56,20 @@ guest saves:
 ```bash
 .venv/bin/python -m app.cli.sessions purge-expired
 ```
+
+## Matching-engine integration boundary
+
+Developer 3 should depend on the protocols and DTOs in
+`app.repositories.matching`, not query publication tables directly:
+
+- `CandidateRepository.list_candidates()` returns only active schemes with the
+  latest verified, published version, including `scheme_version_id`, reviewed
+  rule expressions, rule-source IDs, question templates, and official sources.
+- `MatchRunRepository.record_run(...)` accepts deterministic outcomes, validates
+  each rule/source pair against the reviewed candidate, and persists the engine
+  version and caller-provided profile digest for reproducibility.
+- `MatchRunRepository.question_candidates(...)` returns deduplicated unknown
+  fields with reviewed question templates for the requested session-owned run.
+
+The AI/rule module owns extraction, evaluation, ranking, and question selection;
+the repository owns publication filtering, provenance checks, and persistence.
