@@ -21,12 +21,12 @@ Workspace: `workspaces/upstream`; branch: `feat/ai-matching`. Developer 2's root
 - Next: C after local API integration verification; real dataset/live model checks remain explicit release dependencies.
 
 ## C — Synthetic evaluation, integration and security
-- Status: PENDING
-- Files: none yet.
-- Tests/results: not started.
-- Problems: independently reviewed labels, real official dataset, PostgreSQL deployment and frontend review are unavailable. Proposed labels must not be reported as independently reviewed accuracy.
-- Commit: none.
-- Next: D only after C acceptance, including review evidence.
+- Status: BLOCKED
+- Files: matching benchmark module/CLI, 44-profile synthetic fixture, regression/review-manifest/CLI tests, evaluation.json, LABEL_REVIEW.md, review.example.json. Reused production ranking key; hardened identifier rejection and membership-policy equivalence during security review.
+- Tests/results: 236 pytest tests passed; 96% module coverage measured before the final membership-equivalence regression; lint/format and mypy app tests scripts/evaluate_matching.py passed (89 files). Wheel build passed. Evaluation byte-for-byte reproduced: 164/164 proposed classification agreement, 0/149 proposed unsafe passes, 38/38 missing checks, 32/123 top-three relevance hits, 781/781 synthetic source links, 3/3 invalid inputs rejected. These are unreviewed comparisons, not independently reviewed accuracy. Accuracy/FPR/recall/precision fields remain null; real guidance completeness is unmeasured.
+- Problems: independently reviewed labels, real official dataset, PostgreSQL deployment and frontend review are unavailable. Proposed labels must not be reported as independently reviewed accuracy. A concrete review pack is open and an independent reviewer/corrections have been requested. Local database/API wiring and adversarial tests pass; the real-data/UI/live checks are not claimed complete.
+- Commit: `ai-phase-c-checkpoint` (verified implementation checkpoint, not a completed Phase C).
+- Next: obtain independent review, real guidance checklist and frontend/live integration evidence; rerun evaluation. D only after C acceptance, including review evidence.
 
 ## D — Report, presentation and live demo
 - Status: PENDING

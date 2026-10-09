@@ -193,3 +193,24 @@ def test_multifield_missing_is_preserved_and_result_is_deterministic() -> None:
     assert first.missing_fields == ("age", "land_registration")
     assert first.outcomes[0].required_field == "age"
     assert first == evaluate_candidate(candidate((rule,)), ProfileFacts(), now=NOW)
+
+
+def test_root_and_rows_compare_membership_as_sets() -> None:
+    rule = CandidateRule(
+        "state",
+        atom("state_code", "in", ["MH", "KA"]),
+        RuleSeverity.REQUIRED,
+        SOURCE,
+        "Which state?",
+    )
+    scheme = candidate(
+        (rule,),
+        eligibility_json={
+            "schema_version": "1.0",
+            "all": [atom("state_code", "in", ["KA", "MH", "MH"])],
+        },
+    )
+    assert (
+        evaluate_candidate(scheme, ProfileFacts(state_code="MH"), now=NOW).verdict
+        == Verdict.ALL_CHECKED_CONDITIONS_MET
+    )

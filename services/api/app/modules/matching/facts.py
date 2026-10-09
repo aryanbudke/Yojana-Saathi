@@ -52,7 +52,8 @@ def contains_sensitive_identifier(text: str) -> bool:
     return (
         re.search(
             r"(?<!\d)\d{4}[ -]?\d{4}[ -]?\d{4}(?!\d)|"
-            r"\b(?:aadhaar|aadhar|bank\s+account|ifsc|pan\s+(?:card|number))\b",
+            r"\b(?:aadhaar|aadhar|bank\s+account|ifsc|pan\s+(?:card|number))\b|"
+            r"\b[^\s@]+@[^\s@]+\.[^\s@]+\b|\b[6-9]\d{9}\b|\b[A-Z]{5}\d{4}[A-Z]\b",
             text,
             re.IGNORECASE,
         )

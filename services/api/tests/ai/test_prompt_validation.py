@@ -88,3 +88,9 @@ def test_identifiers_cannot_be_hidden_in_free_text_profile_fields() -> None:
 
     with pytest.raises(ValidationError):
         ConfirmedFacts(occupation="Aadhaar 1234 1234 1234")
+
+
+@pytest.mark.parametrize("value", ["alice@example.test", "9876543210", "ABCDE1234F"])
+def test_common_identifiers_are_not_free_text_facts(value: str) -> None:
+    with pytest.raises(ValueError):
+        ConfirmedFacts(occupation=value)

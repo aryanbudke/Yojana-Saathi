@@ -22,6 +22,16 @@ from app.services.profiles import require_active_session, update_confirmed_fact
 ENGINE_VERSION = "rules-1.0.0"
 
 
+def ranking_key(verdict: Verdict, score: float, scheme_id: UUID) -> tuple[int, float, str]:
+    order = {
+        Verdict.ALL_CHECKED_CONDITIONS_MET: 0,
+        Verdict.NEEDS_INFORMATION: 1,
+        Verdict.MANUAL_REVIEW: 2,
+        Verdict.NOT_ELIGIBLE: 3,
+    }
+    return order[verdict], -score, str(scheme_id)
+
+
 def confirmed_profile(session: Session, session_id: UUID) -> tuple[ConfirmedFacts, set[str]]:
     rows = session.scalars(
         select(ProfileFact).where(
@@ -114,17 +124,9 @@ def match_profile(
         results=tuple(writes),
     )
     # Keep uncertain verdicts visible; relevance never changes an eligibility decision.
-    order = {
-        Verdict.ALL_CHECKED_CONDITIONS_MET: 0,
-        Verdict.NEEDS_INFORMATION: 1,
-        Verdict.MANUAL_REVIEW: 2,
-        Verdict.NOT_ELIGIBLE: 3,
-    }
     results.sort(
-        key=lambda result: (
-            order[Verdict(result.status)],
-            -result.relevance_score,
-            str(result.scheme_id),
+        key=lambda result: ranking_key(
+            Verdict(result.status), result.relevance_score, result.scheme_id
         )
     )
     return MatchesResponse(run_id=run_id, results=results[:limit])

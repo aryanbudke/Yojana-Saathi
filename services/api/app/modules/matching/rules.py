@@ -168,7 +168,10 @@ def source_ids(node: Expression) -> set[UUID]:
 def canonical(node: Expression) -> object:
     """Compare policy meaning, ignoring source annotations and redundant AND nesting."""
     if isinstance(node, Atom):
-        return (node.field, node.op, node.value)
+        threshold = (
+            tuple(sorted(set(node.value), key=repr)) if isinstance(node.value, list) else node.value
+        )
+        return (node.field, node.op, threshold)
     if isinstance(node, Manual):
         return "manual_review"
     if isinstance(node, Not):

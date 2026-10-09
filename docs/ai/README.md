@@ -34,3 +34,12 @@ Every evaluated public candidate is persisted, even when the response limit hide
 The local SQLAlchemy integration tests use Developer 2's reserved `.invalid` test seed. Only Gemini transport is replaced; profile storage, candidate retrieval, audit runs, answers and guidance use real backend code and tables. This proves local wiring, not real government policy or live PostgreSQL/Gemini performance.
 
 No active Developer 1/2 implementation chat was identifiable in the available chat list. This handoff records the integration boundary for their review; no unrelated chat was messaged. Remaining evidence: independently reviewed synthetic labels, user-curated real scheme records, PostgreSQL deployment, a live Gemini check, frontend verdict/question review and the joint demo. The backend handoff already lists real data and deployment as blocked dependencies.
+
+## Synthetic evaluation checkpoint
+
+```bash
+.venv/bin/python scripts/evaluate_matching.py --output ../../docs/ai/evaluation.json
+.venv/bin/mypy app tests scripts/evaluate_matching.py
+```
+
+The 44-profile fixture is hypothetical; 41 valid profiles produce 164 classifications, and three invalid profiles are rejected. Expected verdicts/missing fields/relevance labels were proposed manually, not generated from the evaluator, but independent review is still pending. Read `docs/ai/LABEL_REVIEW.md` before recording an independent manifest. The evaluation returns explicit denominators, confusion counts, failures and limitations; a label disagreement exits nonzero. It leaves accuracy, FPR, recall and recommendation precision unset until an independent manifest covers the exact fixture SHA-256. UUID source coverage proves synthetic linkage only; real guidance completeness remains unmeasured. Phase C is BLOCKED and Phase D has not started.
