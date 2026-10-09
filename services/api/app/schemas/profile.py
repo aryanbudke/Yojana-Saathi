@@ -1,5 +1,6 @@
-"""Profile extraction and confirmed-fact contracts."""
+"""Profile extraction, anonymous-session, and confirmed-fact contracts."""
 
+from datetime import datetime
 from typing import Literal
 from uuid import UUID
 
@@ -8,6 +9,19 @@ from pydantic import Field, field_validator
 from app.schemas.common import ContractModel, StateCode
 
 FactValue = str | int | float | bool | None
+ProfileField = Literal[
+    "age",
+    "state_code",
+    "occupation",
+    "family_income_inr",
+    "land_area_acres",
+    "land_registration",
+    "category",
+    "social_category",
+    "gender",
+    "has_disability",
+    "is_student",
+]
 
 
 class ProfileFacts(ContractModel):
@@ -47,7 +61,7 @@ class ProfileExtractResponse(ContractModel):
 
 class ProfileAnswerRequest(ContractModel):
     session_id: UUID
-    field: str = Field(min_length=1, max_length=100)
+    field: ProfileField
     value: FactValue
 
 
@@ -55,3 +69,13 @@ class ProfileAnswerResponse(ContractModel):
     session_id: UUID
     facts: ProfileFacts
     requires_rematch: bool = True
+
+
+class ProfileSessionCreateRequest(ContractModel):
+    consent_version: str | None = Field(default=None, min_length=1, max_length=40)
+
+
+class ProfileSessionResponse(ContractModel):
+    session_id: UUID
+    expires_at: datetime
+    facts: ProfileFacts
