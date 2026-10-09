@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: yojana-saathi-api
+    runtime: python
+    plan: free
+    region: singapore
+    branch: feat/backend-db
+    rootDir: services/api
+    buildCommand: pip install .
+    startCommand: alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    autoDeployTrigger: commit
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: DATABASE_URL
+        sync: false
+      - key: ALLOWED_ORIGINS
+        sync: false
+      - key: LOG_LEVEL
+        value: INFO
+      - key: SESSION_TTL_HOURS
+        value: "24"
