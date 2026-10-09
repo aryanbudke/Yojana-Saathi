@@ -1,0 +1,85 @@
+{
+  "packet_version": "1.0",
+  "prepared_at": "2026-10-10",
+  "status": "awaiting_independent_review",
+  "candidate_commit": "e0cd11a",
+  "curator_identity": "Developer 2 / Codex",
+  "independence_requirement": "The reviewer must be a person or team member who did not curate or normalize this batch.",
+  "bound_artifacts": {
+    "source_audit_path": "data/curation/source-audit-v1.json",
+    "source_audit_sha256": "13adfdacda5c50d579e4998bc5ec51f2272e78ec291a60c20289078f35377ef1",
+    "normalized_candidates_path": "data/curation/normalized-candidates-v1.json",
+    "normalized_candidates_sha256": "4b33cc5777ed207fded6d07396806adaa9b0990a5d94b4880e3ccaf392460d0e"
+  },
+  "review_instructions": [
+    "Open every official source URL used by the candidate and verify the cited locator supports the benefit, eligibility, exclusion, document, and step claims.",
+    "Confirm the policy version is current as of the review date and identify superseded guidance.",
+    "Confirm every normalized rule preserves the source meaning and that exclusion predicates are not inverted.",
+    "Confirm conditional documents and application steps do not overstate a locally variable process.",
+    "Reject any candidate with unavailable evidence, unresolved contradiction, or an inferred eligibility rule not stated by an official source.",
+    "Record reviewer identity, review timestamp, per-scheme outcome, findings, and approval signature in a separate immutable review receipt."
+  ],
+  "scheme_reviews": [
+    {
+      "draft_slug": "pm-kisan",
+      "outcome": "awaiting_review",
+      "focus": "Check the full higher-economic-status exclusion list, land-record succession treatment, and current eKYC notice."
+    },
+    {
+      "draft_slug": "pmuy2",
+      "outcome": "awaiting_review",
+      "focus": "Check the deprivation-declaration wording, household LPG exclusion, free first refill, and document list."
+    },
+    {
+      "draft_slug": "pm-svanidhi",
+      "outcome": "awaiting_review",
+      "focus": "Do not approve deterministic eligibility unless current post-restructuring onboarding evidence is obtained."
+    },
+    {
+      "draft_slug": "apy",
+      "outcome": "awaiting_review",
+      "focus": "Check age boundaries, savings-account requirement, and the 1 October 2022 income-taxpayer amendment."
+    },
+    {
+      "draft_slug": "pmjdy",
+      "outcome": "awaiting_review",
+      "focus": "Check the unbanked-person condition and ensure overdraft and insurance are described as conditional."
+    },
+    {
+      "draft_slug": "pmmvy",
+      "outcome": "awaiting_review",
+      "focus": "Confirm only PMMVY 2.0 rules are used, including first-child and second-girl-child conditions and exclusions."
+    },
+    {
+      "draft_slug": "ab-pmjay",
+      "outcome": "awaiting_review",
+      "focus": "Keep entitlement tied to the authoritative current beneficiary database and check later national or State cohort changes."
+    },
+    {
+      "draft_slug": "pmv",
+      "outcome": "awaiting_review",
+      "focus": "Check all eighteen trades, family definition, government-service exclusion, and prior-credit exceptions."
+    },
+    {
+      "draft_slug": "nmmss",
+      "outcome": "awaiting_review",
+      "focus": "Check the ₹3,50,000 annual income unit, school exclusions, mark relaxations, and continuation rules."
+    },
+    {
+      "draft_slug": "rkvyshfshc",
+      "outcome": "awaiting_review",
+      "focus": "Confirm the record is presented as a State/UT-delivered soil-sampling service, not an on-demand cash entitlement."
+    }
+  ],
+  "required_receipt_fields": [
+    "reviewer_identity",
+    "reviewer_role_or_team",
+    "reviewed_at",
+    "reviewed_commit",
+    "source_audit_sha256",
+    "normalized_candidates_sha256",
+    "per_scheme_outcomes",
+    "findings",
+    "signature"
+  ]
+}

@@ -204,32 +204,28 @@ only after its acceptance checks pass and its work is committed.
 ## T2-09 — Independent real-scheme review
 
 - **Status:** BLOCKED
-- **Files created or modified:** `services/api/app/db/draft_import.py`,
-  `services/api/app/cli/import_drafts.py`,
-  `services/api/tests/test_draft_import.py`, `services/api/README.md`, and
-  `PROGRESS.md`.
-- **Tests executed:** The supplied SarkarSeva archive validated at exactly
-  3,397 unique cleaned rows. Importer tests prove deterministic IDs,
-  idempotency, explicit-unverified enforcement, and exclusion from public
-  publication queries.
-  - First Supabase import — 3,397 inserted, zero skipped
-  - Second Supabase import — zero inserted, 3,397 skipped
-  - Live database inspection — 3,397 schemes, 3,397 draft versions, zero
-    sources/rules/documents/steps, and zero public candidates
-  - Deployed `GET /api/v1/schemes` — 200 with an empty typed collection
-  - `.venv/bin/ruff check .` — passed
-  - `.venv/bin/ruff format --check .` — passed (76 files)
-  - `.venv/bin/mypy app tests` — passed (68 source files)
-  - `.venv/bin/pytest --cov=app --cov-report=term-missing` — 86 passed,
-    91% coverage; one upstream Starlette TestClient deprecation warning
-- **Problems encountered:** At the user's direction, all 3,397 records were
-  imported to Supabase as `unknown` schemes with private `draft` versions.
-  Their raw text is retained for future curation, but the archive has no
-  official source URLs, verification dates, source-linked rules, or independent
-  review. Therefore this staging import does not complete T2-05–T2-07 or T2-09
-  and none of the records can be published.
-- **Commit reference:** `b7e79d4` — `feat(data): import SarkarSeva candidates as private drafts`
-- **Next task:** T2-06 — Verify the selected official sources and scheme facts
+- **Files created or modified:**
+  `data/curation/independent-review-packet-v1.json`,
+  `services/api/tests/test_independent_review_packet.py`, and `PROGRESS.md`.
+- **Tests executed:** The handoff packet is bound by SHA-256 to source audit
+  `13adfdac...77ef1` and normalized candidates `4b33cc57...0d0e` from commit
+  `e0cd11a`. Tests ensure it covers every candidate, remains unpublished, and
+  requires reviewer identity and signature.
+  - `.venv/bin/pytest -q tests` — 94 passed; one upstream Starlette
+    TestClient deprecation warning
+  - `.venv/bin/pytest -q tests/test_independent_review_packet.py` — 2 passed
+  - `.venv/bin/ruff check tests/test_independent_review_packet.py` — passed
+  - `.venv/bin/ruff format --check tests/test_independent_review_packet.py` — passed
+  - `.venv/bin/mypy --strict tests/test_independent_review_packet.py` — passed
+  - `python3 -m json.tool` — review packet is valid JSON
+- **Problems encountered:** Independent review cannot be performed by the same
+  curator that researched and normalized the records. A separate reviewer must
+  inspect the official sources and return a signed receipt for the exact hashes
+  in the packet. This is an external review dependency, not a technical failure,
+  and it cannot be bypassed without falsely claiming independent verification.
+- **Commit reference:** `HEAD` — `docs(data): prepare independent review packet`
+- **Next task:** T2-09 remains blocked. T2-18 and T2-21 must not start until the
+  independent review receipt is accepted.
 
 ## T2-08 — Enforce source linkage and immutable published versions
 
