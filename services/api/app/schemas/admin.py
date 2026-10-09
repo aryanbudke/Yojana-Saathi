@@ -3,6 +3,8 @@
 from typing import Literal
 from uuid import UUID
 
+from pydantic import Field
+
 from app.schemas.common import ContractModel
 
 
@@ -29,3 +31,17 @@ class StagingSearchResponse(ContractModel):
 
     publication_allowed: Literal[False] = False
     results: list[StagingSearchResult]
+
+
+class StagingAskRequest(ContractModel):
+    question: str = Field(min_length=2, max_length=500)
+    limit: int = Field(default=6, ge=1, le=10)
+
+
+class StagingAskResponse(ContractModel):
+    """Generated from unverified drafts for curator triage; never citizen guidance."""
+
+    publication_allowed: Literal[False] = False
+    answer: str
+    cited_slugs: list[str]
+    sources: list[StagingSearchResult]

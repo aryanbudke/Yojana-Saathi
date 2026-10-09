@@ -55,6 +55,16 @@ Reviewers can semantically search the unverified notebook records to decide whic
      "http://127.0.0.1:8000/api/v1/admin/staging-schemes/search?q=scholarship+for+college&limit=10"
    ```
 
+5. Ask a question (curator RAG). The top records are retrieved as above, and `GEMINI_MODEL` writes a short answer from them:
+
+   ```bash
+   curl -X POST -H "X-Admin-Token: $ADMIN_REVIEW_TOKEN" -H "Content-Type: application/json" \
+     -d '{"question": "Which schemes help widows, and what is missing from their records?", "limit": 6}' \
+     http://127.0.0.1:8000/api/v1/admin/staging-schemes/ask
+   ```
+
+   The response has `answer`, `cited_slugs` and the retrieved `sources`. The server drops any cited slug that was not retrieved, and the prompt treats record text as untrusted. If the records don't cover the question, the answer says so and cites nothing. Answers come from unverified drafts, so they are triage notes for curators, never citizen guidance. If the model is overloaded or unconfigured, the endpoint returns 503.
+
 Every result carries `review_status: draft`, its `missing_fields` and the raw record; the response has `publication_allowed: false`. Similarity is a cosine score for ordering, not relevance or eligibility evidence. The embedded text is name, level, category, details, benefits, eligibility and tags. Search queries are sent to Gemini, so curators should not paste citizen data into them.
 
 `tests/ai/test_staging_search.py` covers auth, outage fallback and request batching on SQLite. The pgvector ranking test runs only when `STAGING_SEARCH_PG_URL` points at a PostgreSQL database with `vector` available; it uses an isolated temporary schema.

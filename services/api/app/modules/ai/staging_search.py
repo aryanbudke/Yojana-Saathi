@@ -12,15 +12,17 @@ from typing import Literal, cast
 from urllib.error import HTTPError
 from urllib.request import Request, urlopen
 
-from pydantic import ValidationError
+from pydantic import BaseModel, Field, ValidationError
 from sqlalchemy import delete, select
 from sqlalchemy.orm import Session
 
 from app.db.models import STAGING_EMBEDDING_DIMENSIONS, StagingScheme
+from app.modules.ai.prompts import STAGING_ANSWER_PROMPT
 from app.modules.ai.settings import AISettings
 
 _BATCH_SIZE = 100
 _RATE_LIMIT_WAIT_SECONDS = 30
+_CONTEXT_CHARS_PER_RECORD = 4000
 _DOCUMENT_FIELDS = (
     "scheme_name",
     "level",
@@ -36,6 +38,15 @@ TaskType = Literal["RETRIEVAL_DOCUMENT", "RETRIEVAL_QUERY"]
 
 class EmbeddingUnavailable(RuntimeError):
     pass
+
+
+class AnswerUnavailable(RuntimeError):
+    pass
+
+
+class _AnswerDraft(BaseModel):
+    answer: str = Field(min_length=1, max_length=6000)
+    cited_slugs: list[str] = Field(max_length=50)
 
 
 def document_text(record: dict[str, str | None]) -> str:
@@ -126,6 +137,60 @@ def search(
     distance = StagingScheme.embedding.cosine_distance(list(query_vector)).label("distance")
     rows = session.execute(select(StagingScheme, distance).order_by(distance).limit(limit))
     return [(row[0], 1.0 - cast(float, row[1])) for row in rows]
+
+
+def answer(
+    settings: AISettings, question: str, hits: Sequence[StagingScheme]
+) -> tuple[str, list[str]]:
+    """Gemini answer grounded in retrieved records; citations outside them are dropped."""
+
+    key = settings.api_key
+    if key is None or not key.get_secret_value().strip() or settings.model is None:
+        raise AnswerUnavailable("GEMINI_API_KEY and GEMINI_MODEL are required")
+    context = [
+        {
+            "slug": hit.slug,
+            "text": "\n".join(f"{field}: {value}" for field, value in hit.record.items() if value)[
+                :_CONTEXT_CHARS_PER_RECORD
+            ],
+        }
+        for hit in hits
+    ]
+    payload = {
+        "systemInstruction": {"parts": [{"text": STAGING_ANSWER_PROMPT}]},
+        "contents": [
+            {
+                "role": "user",
+                "parts": [{"text": json.dumps({"question": question, "records": context})}],
+            }
+        ],
+        "generationConfig": {
+            "temperature": 0.2,
+            "maxOutputTokens": 2048,
+            "responseFormat": {
+                "text": {"mimeType": "APPLICATION_JSON", "schema": _AnswerDraft.model_json_schema()}
+            },
+        },
+    }
+    request = Request(
+        f"https://generativelanguage.googleapis.com/v1beta/models/{settings.model}:generateContent",
+        data=json.dumps(payload).encode(),
+        headers={"Content-Type": "application/json", "x-goog-api-key": key.get_secret_value()},
+        method="POST",
+    )
+    try:
+        with urlopen(request, timeout=30) as response:
+            candidates = json.loads(response.read())["candidates"]
+        if len(candidates) != 1 or candidates[0]["finishReason"] != "STOP":
+            raise ValueError("Incomplete generation")
+        output = "".join(
+            part["text"] for part in candidates[0]["content"]["parts"] if not part.get("thought")
+        )
+        draft = _AnswerDraft.model_validate_json(output)
+    except (OSError, HTTPException, ValueError, TypeError, KeyError, IndexError):
+        raise AnswerUnavailable("Gemini answer request failed") from None
+    allowed = {hit.slug for hit in hits}
+    return draft.answer, list(dict.fromkeys(s for s in draft.cited_slugs if s in allowed))
 
 
 @lru_cache

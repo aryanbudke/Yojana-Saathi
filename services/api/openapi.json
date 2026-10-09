@@ -1480,6 +1480,66 @@
         "title": "SourceReference",
         "type": "object"
       },
+      "StagingAskRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "limit": {
+            "default": 6,
+            "maximum": 10.0,
+            "minimum": 1.0,
+            "title": "Limit",
+            "type": "integer"
+          },
+          "question": {
+            "maxLength": 500,
+            "minLength": 2,
+            "title": "Question",
+            "type": "string"
+          }
+        },
+        "required": [
+          "question"
+        ],
+        "title": "StagingAskRequest",
+        "type": "object"
+      },
+      "StagingAskResponse": {
+        "additionalProperties": false,
+        "description": "Generated from unverified drafts for curator triage; never citizen guidance.",
+        "properties": {
+          "answer": {
+            "title": "Answer",
+            "type": "string"
+          },
+          "cited_slugs": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Cited Slugs",
+            "type": "array"
+          },
+          "publication_allowed": {
+            "const": false,
+            "default": false,
+            "title": "Publication Allowed",
+            "type": "boolean"
+          },
+          "sources": {
+            "items": {
+              "$ref": "#/components/schemas/StagingSearchResult"
+            },
+            "title": "Sources",
+            "type": "array"
+          }
+        },
+        "required": [
+          "answer",
+          "cited_slugs",
+          "sources"
+        ],
+        "title": "StagingAskResponse",
+        "type": "object"
+      },
       "StagingSearchResponse": {
         "additionalProperties": false,
         "description": "Unverified curation leads; publication_allowed is always false.",
@@ -1730,6 +1790,66 @@
           }
         },
         "summary": "Review Version",
+        "tags": [
+          "admin"
+        ]
+      }
+    },
+    "/api/v1/admin/staging-schemes/ask": {
+      "post": {
+        "description": "Answer a curator question from retrieved unverified records, with checked citations.",
+        "operationId": "ask_staging_schemes_api_v1_admin_staging_schemes_ask_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Admin-Token",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Admin-Token"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StagingAskRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StagingAskResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Ask Staging Schemes",
         "tags": [
           "admin"
         ]
