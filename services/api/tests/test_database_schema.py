@@ -2,6 +2,8 @@
 
 from pathlib import Path
 
+from alembic.config import Config
+from alembic.script import ScriptDirectory
 from sqlalchemy import Enum as SqlEnum
 from sqlalchemy import ForeignKeyConstraint, UniqueConstraint
 
@@ -75,3 +77,18 @@ def test_enums_persist_public_lowercase_values() -> None:
         "not_eligible",
         "manual_review",
     ]
+
+
+def test_migrations_form_a_single_linear_head() -> None:
+    config = Config(str(Path(__file__).parents[1] / "alembic.ini"))
+    config.set_main_option("script_location", str(Path(__file__).parents[1] / "migrations"))
+
+    assert ScriptDirectory.from_config(config).get_heads() == ["20261009_0005"]
+
+
+def test_staging_table_enables_row_level_security() -> None:
+    migration = (
+        Path(__file__).parents[1] / "migrations" / "versions" / "20261009_0005_staging_schemes.py"
+    ).read_text()
+
+    assert 'ALTER TABLE "staging_schemes" ENABLE ROW LEVEL SECURITY;' in migration

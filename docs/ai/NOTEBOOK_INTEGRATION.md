@@ -40,7 +40,7 @@ After a reviewed bundle is available, use the existing candidate repository, det
 
 Reviewers can semantically search the unverified notebook records to decide which schemes to curate first. This replaces the notebook's FAISS index with PostgreSQL `pgvector` and Gemini embeddings. It is a discovery aid only: results never feed matching, questions, guidance or publication.
 
-1. Run migrations (`20261009_0004` enables the `vector` extension and creates `staging_schemes`). Supabase supports `vector`; other hosts must provide it.
+1. Run migrations (`20261009_0005` enables the `vector` extension, creates `staging_schemes` and turns on row-level security for it, matching `0004`). Supabase supports `vector`; other hosts must provide it.
 2. Set `GEMINI_API_KEY` and `GEMINI_EMBEDDING_MODEL` (verified with `gemini-embedding-001`, 768 dimensions).
 3. From `services/api`, index the export. Each run validates it with the staging importer above and replaces the whole staging table:
 

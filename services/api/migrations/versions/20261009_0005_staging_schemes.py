@@ -1,7 +1,7 @@
 """Store unverified notebook records with embeddings for curator search.
 
-Revision ID: 20261009_0004
-Revises: 20261009_0003
+Revision ID: 20261009_0005
+Revises: 20261009_0004
 Create Date: 2026-10-09
 """
 
@@ -12,8 +12,8 @@ from alembic import op
 from pgvector.sqlalchemy import Vector
 from sqlalchemy.dialects import postgresql
 
-revision: str = "20261009_0004"
-down_revision: str | None = "20261009_0003"
+revision: str = "20261009_0005"
+down_revision: str | None = "20261009_0004"
 branch_labels: str | Sequence[str] | None = None
 depends_on: str | Sequence[str] | None = None
 
@@ -34,6 +34,8 @@ def upgrade() -> None:
         sa.PrimaryKeyConstraint("id", name=op.f("pk_staging_schemes")),
         sa.UniqueConstraint("slug", name=op.f("uq_staging_schemes_slug")),
     )
+    # Match 0004: no Supabase anon/authenticated access; the backend role bypasses RLS.
+    op.execute('ALTER TABLE "staging_schemes" ENABLE ROW LEVEL SECURITY;')
 
 
 def downgrade() -> None:
