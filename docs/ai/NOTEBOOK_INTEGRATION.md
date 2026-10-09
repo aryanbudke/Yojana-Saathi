@@ -42,7 +42,7 @@ Reviewers can semantically search the unverified notebook records to decide whic
 
 1. Run migrations (`20261009_0005` enables the `vector` extension, creates `staging_schemes` and turns on row-level security for it, matching `0004`). Supabase supports `vector`; other hosts must provide it.
 2. Set `GEMINI_API_KEY` and `GEMINI_EMBEDDING_MODEL` (configured for 768 dimensions). Live provider compatibility still requires verification.
-3. From `services/api`, index the export. Each run validates it with the staging importer above and replaces the whole staging table:
+3. From `services/api`, index the export. Each run validates the entire nonempty export and all embeddings before replacing the whole staging table in one transaction. Embedding/configuration failures never open a database write; database/commit failures roll back the replacement. This is a full snapshot replacement, not an append operation:
 
    ```bash
    .venv/bin/python scripts/index_notebook_staging.py /absolute/path/sarkarseva_processed/schemes_clean.json

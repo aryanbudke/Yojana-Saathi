@@ -100,18 +100,7 @@ def _post_batch(
                 raise ValueError("Oversized embedding response")
             embeddings = json.loads(raw)["embeddings"]
             vectors = [item["values"] for item in embeddings]
-            if len(vectors) != expected or any(
-                len(vector) != STAGING_EMBEDDING_DIMENSIONS
-                or any(
-                    isinstance(value, bool)
-                    or not isinstance(value, (int, float))
-                    or not math.isfinite(value)
-                    for value in vector
-                )
-                or not any(vector)
-                for vector in vectors
-            ):
-                raise ValueError("Invalid embedding values or shape")
+            _validate_vectors(vectors, expected)
             return [[float(value) for value in vector] for vector in vectors]
         except HTTPError as error:
             if error.code == 429 and attempt < retries:
@@ -132,15 +121,32 @@ def _post_batch(
     raise EmbeddingUnavailable("Gemini embedding rate limit persisted")
 
 
+def _validate_vectors(vectors: Sequence[Sequence[float]], expected: int) -> None:
+    if len(vectors) != expected or any(
+        len(vector) != STAGING_EMBEDDING_DIMENSIONS
+        or any(
+            isinstance(value, bool)
+            or not isinstance(value, (int, float))
+            or not math.isfinite(value)
+            or abs(value) > 3.4028234663852886e38  # pgvector stores float32 components.
+            for value in vector
+        )
+        or not any(vector)
+        for vector in vectors
+    ):
+        raise ValueError("Invalid embedding values or shape")
+
+
 def replace_snapshot(
     session: Session, staged_export: dict[str, object], vectors: Sequence[Sequence[float]]
 ) -> int:
     """Swap the whole staging table for one validated export; the caller commits."""
 
     staged = staged_export["records"]
-    assert isinstance(staged, list) and len(staged) == len(vectors)
-    session.execute(delete(StagingScheme))
-    session.add_all(
+    if not isinstance(staged, list) or not staged:
+        raise ValueError("A nonempty validated staging export is required")
+    _validate_vectors(vectors, len(staged))
+    rows = [
         StagingScheme(
             slug=(item["record"]["slug"] or "").strip(),
             name=(item["record"]["scheme_name"] or "").strip(),
@@ -150,8 +156,10 @@ def replace_snapshot(
             embedding=list(vector),
         )
         for item, vector in zip(staged, vectors, strict=True)
-    )
-    return len(staged)
+    ]
+    session.execute(delete(StagingScheme))
+    session.add_all(rows)
+    return len(rows)
 
 
 def search(

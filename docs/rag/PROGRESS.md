@@ -5,7 +5,7 @@ Scope: curator-only notebook RAG; unverified drafts never feed citizen matching 
 | Task | Status | Acceptance / dependency |
 | --- | --- | --- |
 | RAG-01 Provider validation and grounded answers | COMPLETED | Reject invalid vectors/provider output and unknown citations, fixed abstention for uncited answers; backend tests/lint/types pass; commit before RAG-02 |
-| RAG-02 Safe indexing pipeline | PENDING | Validate before replacement, failures preserve existing snapshot, use existing database model; synthetic local tests, CLI errors and transaction verification |
+| RAG-02 Safe indexing pipeline | COMPLETED | Validate before replacement, failures preserve existing snapshot, use existing database model; synthetic local tests, CLI errors and transaction verification |
 | RAG-03 Retrieval and API verification | PENDING | Synthetic local auth/error/retrieval contracts and PostgreSQL test harness; full regression/lint/types; no real-data claim |
 | RAG-04 Real-data indexing and live verification | PENDING | Actual cleaned export, PostgreSQL with vector, server Gemini and reviewer configuration, reachable API; real retrieval/answers measured |
 
@@ -29,5 +29,16 @@ Scope: curator-only notebook RAG; unverified drafts never feed citizen matching 
 - Corrected RAG JSON MIME type to `application/json`, as documented by the [Google REST structured-output example](https://ai.google.dev/gemini-api/docs/generate-content/structured-output). No model migration or live provider claim.
 - Review: owned AI route/client/fixture changes only, unchanged admin DTOs; no credentials in errors, generated drafts cannot enter public matching.
 - Problems: real provider/database unavailable; strict output validation proves citation membership, not the truth of each generated statement.
-- Commit: task commit `fix(ai): validate staging RAG provider output and citations` (exact reference recorded in the following task update).
+- Commit: `e5ce440` — `fix(ai): validate staging RAG provider output and citations`.
 - Next task: RAG-02 safe indexing pipeline, only after this task is committed.
+
+## RAG-02 — Safe indexing pipeline
+
+- Status: COMPLETED
+- Files: existing staging service and index CLI; new `services/api/tests/ai/test_staging_index.py`; notebook runbook and this progress file.
+- Acceptance: malformed export/config/provider output fails before database mutation; empty/mismatched/invalid-vector replacement is rejected; database failure rolls back snapshot; successful index persists drafts with provenance and closes the engine.
+- Tests: TDD reproduced7 failures before fixes. Final indexing14 passed; full backend302 passed,2 PostgreSQL skips. Index CLI100% statement coverage; staging service93% (pgvector retrieval pending). Ruff lint/format, strict mypy app/tests/index CLI and diff checks passed. Real SQLite persistence/rollback used existing StagingScheme; no SQLite cosine-search claim.
+- Changes: shared vector validation (including float32 bounds), explicit nonempty/count checks instead of removable assertions, construct replacement rows before deletion, transaction context/rollback, sanitized configuration/database errors and engine cleanup. Tests cover no-write invalid inputs, provenance, successful replacement, insert-after-delete failure, engine/config/provider failures and CLI entrypoint.
+- Problems: no actual dataset or PostgreSQL available. No production seed/database touched.
+- Commit: task commit `fix(ai): preserve staging snapshots on indexing failures` (exact reference in next update).
+- Next task: RAG-03 retrieval/API verification after commit.
