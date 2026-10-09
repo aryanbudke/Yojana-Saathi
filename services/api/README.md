@@ -44,3 +44,15 @@ create a new version for any correction.
 The fixture under `tests/fixtures` is synthetic and uses the reserved `.invalid`
 domain. It must never be presented as government guidance or loaded into a
 production environment.
+
+## Anonymous-session retention
+
+Profile sessions expire after `SESSION_TTL_HOURS` (24 hours by default, bounded
+to 1–168 hours). Expired sessions are rejected by profile and guidance APIs.
+Run the following command from a scheduled job to physically remove expired
+sessions; PostgreSQL cascades removal to their facts, match runs/results, and
+guest saves:
+
+```bash
+.venv/bin/python -m app.cli.sessions purge-expired
+```

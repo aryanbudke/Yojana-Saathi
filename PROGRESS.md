@@ -17,8 +17,8 @@ only after its acceptance checks pass and its work is committed.
 | T2-10 | CLI seed and review/publish controls | COMPLETED |
 | T2-11 | F02 scheme discovery API | COMPLETED |
 | T2-12 | F05 scheme detail API | COMPLETED |
-| T2-13 | F06 application guidance API | PENDING |
-| T2-14 | F01 ephemeral sessions and confirmed facts | PENDING |
+| T2-13 | F06 application guidance API | COMPLETED |
+| T2-14 | F01 ephemeral sessions and confirmed facts | COMPLETED |
 | T2-15 | Matching and question repository/service interfaces | PENDING |
 | T2-16 | Admin restrictions and official URL validation | PENDING |
 | T2-17 | Optional F07 guest saves (after all P0 work) | PENDING |
@@ -214,5 +214,48 @@ only after its acceptance checks pass and its work is committed.
 - **Problems encountered:** The initial formatter check found two mechanical
   layout differences; both were formatted and the full suite rerun. No API or
   source-integrity failures remained.
-- **Commit reference:** `HEAD` — `feat(api): add source-linked scheme details`
+- **Commit reference:** `090da59` — `feat(api): add source-linked scheme details`
 - **Next task:** T2-13 — F06 application guidance API
+
+## T2-13 — F06 application guidance API
+
+- **Status:** COMPLETED
+- **Files created or modified:** `services/api/app/main.py`,
+  `services/api/app/api/v1/guidance.py`,
+  `services/api/app/services/guidance.py`,
+  `services/api/tests/test_guidance_api.py`, and `PROGRESS.md`.
+- **Tests executed:**
+  - `.venv/bin/ruff check .` — passed
+  - `.venv/bin/ruff format --check .` — passed (53 files)
+  - `.venv/bin/mypy app tests` — passed (47 source files)
+  - `.venv/bin/pytest --cov=app --cov-report=term-missing` — 56 passed,
+    93% coverage; one upstream Starlette TestClient deprecation warning
+- **Problems encountered:** SQLite removes timezone metadata from stored UTC
+  timestamps, so expiry checks now normalize values to UTC at the service
+  boundary. Strict typing also required explicit boolean conversion for
+  comparisons over JSON values.
+- **Commit reference:** `HEAD` — `feat(api): add verified application guidance`
+- **Next task:** T2-14 — F01 ephemeral sessions and confirmed facts
+
+## T2-14 — F01 ephemeral sessions and confirmed facts
+
+- **Status:** COMPLETED
+- **Files created or modified:** `services/api/app/main.py`,
+  `services/api/app/schemas/profile.py`,
+  `services/api/app/api/v1/profiles.py`,
+  `services/api/app/services/profiles.py`,
+  `services/api/app/cli/sessions.py`, `services/api/tests/test_profiles_api.py`,
+  `services/api/README.md`, and `PROGRESS.md`.
+- **Tests executed:**
+  - `.venv/bin/ruff check .` — passed
+  - `.venv/bin/ruff format --check .` — passed (57 files)
+  - `.venv/bin/mypy app tests` — passed (51 source files)
+  - `.venv/bin/pytest --cov=app --cov-report=term-missing` — 61 passed,
+    91% coverage; one upstream Starlette TestClient deprecation warning
+- **Problems encountered:** SQLite returns stored UTC timestamps without
+  timezone metadata, so active-session comparisons normalize timestamps. An
+  early test fixture closed its shared in-memory engine before an inspection
+  session; resource teardown order was corrected and the clean full suite was
+  rerun. User-origin facts are explicitly protected from model overwrites.
+- **Commit reference:** `HEAD` — `feat(api): add ephemeral profile sessions`
+- **Next task:** T2-15 — Matching and question repository interfaces
