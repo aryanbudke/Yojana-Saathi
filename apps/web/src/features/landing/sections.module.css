@@ -80,12 +80,12 @@
   font-weight: 700;
   line-height: 1;
   letter-spacing: -0.04em;
-  color: rgb(20 83 45 / 28%);
+  color: var(--accent-ink);
 }
 
 .stepLead .stepNumber {
   font-size: 72px;
-  color: rgb(20 83 45 / 35%);
+  color: var(--accent-ink);
 }
 
 .stepIcon {

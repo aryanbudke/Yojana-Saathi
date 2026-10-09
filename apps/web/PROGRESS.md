@@ -275,7 +275,7 @@ Brief: complete 10-section GovTech landing page in the confirmed direction (ivor
 | SR-05 Interactive finder | COMPLETED |
 | SR-06 Categories/sources | COMPLETED |
 | SR-07 Guidance/footer | COMPLETED |
-| SR-08 Responsive | PENDING |
+| SR-08 Responsive | COMPLETED |
 | SR-09 API journeys | PENDING |
 | SR-10 Visual/accessibility polish | PENDING |
 
@@ -305,3 +305,12 @@ Brief: complete 10-section GovTech landing page in the confirmed direction (ivor
 - Problems: footer adds another navigation landmark, so existing test locators now explicitly select Main navigation. Per the prior user-approved decisions, Contact/Terms/subscriptions are not invented; actual Help/FAQ/Privacy/Disclaimer pages are supplied. Application tracking text is conditional and refers to the official authority. Reference image absent; written brief used.
 - Commit: commit containing this entry, resolve with `git log --oneline --grep=SR-07`.
 - Next: SR-08 full responsive matrix.
+
+## SR-08 — Responsive and rendered contrast gate
+
+- Status: COMPLETED
+- Files: src/app/globals.css, src/styles/shell.css, src/features/landing/sections.module.css, e2e/accessibility.spec.ts, artifacts/full-site/{home,finder,categories}-{375,1280}.png, PROGRESS.md.
+- Verification: all eight responsive/CTA journeys passed after fixes at320/375/390/768/1024/1280/1440. Thirty-five axe scans across initial home, review, recommendations, detail and guidance found no WCAG A/AA violations; no horizontal overflow. Keyboard answer interaction/reduced motion included. Lint and strict TypeScript passed. Actual desktop/mobile screenshots inspected.
+- Problems: initial matrix found low-contrast decorative step numerals and4.4:1 secondary text on sage. Used accent-ink for numerals and a scoped sage-ink token for preview text. Enlarged example/brand/text-link/match-title/footer link targets to44px. Test diagnostic output now records compact actionable targets. No reference image exists; comparison remains against the approved written direction.
+- Commit: commit containing this entry, resolve with `git log --oneline --grep=SR-08`.
+- Next: SR-09 complete API-client/user-flow regression gate.
