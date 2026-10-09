@@ -13,11 +13,11 @@ Workspace: `workspaces/upstream`; branch: `feat/ai-matching`. Developer 2's root
 - Next: B, only after A passes and commits.
 
 ## B — Gemini, matching and follow-up APIs
-- Status: PENDING
-- Files: none yet.
-- Tests/results: not started.
-- Problems: wiring requires minimal registration in `app/main.py`; use existing profiles, candidate/run repositories, error handlers and guidance. No schema or persistence rewrite. Record shared integration edits in the handoff.
-- Commit: none.
+- Status: COMPLETED
+- Files: owned Gemini/settings/routes, matching/questions/explanations services; AI environment template; API/transport/question tests; docs/ai/README.md. Shared wiring: two lines in main.py and generated openapi.json only.
+- Tests/results: 178 pytest tests passed, 97% new-module statement coverage, ruff lint/format passed, mypy passed (86 files). Existing OpenAPI paths and component schemas byte-for-byte equivalent after JSON loading; new routes/components only.
+- Problems: wiring requires minimal registration in `app/main.py`; use existing profiles, candidate/run repositories, error handlers and guidance. No schema or persistence rewrite. Draft null fields initially suppressed follow-ups; fixed and regression-tested. Unknown answers use existing null/registration not_sure values. Live Gemini/real PostgreSQL are still unverified; transport and SQLite tests are explicitly labeled.
+- Commit: `ai-phase-b` (Git tag pointing to the verified phase commit).
 - Next: C after local API integration verification; real dataset/live model checks remain explicit release dependencies.
 
 ## C — Synthetic evaluation, integration and security

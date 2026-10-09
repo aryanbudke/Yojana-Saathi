@@ -1,5 +1,7 @@
 """Strict validation at AI/matching boundaries without changing shared wire fields."""
 
+import re
+
 from pydantic import ConfigDict, field_validator
 
 from app.schemas.profile import ProfileFacts
@@ -46,6 +48,18 @@ STATE_CODES = frozenset(
 )
 
 
+def contains_sensitive_identifier(text: str) -> bool:
+    return (
+        re.search(
+            r"(?<!\d)\d{4}[ -]?\d{4}[ -]?\d{4}(?!\d)|"
+            r"\b(?:aadhaar|aadhar|bank\s+account|ifsc|pan\s+(?:card|number))\b",
+            text,
+            re.IGNORECASE,
+        )
+        is not None
+    )
+
+
 class ConfirmedFacts(ProfileFacts):
     model_config = ConfigDict(extra="forbid", strict=True, allow_inf_nan=False)
 
@@ -61,4 +75,6 @@ class ConfirmedFacts(ProfileFacts):
     def nonblank(cls, value: str | None) -> str | None:
         if value is not None and not value.strip():
             raise ValueError("Use non-whitespace text")
+        if value is not None and contains_sensitive_identifier(value):
+            raise ValueError("Direct identity and banking information is not a profile fact")
         return value

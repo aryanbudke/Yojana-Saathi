@@ -6,7 +6,7 @@ Rules support eq/in/lt/lte/gt/gte, all/any/not and manual_review_required. Trees
 
 The root eligibility JSON must have schema_version 1.0 and agree with the conjunction of REQUIRED rows, ignoring source annotations and redundant AND nesting. This prevents extra root criteria from disappearing during per-rule evaluation. Exclusions and manual-review rows are separately mandatory. A known exclusion can reject even when another rule needs manual review. No rules cannot produce a pass.
 
-Each outcome carries the existing reviewed rule key and source ID. Missing fields are persisted through MatchResultWrite; the public DTO conveys them through unknown_rules.required_field and deterministic reasons, which include every missing field for compound rules. The next match can ask the next unresolved compound field.
+Each outcome carries the existing reviewed rule key and source ID. Missing fields are persisted through MatchResultWrite; the public DTO conveys them through unknown_rules.required_field and deterministic reasons, which include every missing field for compound rules. Question templates spanning multiple fields require an explicit reviewed per-field mapping; the selector does not repurpose them.
 
 Gemini extraction output is restricted to existing ProfileFacts and exact original evidence snippets. This checks structure and traceability, not semantic truth: the citizen must still review every value. Generated explanations may only select exact prevalidated claims and citations. Unrestricted policy paraphrasing and invented instructions are not enabled.
 

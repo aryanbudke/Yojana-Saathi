@@ -17,6 +17,7 @@ from app.api.v1.schemes import router as schemes_router
 from app.core.config import Settings, get_settings
 from app.core.errors import install_error_handlers, install_request_id_middleware
 from app.db.session import create_database_engine, create_session_factory
+from app.modules.ai.routes import router as ai_router
 
 
 def create_app(
@@ -63,6 +64,7 @@ def create_app(
     application.include_router(guidance_router)
     application.include_router(profiles_router)
     application.include_router(saved_router)
+    application.include_router(ai_router)
     return application
 
 

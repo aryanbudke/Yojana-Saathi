@@ -78,3 +78,13 @@ def test_grounding_rejects_injected_claims_urls_and_citations() -> None:
     raw["source_ids"] = [str(UUID(int=99))]
     with pytest.raises(ValueError):
         validate_explanation(json.dumps(raw), allowed)
+
+
+def test_identifiers_cannot_be_hidden_in_free_text_profile_fields() -> None:
+    import pytest
+    from pydantic import ValidationError
+
+    from app.modules.matching.facts import ConfirmedFacts
+
+    with pytest.raises(ValidationError):
+        ConfirmedFacts(occupation="Aadhaar 1234 1234 1234")

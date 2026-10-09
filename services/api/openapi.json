@@ -39,6 +39,180 @@
         "title": "ApplicationStepDetail",
         "type": "object"
       },
+      "ConfirmedFacts": {
+        "additionalProperties": false,
+        "properties": {
+          "age": {
+            "anyOf": [
+              {
+                "maximum": 120.0,
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Age"
+          },
+          "category": {
+            "anyOf": [
+              {
+                "maxLength": 80,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Category"
+          },
+          "family_income_inr": {
+            "anyOf": [
+              {
+                "maximum": 1000000000.0,
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Family Income Inr"
+          },
+          "gender": {
+            "anyOf": [
+              {
+                "maxLength": 40,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gender"
+          },
+          "has_disability": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Has Disability"
+          },
+          "is_student": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Is Student"
+          },
+          "land_area_acres": {
+            "anyOf": [
+              {
+                "maximum": 1000000.0,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Land Area Acres"
+          },
+          "land_registration": {
+            "anyOf": [
+              {
+                "enum": [
+                  "yes",
+                  "no",
+                  "not_sure"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Land Registration"
+          },
+          "occupation": {
+            "anyOf": [
+              {
+                "maxLength": 120,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Occupation"
+          },
+          "social_category": {
+            "anyOf": [
+              {
+                "maxLength": 80,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Social Category"
+          },
+          "state_code": {
+            "anyOf": [
+              {
+                "pattern": "^[A-Z]{2}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "State Code"
+          }
+        },
+        "title": "ConfirmedFacts",
+        "type": "object"
+      },
+      "ConfirmedMatchRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "facts": {
+            "$ref": "#/components/schemas/ConfirmedFacts"
+          },
+          "limit": {
+            "default": 5,
+            "maximum": 20.0,
+            "minimum": 1.0,
+            "title": "Limit",
+            "type": "integer"
+          },
+          "session_id": {
+            "format": "uuid",
+            "title": "Session Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "session_id",
+          "facts"
+        ],
+        "title": "ConfirmedMatchRequest",
+        "type": "object"
+      },
       "CurationActionResponse": {
         "additionalProperties": false,
         "properties": {
@@ -325,6 +499,116 @@
         "title": "HealthResponse",
         "type": "object"
       },
+      "MatchesResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "results": {
+            "items": {
+              "$ref": "#/components/schemas/SchemeMatchResult"
+            },
+            "title": "Results",
+            "type": "array"
+          },
+          "run_id": {
+            "format": "uuid",
+            "title": "Run Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "run_id",
+          "results"
+        ],
+        "title": "MatchesResponse",
+        "type": "object"
+      },
+      "NextQuestionRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "run_id": {
+            "format": "uuid",
+            "title": "Run Id",
+            "type": "string"
+          },
+          "session_id": {
+            "format": "uuid",
+            "title": "Session Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "session_id",
+          "run_id"
+        ],
+        "title": "NextQuestionRequest",
+        "type": "object"
+      },
+      "NextQuestionResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "answer_type": {
+            "anyOf": [
+              {
+                "enum": [
+                  "single_choice",
+                  "number",
+                  "text"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Answer Type"
+          },
+          "field": {
+            "anyOf": [
+              {
+                "maxLength": 100,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Field"
+          },
+          "options": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Options",
+            "type": "array"
+          },
+          "question": {
+            "anyOf": [
+              {
+                "maxLength": 500,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Question"
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "maxLength": 500,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason"
+          }
+        },
+        "title": "NextQuestionResponse",
+        "type": "object"
+      },
       "ProfileAnswerRequest": {
         "additionalProperties": false,
         "properties": {
@@ -401,6 +685,54 @@
           "facts"
         ],
         "title": "ProfileAnswerResponse",
+        "type": "object"
+      },
+      "ProfileExtractRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "locale": {
+            "default": "en-IN",
+            "pattern": "^[a-z]{2}(?:-[A-Z]{2})?$",
+            "title": "Locale",
+            "type": "string"
+          },
+          "text": {
+            "maxLength": 1000,
+            "minLength": 1,
+            "title": "Text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "text"
+        ],
+        "title": "ProfileExtractRequest",
+        "type": "object"
+      },
+      "ProfileExtractResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "facts": {
+            "$ref": "#/components/schemas/ProfileFacts"
+          },
+          "needs_review": {
+            "title": "Needs Review",
+            "type": "boolean"
+          },
+          "unknown_fields": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Unknown Fields",
+            "type": "array"
+          }
+        },
+        "required": [
+          "facts",
+          "unknown_fields",
+          "needs_review"
+        ],
+        "title": "ProfileExtractResponse",
         "type": "object"
       },
       "ProfileFacts": {
@@ -639,6 +971,60 @@
         "title": "ReviewStatus",
         "type": "string"
       },
+      "RuleOutcome": {
+        "additionalProperties": false,
+        "properties": {
+          "reason": {
+            "minLength": 1,
+            "title": "Reason",
+            "type": "string"
+          },
+          "required_field": {
+            "anyOf": [
+              {
+                "maxLength": 100,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Required Field"
+          },
+          "result": {
+            "$ref": "#/components/schemas/RuleResult"
+          },
+          "rule_key": {
+            "maxLength": 160,
+            "minLength": 1,
+            "title": "Rule Key",
+            "type": "string"
+          },
+          "source_id": {
+            "format": "uuid",
+            "title": "Source Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "rule_key",
+          "result",
+          "source_id",
+          "reason"
+        ],
+        "title": "RuleOutcome",
+        "type": "object"
+      },
+      "RuleResult": {
+        "enum": [
+          "pass",
+          "fail",
+          "unknown",
+          "manual_review"
+        ],
+        "title": "RuleResult",
+        "type": "string"
+      },
       "RuleSeverity": {
         "enum": [
           "required",
@@ -857,6 +1243,93 @@
         "title": "SchemeListResponse",
         "type": "object"
       },
+      "SchemeMatchResult": {
+        "additionalProperties": false,
+        "properties": {
+          "failed_rules": {
+            "items": {
+              "$ref": "#/components/schemas/RuleOutcome"
+            },
+            "title": "Failed Rules",
+            "type": "array"
+          },
+          "last_verified_at": {
+            "format": "date-time",
+            "title": "Last Verified At",
+            "type": "string"
+          },
+          "manual_review_rules": {
+            "items": {
+              "$ref": "#/components/schemas/RuleOutcome"
+            },
+            "title": "Manual Review Rules",
+            "type": "array"
+          },
+          "matched_rules": {
+            "items": {
+              "$ref": "#/components/schemas/RuleOutcome"
+            },
+            "title": "Matched Rules",
+            "type": "array"
+          },
+          "official_source_urls": {
+            "items": {
+              "format": "uri",
+              "minLength": 1,
+              "type": "string"
+            },
+            "minItems": 1,
+            "title": "Official Source Urls",
+            "type": "array"
+          },
+          "relevance_score": {
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Relevance Score",
+            "type": "number"
+          },
+          "scheme_id": {
+            "format": "uuid",
+            "title": "Scheme Id",
+            "type": "string"
+          },
+          "scheme_name": {
+            "maxLength": 255,
+            "minLength": 1,
+            "title": "Scheme Name",
+            "type": "string"
+          },
+          "scheme_version_id": {
+            "format": "uuid",
+            "title": "Scheme Version Id",
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/Verdict"
+          },
+          "unknown_rules": {
+            "items": {
+              "$ref": "#/components/schemas/RuleOutcome"
+            },
+            "title": "Unknown Rules",
+            "type": "array"
+          }
+        },
+        "required": [
+          "scheme_id",
+          "scheme_name",
+          "scheme_version_id",
+          "status",
+          "relevance_score",
+          "matched_rules",
+          "failed_rules",
+          "unknown_rules",
+          "last_verified_at",
+          "official_source_urls"
+        ],
+        "title": "SchemeMatchResult",
+        "type": "object"
+      },
       "SchemeStatus": {
         "enum": [
           "active",
@@ -1046,6 +1519,16 @@
         ],
         "title": "ValidationError",
         "type": "object"
+      },
+      "Verdict": {
+        "enum": [
+          "all_checked_conditions_met",
+          "needs_information",
+          "not_eligible",
+          "manual_review"
+        ],
+        "title": "Verdict",
+        "type": "string"
       }
     }
   },
@@ -1236,6 +1719,47 @@
         ]
       }
     },
+    "/api/v1/matches": {
+      "post": {
+        "operationId": "matches_api_v1_matches_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConfirmedMatchRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MatchesResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Matches",
+        "tags": [
+          "matching"
+        ]
+      }
+    },
     "/api/v1/profiles/answers": {
       "post": {
         "description": "Persist one explicitly user-confirmed profile fact.",
@@ -1273,6 +1797,47 @@
           }
         },
         "summary": "Answer Profile Question",
+        "tags": [
+          "profiles"
+        ]
+      }
+    },
+    "/api/v1/profiles/extract": {
+      "post": {
+        "operationId": "extract_api_v1_profiles_extract_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProfileExtractRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProfileExtractResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Extract",
         "tags": [
           "profiles"
         ]
@@ -1354,6 +1919,47 @@
         "summary": "Delete Session",
         "tags": [
           "profiles"
+        ]
+      }
+    },
+    "/api/v1/questions/next": {
+      "post": {
+        "operationId": "questions_api_v1_questions_next_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NextQuestionRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NextQuestionResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Questions",
+        "tags": [
+          "questions"
         ]
       }
     },
