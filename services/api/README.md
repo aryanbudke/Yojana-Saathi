@@ -45,6 +45,22 @@ The fixture under `tests/fixtures` is synthetic and uses the reserved `.invalid`
 domain. It must never be presented as government guidance or loaded into a
 production environment.
 
+### Unverified candidate imports
+
+The SarkarSeva archive can be retained for later curation without publishing
+its claims. Validate the exact cleaned dataset first:
+
+```bash
+.venv/bin/python -m app.cli.import_drafts path/to/SarkarSeva_Project.zip
+```
+
+Add `--write` only when the configured database is the intended destination.
+The operation is idempotent by slug and inserts `unknown` schemes with `draft`
+versions, no review identity, no publication timestamp, and no source-backed
+rules. Public repositories and APIs continue to exclude every imported record.
+The raw eligibility, application, document, category, and tag text is retained
+inside the draft version for later manual verification; it is not guidance.
+
 ## Anonymous-session retention
 
 Profile sessions expire after `SESSION_TTL_HOURS` (24 hours by default, bounded

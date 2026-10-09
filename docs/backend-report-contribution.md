@@ -79,9 +79,9 @@ supports reproducible explanations without model calls.
 
 The latest verification gate produced these results:
 
-- 82 pytest tests passed with 91% line coverage;
-- Ruff lint and format checks passed across 73 Python files;
-- strict mypy passed across 65 application/test source files;
+- 86 pytest tests passed with 91% line coverage;
+- Ruff lint and format checks passed across 76 Python files;
+- strict mypy passed across 68 application/test source files;
 - Alembic reported one head (`20261009_0004`) and rendered the complete
   PostgreSQL upgrade chain;
 - Supabase runs that head with all 12 application tables present and protected
@@ -106,8 +106,9 @@ The implementation has been migrated to Supabase through revision
 `https://yojana-saathi-api.onrender.com`. The free service can sleep after
 inactivity, so its first request can experience a cold-start delay.
 
-The user retained ownership of manual scheme collection. Consequently, no real
-verified production dataset snapshot exists yet. The backend is designed to
-reject its synthetic fixture in production. Real-data research, independent
-review and Supabase real-data seeding must be completed before claiming an
-end-to-end production dataset.
+Supabase contains 3,397 SarkarSeva candidates as private, unpublished drafts.
+Their raw text is retained for curation, but every record lacks official source
+and independent-review evidence. The backend excludes all of them from public
+queries and rejects its synthetic fixture in production. Official-source
+research, normalization, independent review, and publication must be completed
+before claiming an end-to-end production dataset.

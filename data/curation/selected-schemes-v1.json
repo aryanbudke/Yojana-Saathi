@@ -1,0 +1,87 @@
+{
+  "selection_version": "1.0",
+  "selected_at": "2026-10-10",
+  "scope": "First ten Central Government candidates with identifiable primary official sources",
+  "schemes": [
+    {
+      "draft_slug": "pm-kisan",
+      "name": "Pradhan Mantri Kisan Samman Nidhi",
+      "category": "Agriculture, Rural & Environment",
+      "primary_source_candidate": "https://pmkisan.gov.in/Documents/RevisedPM-KISANOperationalGuidelines(English).pdf",
+      "selection_reason": "Official operational guidelines and current scheme portal are available.",
+      "verification_status": "research_pending"
+    },
+    {
+      "draft_slug": "pmuy2",
+      "name": "Pradhan Mantri Ujjwala Yojana 2.0",
+      "category": "Utility & Sanitation",
+      "primary_source_candidate": "https://www.pmuy.gov.in/ujjwala2.html",
+      "selection_reason": "Official scheme portal publishes eligibility, documents, and application guidance.",
+      "verification_status": "research_pending"
+    },
+    {
+      "draft_slug": "pm-svanidhi",
+      "name": "PM Street Vendor's AtmaNirbhar Nidhi",
+      "category": "Business & Entrepreneurship",
+      "primary_source_candidate": "https://www.mohua.gov.in/pm_svandhi/guidelines.pdf",
+      "selection_reason": "MoHUA publishes scheme guidelines; the application host requires availability review.",
+      "verification_status": "research_pending"
+    },
+    {
+      "draft_slug": "apy",
+      "name": "Atal Pension Yojana",
+      "category": "Social Welfare & Empowerment",
+      "primary_source_candidate": "https://pfrda.org.in/schemes/atal-pension-yojana-apy",
+      "selection_reason": "The statutory regulator maintains a current scheme page and FAQs.",
+      "verification_status": "research_pending"
+    },
+    {
+      "draft_slug": "pmjdy",
+      "name": "Pradhan Mantri Jan Dhan Yojana",
+      "category": "Banking, Financial Services and Insurance",
+      "primary_source_candidate": "https://pmjdy.gov.in/",
+      "selection_reason": "A dedicated official scheme portal is available.",
+      "verification_status": "research_pending"
+    },
+    {
+      "draft_slug": "pmmvy",
+      "name": "Pradhan Mantri Matru Vandana Yojana",
+      "category": "Women and Child",
+      "primary_source_candidate": "https://www.wcd.gov.in/offerings/pradhan-mantri-matru-vandana-yojana",
+      "selection_reason": "The responsible ministry publishes scheme materials and current portal links.",
+      "verification_status": "research_pending"
+    },
+    {
+      "draft_slug": "ab-pmjay",
+      "name": "Ayushman Bharat - Pradhan Mantri Jan Arogya Yojana",
+      "category": "Health & Wellness",
+      "primary_source_candidate": "https://pmjay.gov.in/",
+      "selection_reason": "The National Health Authority maintains the official scheme and beneficiary portals.",
+      "verification_status": "research_pending"
+    },
+    {
+      "draft_slug": "pmv",
+      "name": "PM Vishwakarma",
+      "category": "Skills & Employment",
+      "primary_source_candidate": "https://pmvishwakarma.gov.in/FileHandling/ViewFile/MiscFiles%5CPM%20Vishwakarma-Guidelines.pdf",
+      "selection_reason": "The official portal exposes implementation guidelines, FAQs, and registration guidance.",
+      "verification_status": "research_pending"
+    },
+    {
+      "draft_slug": "nmmss",
+      "name": "National Means-Cum-Merit Scholarship Scheme",
+      "category": "Education & Learning",
+      "primary_source_candidate": "https://scholarships.gov.in/public/FAQ/NMSSS_FAQ.pdf",
+      "selection_reason": "The National Scholarship Portal publishes an official scheme FAQ and application path.",
+      "verification_status": "research_pending"
+    },
+    {
+      "draft_slug": "rkvyshfshc",
+      "name": "RKVY Soil Health and Fertility - Soil Health Card",
+      "category": "Agriculture, Rural & Environment",
+      "primary_source_candidate": "https://soilhealth.dac.gov.in/",
+      "selection_reason": "The Department of Agriculture maintains a dedicated official Soil Health Card portal.",
+      "verification_status": "research_pending"
+    }
+  ]
+}

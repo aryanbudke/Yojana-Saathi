@@ -1,0 +1,373 @@
+{
+  "audit_version": "1.0",
+  "audited_at": "2026-10-10",
+  "publication_status": "research_only_not_independently_reviewed",
+  "scope_note": "Primary-source audit for the first curation batch. Facts in this file are research inputs, not published guidance. Ambiguities must remain non-decisive during normalization.",
+  "schemes": [
+    {
+      "draft_slug": "pm-kisan",
+      "source_review_status": "primary_sources_audited",
+      "policy_effective_date": "2020-03-29",
+      "policy_date_note": "Date printed on the revised operational guidelines; the live portal was also checked for current eKYC guidance.",
+      "sources": [
+        {
+          "url": "https://pmkisan.gov.in/Documents/RevisedPM-KISANOperationalGuidelines(English).pdf",
+          "title": "PM-KISAN Operational Guidelines (revised 29 March 2020)",
+          "document_date": "2020-03-29",
+          "checked_at": "2026-10-10",
+          "locator": "Sections 2–5"
+        },
+        {
+          "url": "https://pmkisan.gov.in/",
+          "title": "PM-KISAN official portal",
+          "document_date": null,
+          "checked_at": "2026-10-10",
+          "locator": "Farmer Corner and current eKYC notice"
+        }
+      ],
+      "benefit_facts": [
+        "Eligible landholding farmer families receive ₹6,000 per year by direct benefit transfer, subject to exclusions."
+      ],
+      "eligibility_facts": [
+        "The beneficiary unit is a landholding farmer family comprising husband, wife and minor children that owns cultivable land in State or UT land records.",
+        "eKYC is mandatory for registered farmers according to the live portal."
+      ],
+      "exclusion_facts": [
+        "Institutional landholders are excluded.",
+        "Specified current or former constitutional office holders, ministers, legislators, mayors and district panchayat chairpersons are excluded.",
+        "Specified serving or retired government, PSE, autonomous-institution and local-body employees are excluded, except Multi Tasking Staff, Class IV and Group D employees.",
+        "Pensioners receiving at least ₹10,000 per month are excluded, with the guideline's stated staff exceptions.",
+        "Persons who paid income tax in the last assessment year and practising registered doctors, engineers, lawyers, chartered accountants and architects are excluded.",
+        "Newly uploaded NRI landholding farmer families are excluded."
+      ],
+      "ambiguities": [
+        "Land-record succession and the special identification mechanisms for parts of the North East and Jharkhand require State or UT handling and must not be reduced to a single nationwide yes/no rule."
+      ]
+    },
+    {
+      "draft_slug": "pmuy2",
+      "source_review_status": "primary_sources_audited",
+      "policy_effective_date": null,
+      "policy_date_note": "The current Ujjwala 2.0 eligibility and FAQ pages do not state a policy-effective date; the version label and retrieval date are retained instead.",
+      "sources": [
+        {
+          "url": "https://www.pmuy.gov.in/ujjwala2.html",
+          "title": "New Ujjwala 2.0 Connection",
+          "document_date": null,
+          "checked_at": "2026-10-10",
+          "locator": "Eligibility criteria, documents required, and application paragraph"
+        },
+        {
+          "url": "https://www.pmuy.gov.in/faq.html",
+          "title": "Frequently Asked Questions on Ujjwala Scheme",
+          "document_date": null,
+          "checked_at": "2026-10-10",
+          "locator": "Questions 1, 3 and 5"
+        }
+      ],
+      "benefit_facts": [
+        "The beneficiary receives a security-deposit-free LPG connection without installation charges.",
+        "The LPG stove and first refill are provided free of cost under the current FAQ, apart from any applicable State stamp fee."
+      ],
+      "eligibility_facts": [
+        "The applicant must be a woman aged at least 18 years.",
+        "The adult woman must belong to a poor household and submit the prescribed deprivation declaration.",
+        "The applicant supplies KYC, identity, household-composition, bank-account and applicable address documents."
+      ],
+      "exclusion_facts": [
+        "A household that already has an LPG connection from an Oil Marketing Company is not eligible for a new PMUY connection."
+      ],
+      "ambiguities": [
+        "The portal defines a poor household through its prescribed deprivation declaration rather than a numeric income threshold; no income cutoff should be inferred."
+      ]
+    },
+    {
+      "draft_slug": "pm-svanidhi",
+      "source_review_status": "primary_sources_audited_with_current_eligibility_ambiguity",
+      "policy_effective_date": "2025-08-27",
+      "policy_date_note": "Cabinet approval date for the restructured scheme reported by the official Press Information Bureau; lending now continues through 31 March 2030.",
+      "sources": [
+        {
+          "url": "https://www.pib.gov.in/PressReleasePage.aspx?PRID=2161157",
+          "title": "Cabinet approves restructuring and extension of PM SVANidhi",
+          "document_date": "2025-08-27",
+          "checked_at": "2026-10-10",
+          "locator": "Restructured scheme overview"
+        },
+        {
+          "url": "https://mohua.gov.in/static/uploads/2026/07/d8d54098c59ba07acbdc2fc48e02d635.pdf",
+          "title": "PM SVANidhi: Promoting Livelihood, Boosting Economy, Financial Inclusion and Digital Empowerment",
+          "document_date": "2026-07-01",
+          "checked_at": "2026-10-10",
+          "locator": "Restructured Scheme Highlights"
+        },
+        {
+          "url": "https://www.mohua.gov.in/pm_svandhi/guidelines.pdf",
+          "title": "Original PM SVANidhi guidelines",
+          "document_date": "2020-06-01",
+          "checked_at": "2026-10-10",
+          "locator": "Legacy eligibility reference; portal returned an HTML wrapper during audit"
+        }
+      ],
+      "benefit_facts": [
+        "The restructured scheme provides collateral-free loan tranches of ₹15,000, ₹25,000 and ₹50,000 with a 7% interest subsidy.",
+        "Street vendors who repay the second loan can receive a UPI-linked RuPay credit card with a limit up to ₹30,000.",
+        "The restructured scheme includes capped digital-transaction cashback."
+      ],
+      "eligibility_facts": [
+        "The current scheme serves eligible street vendors and is being extended beyond statutory towns to census towns and peri-urban areas in a graded manner."
+      ],
+      "exclusion_facts": [],
+      "ambiguities": [
+        "The current MoHUA overview does not restate the complete onboarding evidence required from each vendor after restructuring. Legacy survey, Certificate of Vending and Letter of Recommendation rules must not be presented as current until the restructured operational guidelines are obtained.",
+        "No deterministic eligibility rule will be created for this record in T2-07; it may only carry an official-portal referral until the ambiguity is resolved."
+      ]
+    },
+    {
+      "draft_slug": "apy",
+      "source_review_status": "primary_sources_audited",
+      "policy_effective_date": "2022-10-01",
+      "policy_date_note": "Effective date of the income-taxpayer restriction stated in the current PFRDA FAQ; other core APY terms predate this amendment.",
+      "sources": [
+        {
+          "url": "https://pfrda.org.in/w/faqs/atal-pension-yojana",
+          "title": "Atal Pension Yojana FAQs",
+          "document_date": null,
+          "checked_at": "2026-10-10",
+          "locator": "Who can subscribe, income-taxpayer, benefits and Aadhaar questions"
+        }
+      ],
+      "benefit_facts": [
+        "After age 60, the subscriber receives the selected Government-guaranteed minimum pension of ₹1,000, ₹2,000, ₹3,000, ₹4,000 or ₹5,000 per month, depending on contributions.",
+        "The spouse can receive the same pension after the subscriber's death, followed by return of accumulated pension wealth to the nominee after both have died."
+      ],
+      "eligibility_facts": [
+        "The applicant must be an Indian citizen aged from 18 through 40 years and hold a savings bank or post-office savings account.",
+        "An NRI may join if the same eligibility conditions are met.",
+        "Only one APY account may be opened by an individual."
+      ],
+      "exclusion_facts": [
+        "From 1 October 2022, a person who is or has been an income-tax payer as of the application date cannot open a new APY account."
+      ],
+      "ambiguities": [
+        "Existing subscribers who joined on or before 30 September 2022 may continue even if they are income-tax payers; the restriction must be evaluated against the account-opening date."
+      ]
+    },
+    {
+      "draft_slug": "pmjdy",
+      "source_review_status": "primary_sources_audited",
+      "policy_effective_date": "2018-08-28",
+      "policy_date_note": "The live scheme page uses this date to distinguish the enhanced accident-insurance cover for new accounts; it is not the original launch date.",
+      "sources": [
+        {
+          "url": "https://pmjdy.gov.in/scheme",
+          "title": "PMJDY Scheme Details",
+          "document_date": null,
+          "checked_at": "2026-10-10",
+          "locator": "Scheme Details and Benefits under PMJDY"
+        }
+      ],
+      "benefit_facts": [
+        "An unbanked person can open a basic savings bank deposit account without a minimum-balance requirement.",
+        "The account earns interest and includes a RuPay debit card.",
+        "Accident insurance is ₹1 lakh, enhanced to ₹2 lakh for new PMJDY accounts opened after 28 August 2018.",
+        "Eligible account holders may receive an overdraft facility up to ₹10,000."
+      ],
+      "eligibility_facts": [
+        "The scheme page describes the account as available to a person who does not have another bank account."
+      ],
+      "exclusion_facts": [
+        "A person who already has a bank account does not satisfy the scheme page's stated unbanked-person condition for opening a PMJDY account."
+      ],
+      "ambiguities": [
+        "Overdraft eligibility and insurance claim conditions are separate product conditions and must not be represented as automatic benefits for every account holder."
+      ]
+    },
+    {
+      "draft_slug": "pmmvy",
+      "source_review_status": "primary_sources_audited",
+      "policy_effective_date": "2022-04-01",
+      "policy_date_note": "Effective date printed in the official PMMVY 2.0 material.",
+      "sources": [
+        {
+          "url": "https://www.spniwcd.wcd.gov.in/uploads/pdf/1710098119_SYeJGnu1ej.pdf",
+          "title": "PMMVY 2.0 scheme and portal material",
+          "document_date": "2022-04-01",
+          "checked_at": "2026-10-10",
+          "locator": "Main Features and Benefits under PMMVY"
+        },
+        {
+          "url": "https://www.spniwcd.wcd.gov.in/pradhan-mantri-matru-vandana-yojna/faqs",
+          "title": "PMMVY official FAQs",
+          "document_date": null,
+          "checked_at": "2026-10-10",
+          "locator": "PMMVY 2.0 changes"
+        }
+      ],
+      "benefit_facts": [
+        "For the first living child, an eligible woman receives ₹5,000 in two conditional instalments.",
+        "For the second living child, when that child is a girl, an eligible woman receives ₹6,000 in one conditional instalment."
+      ],
+      "eligibility_facts": [
+        "The beneficiary is an eligible pregnant woman or lactating mother for the first living child, or for the second living child when that child is a girl.",
+        "The first-child instalments require timely pregnancy registration and antenatal check-up, followed by birth registration and vaccinations through fourteen weeks.",
+        "Second-girl-child benefit requires pregnancy registration, antenatal check-up, birth registration and vaccinations through fourteen weeks."
+      ],
+      "exclusion_facts": [
+        "Women in regular employment with the Central Government, State Government or a public-sector undertaking, and women receiving similar maternity benefits under another law, are excluded."
+      ],
+      "ambiguities": [
+        "Category-based eligibility proofs and the 270-day application window require the current portal's detailed circulars during document normalization.",
+        "The superseded 2017 three-instalment rules must not be used for PMMVY 2.0."
+      ]
+    },
+    {
+      "draft_slug": "ab-pmjay",
+      "source_review_status": "primary_sources_audited_with_dynamic_beneficiary_list",
+      "policy_effective_date": null,
+      "policy_date_note": "NHA materials use multiple operational versions; this audit does not assign one date to the dynamic national and State beneficiary lists.",
+      "sources": [
+        {
+          "url": "https://hem.nha.gov.in/BeneficiaryIdentification.pdf",
+          "title": "AB PM-JAY Beneficiary Identification Guidelines",
+          "document_date": null,
+          "checked_at": "2026-10-10",
+          "locator": "Beneficiary database and identity matching"
+        },
+        {
+          "url": "https://hem.nha.gov.in/HBP.pdf",
+          "title": "National Health Benefit Package 2.2",
+          "document_date": null,
+          "checked_at": "2026-10-10",
+          "locator": "Eligible beneficiary families and cashless treatment"
+        },
+        {
+          "url": "https://beneficiary.nha.gov.in/",
+          "title": "NHA beneficiary portal",
+          "document_date": null,
+          "checked_at": "2026-10-10",
+          "locator": "Current beneficiary lookup"
+        }
+      ],
+      "benefit_facts": [
+        "Entitled beneficiary families receive cashless cover up to ₹5 lakh per family per year for covered secondary and tertiary hospital care."
+      ],
+      "eligibility_facts": [
+        "Entitlement is determined by inclusion in the applicable PM-JAY beneficiary database, which draws on SECC 2011, legacy RSBY and approved State datasets."
+      ],
+      "exclusion_facts": [],
+      "ambiguities": [
+        "State expansions and later national cohorts make a static demographic rule unsafe; the current NHA beneficiary lookup is authoritative for an individual household.",
+        "The source set does not support telling a user that absence of one SECC criterion alone makes them ineligible."
+      ]
+    },
+    {
+      "draft_slug": "pmv",
+      "source_review_status": "primary_sources_audited",
+      "policy_effective_date": null,
+      "policy_date_note": "The official implementation guideline and FAQ were audited, but no effective date is assigned without a dated notification in the source set.",
+      "sources": [
+        {
+          "url": "https://pmvishwakarma.gov.in/FileHandling/ViewFile/MiscFiles%5CPM%20Vishwakarma-Guidelines.pdf",
+          "title": "PM Vishwakarma Guidelines for Implementation",
+          "document_date": null,
+          "checked_at": "2026-10-10",
+          "locator": "Eligibility Criteria and Registration"
+        },
+        {
+          "url": "https://pmvishwakarma.gov.in/Home/FAQ",
+          "title": "PM Vishwakarma Frequently Asked Questions",
+          "document_date": null,
+          "checked_at": "2026-10-10",
+          "locator": "Eligibility questions"
+        }
+      ],
+      "benefit_facts": [
+        "The scheme provides recognition, skill training, a toolkit incentive, collateral-free credit, digital-transaction incentives and marketing support to eligible artisans and craftspeople."
+      ],
+      "eligibility_facts": [
+        "The applicant must be at least 18 years old and be self-employed in one of the eighteen covered family-based traditional trades using hands and tools.",
+        "Only one member of a family may register, with family defined by the guideline for this purpose.",
+        "The person must be engaged in the trade on the registration date."
+      ],
+      "exclusion_facts": [
+        "A person in government service and their family members are not eligible.",
+        "The guideline restricts applicants who recently received loans under specified similar credit-based schemes, subject to stated exceptions and repayment conditions."
+      ],
+      "ambiguities": [
+        "The previous-credit rule contains scheme-specific lookback and repayment exceptions and must be normalized directly from the guideline, not from a shortened summary."
+      ]
+    },
+    {
+      "draft_slug": "nmmss",
+      "source_review_status": "primary_sources_audited",
+      "policy_effective_date": "2022-04-01",
+      "policy_date_note": "The revised guidelines are dated 10 March 2022 and state that they take effect from financial year 2022–23.",
+      "sources": [
+        {
+          "url": "https://scholarships.gov.in/public/schemeGuidelines/NMMSSGuidelines.pdf",
+          "title": "Revised Guidelines for National Means-cum-Merit Scholarship Scheme",
+          "document_date": "2022-03-10",
+          "checked_at": "2026-10-10",
+          "locator": "Sections 1–7"
+        },
+        {
+          "url": "https://scholarships.gov.in/public/FAQ/NMSSS_FAQ.pdf",
+          "title": "NMMSS Frequently Asked Questions",
+          "document_date": null,
+          "checked_at": "2026-10-10",
+          "locator": "Eligibility, amount and application questions"
+        }
+      ],
+      "benefit_facts": [
+        "The scholarship is ₹12,000 per year for up to four years from Class IX through Class XII, subject to continuation conditions."
+      ],
+      "eligibility_facts": [
+        "Parental income from all sources must not exceed ₹3,50,000 per year at selection.",
+        "The student must be a regular student in a Government, Government-aided or local-body school and pass the State or UT selection process.",
+        "At least 55% or equivalent in Class VII is required to sit the selection test, relaxed by five percentage points for SC and ST students.",
+        "Continuation requires clear promotion and the guideline's stated Class X marks threshold."
+      ],
+      "exclusion_facts": [
+        "Students in Kendriya Vidyalayas, Jawahar Navodaya Vidyalayas, specified government residential schools, and private schools are not eligible.",
+        "A student may not simultaneously avail another Central Government scholarship.",
+        "Study abroad and diploma or certificate courses are not covered."
+      ],
+      "ambiguities": [
+        "Selection-test dates and application windows are State or UT and academic-year specific and must not be hard-coded as permanent scheme rules."
+      ]
+    },
+    {
+      "draft_slug": "rkvyshfshc",
+      "source_review_status": "primary_sources_audited_as_state_delivered_service",
+      "policy_effective_date": null,
+      "policy_date_note": "The current programme is implemented as the Soil Health and Fertility component of RKVY through States and UTs; no individual entitlement effective date is assigned.",
+      "sources": [
+        {
+          "url": "https://www.pib.gov.in/FactsheetDetails.aspx?Id=148602",
+          "title": "Soil Health Card official factsheet",
+          "document_date": null,
+          "checked_at": "2026-10-10",
+          "locator": "Scheme purpose and all-farmer scope"
+        },
+        {
+          "url": "https://soilhealth.dac.gov.in/",
+          "title": "Soil Health Card portal",
+          "document_date": null,
+          "checked_at": "2026-10-10",
+          "locator": "Portal ownership and card services; automated access returned 403"
+        }
+      ],
+      "benefit_facts": [
+        "A Soil Health Card reports the tested nutrient status of a farmer's landholding and gives crop-appropriate nutrient and fertiliser recommendations."
+      ],
+      "eligibility_facts": [
+        "The official factsheet states that the programme assists States and UTs in issuing Soil Health Cards to all farmers in the country."
+      ],
+      "exclusion_facts": [],
+      "ambiguities": [
+        "This is a State and UT delivered sampling service rather than a uniform national cash-benefit application. Local sampling cycles and contact processes vary and must be presented as local guidance, not a guaranteed on-demand entitlement."
+      ]
+    }
+  ]
+}

@@ -9,9 +9,9 @@ only after its acceptance checks pass and its work is committed.
 | T2-02 | PostgreSQL models and Alembic migrations | COMPLETED |
 | T2-03 | Stable API DTOs and public frontend fixtures | COMPLETED |
 | T2-04 | Database indexes, publication filters, test seeding | COMPLETED |
-| T2-05 | Select and document 10–15 high-confidence schemes | BLOCKED |
-| T2-06 | Curate official source data, eligibility, and exclusions | BLOCKED |
-| T2-07 | Normalize codes, units, rule JSON, and conditional documents | BLOCKED |
+| T2-05 | Select and document 10–15 high-confidence schemes | COMPLETED |
+| T2-06 | Curate official source data, eligibility, and exclusions | COMPLETED |
+| T2-07 | Normalize codes, units, rule JSON, and conditional documents | COMPLETED |
 | T2-08 | Enforce source linkage and immutable published versions | COMPLETED |
 | T2-09 | Peer review records and provide synthetic fixtures | BLOCKED |
 | T2-10 | CLI seed and review/publish controls | COMPLETED |
@@ -119,18 +119,113 @@ only after its acceptance checks pass and its work is committed.
 - **Commit reference:** `7c76bd6` — `feat(db): enforce published queries and seeded fixtures`
 - **Next task:** T2-05 — Select and document 10–15 high-confidence schemes
 
-## T2-05–T2-07 and T2-09 — Real-scheme data work
+## T2-05 — Select and document the first high-confidence schemes
+
+- **Status:** COMPLETED
+- **Files created or modified:**
+  `data/curation/selected-schemes-v1.json`,
+  `services/api/tests/test_curation_selection.py`, and `PROGRESS.md`.
+- **Tests executed:** Official-source discovery was limited to primary central
+  ministry, statutory authority, or scheme portals. The selection integrity
+  test verifies exactly ten unique draft slugs, HTTPS source candidates, an
+  explicit research-pending state, and a closed official-host allowlist.
+  - `.venv/bin/pytest -q tests` — 87 passed; one upstream Starlette
+    TestClient deprecation warning
+  - `.venv/bin/ruff check .` — passed
+  - `.venv/bin/ruff format --check .` — passed (77 files)
+  - `python3 -m json.tool` — selection manifest is valid JSON
+  - `.venv/bin/mypy --strict app` — existing URL-field mismatches remain in
+    `scheme_discovery.py`, `scheme_detail.py`, and `guidance.py`; T2-05 adds
+    no typed application code
+- **Problems encountered:** The multi-scheme research job remained in a
+  non-terminal processing state, so selection evidence was gathered through
+  individual official-source searches. Several portals block automated content
+  retrieval; those records remain research-pending and cannot be treated as
+  verified until their primary documents are audited.
+- **Commit reference:** `HEAD` — `docs(data): select first official-source curation batch`
+- **Next task:** T2-06 — Verify official sources, dates, eligibility, and exclusions
+
+## T2-06 — Curate official sources, eligibility, and exclusions
+
+- **Status:** COMPLETED
+- **Files created or modified:**
+  `data/curation/source-audit-v1.json`,
+  `services/api/tests/test_source_audit.py`, and `PROGRESS.md`.
+- **Tests executed:** Ten selected records were audited against primary Central
+  Government, ministry, statutory-authority, or official scheme sources. The
+  audit records source retrieval dates, policy dates where the source states
+  one, benefits, eligibility, exclusions, precise locators, and unresolved
+  policy ambiguity.
+  - `.venv/bin/pytest -q tests` — 89 passed; one upstream Starlette
+    TestClient deprecation warning
+  - `.venv/bin/ruff check .` — passed
+  - `.venv/bin/ruff format --check .` — passed (78 files)
+  - `python3 -m json.tool` — source-audit manifest is valid JSON
+- **Problems encountered:** PM SVANidhi was restructured in August 2025, but
+  the current overview does not restate complete vendor-onboarding evidence;
+  that record is explicitly barred from receiving a deterministic eligibility
+  rule. AB PM-JAY uses dynamic national and State beneficiary datasets, and
+  Soil Health Cards are delivered through State/UT sampling rather than a
+  uniform national application. These boundaries are recorded as ambiguities,
+  not guessed rules. The audit also replaces superseded PMMVY 1.0 facts with
+  PMMVY 2.0 material effective 1 April 2022.
+- **Commit reference:** `HEAD` — `docs(data): audit official sources for first scheme batch`
+- **Next task:** T2-07 — Normalize the audited facts, documents, and steps
+
+## T2-07 — Normalize rules, units, documents, and steps
+
+- **Status:** COMPLETED
+- **Files created or modified:**
+  `data/curation/normalized-candidates-v1.json`,
+  `services/api/tests/test_normalized_candidates.py`, and `PROGRESS.md`.
+- **Tests executed:** The ten candidates are normalized as Central schemes
+  with null State codes, stable categories, structured rule expressions,
+  source-linked conditional documents, and ordered application steps. Income
+  is represented as integer INR per year. The bundle remains explicitly draft
+  and cannot be published before independent review.
+  - `.venv/bin/pytest -q tests` — 92 passed; one upstream Starlette
+    TestClient deprecation warning
+  - `.venv/bin/pytest -q tests/test_normalized_candidates.py tests/test_source_audit.py`
+    — 5 passed
+  - `.venv/bin/ruff check .` — passed
+  - `.venv/bin/ruff format --check .` — passed (79 files)
+  - `.venv/bin/mypy --strict tests/test_normalized_candidates.py tests/test_source_audit.py`
+    — passed
+  - Production URL validator — 18 unique official URLs accepted
+  - `python3 -m json.tool` — normalized candidate manifest is valid JSON
+- **Problems encountered:** The normalization deliberately converts PM
+  SVANidhi onboarding, PM-JAY beneficiary matching, and local Soil Health Card
+  delivery into manual-review rules. It does not infer deterministic answers
+  from incomplete or locally variable policy. PMMVY 2.0 conditional benefits
+  and NMMSS annual-income units are encoded explicitly.
+- **Commit reference:** `HEAD` — `feat(data): normalize first source-backed scheme batch`
+- **Next task:** T2-09 — Obtain independent review and record the review outcome
+
+## T2-09 — Independent real-scheme review
 
 - **Status:** BLOCKED
-- **Files created or modified:** `PROGRESS.md`
-- **Tests executed:** Not applicable; no real scheme data was committed.
-- **Problems encountered:** On 2026-10-09 the user explicitly took ownership
-  of choosing schemes and manually collecting/scraping their official source
-  material. The stopped research produced no repository data. These tasks must
-  resume only after the user supplies that reviewed input; synthetic fixtures
-  remain clearly labeled and cannot satisfy this gate.
-- **Commit reference:** Pending progress-only record
-- **Next task:** T2-08 — Enforce source linkage and immutable published versions
+- **Files created or modified:**
+  `data/curation/independent-review-packet-v1.json`,
+  `services/api/tests/test_independent_review_packet.py`, and `PROGRESS.md`.
+- **Tests executed:** The handoff packet is bound by SHA-256 to source audit
+  `13adfdac...77ef1` and normalized candidates `4b33cc57...0d0e` from commit
+  `e0cd11a`. Tests ensure it covers every candidate, remains unpublished, and
+  requires reviewer identity and signature.
+  - `.venv/bin/pytest -q tests` — 94 passed; one upstream Starlette
+    TestClient deprecation warning
+  - `.venv/bin/pytest -q tests/test_independent_review_packet.py` — 2 passed
+  - `.venv/bin/ruff check tests/test_independent_review_packet.py` — passed
+  - `.venv/bin/ruff format --check tests/test_independent_review_packet.py` — passed
+  - `.venv/bin/mypy --strict tests/test_independent_review_packet.py` — passed
+  - `python3 -m json.tool` — review packet is valid JSON
+- **Problems encountered:** Independent review cannot be performed by the same
+  curator that researched and normalized the records. A separate reviewer must
+  inspect the official sources and return a signed receipt for the exact hashes
+  in the packet. This is an external review dependency, not a technical failure,
+  and it cannot be bypassed without falsely claiming independent verification.
+- **Commit reference:** `HEAD` — `docs(data): prepare independent review packet`
+- **Next task:** T2-09 remains blocked. T2-18 and T2-21 must not start until the
+  independent review receipt is accepted.
 
 ## T2-08 — Enforce source linkage and immutable published versions
 
@@ -346,7 +441,8 @@ only after its acceptance checks pass and its work is committed.
   - Live immutability inspection — five triggers and two trigger functions
     present
   - Live RLS inspection — enabled on 12/12 application tables
-  - Live data inspection — zero schemes, versions, sources, or audit rows
+  - Initial live data inspection before draft import — zero schemes, versions,
+    sources, or audit rows
   - `.venv/bin/ruff check .` — passed
   - `.venv/bin/ruff format --check .` — passed (72 files)
   - `.venv/bin/mypy app tests` — passed (64 source files)
@@ -354,10 +450,11 @@ only after its acceptance checks pass and its work is committed.
     91% coverage; one upstream Starlette TestClient deprecation warning
 - **Problems encountered:** Blank optional admin variables initially prevented
   settings startup; empty values are now ignored and regression-tested. The
-  schema migration and security checks are complete, but the user-curated,
-  independently reviewed real-scheme bundle has not been supplied. The
-  synthetic `.invalid` fixture was deliberately not inserted into production,
-  so real-record seeding and API smoke tests remain blocked.
+  schema migration and security checks are complete. Supabase now contains
+  3,397 private draft candidates, but none has official provenance or review
+  evidence. The synthetic `.invalid` fixture was deliberately not inserted into
+  production, so verified-record seeding and public API smoke tests remain
+  blocked.
 - **Commit reference:** `HEAD` — `feat(db): migrate and secure Supabase schema`
 - **Next task:** Supply and review the real scheme seed bundle, then validate,
   seed, and smoke-query it before marking T2-18 complete
