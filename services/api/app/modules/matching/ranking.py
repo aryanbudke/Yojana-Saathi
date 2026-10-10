@@ -83,6 +83,25 @@ def preliminary_relevance(candidate: PreliminaryScheme, facts: ConfirmedFacts) -
     return round(len(terms & corpus) / len(terms), 6)
 
 
+def preliminary_matching_terms(
+    candidate: PreliminaryScheme, facts: ConfirmedFacts
+) -> tuple[str, ...]:
+    """Return profile terms visibly present in draft metadata."""
+
+    terms = profile_terms(facts)
+    corpus = _tokens(
+        [
+            candidate.name,
+            candidate.category,
+            candidate.summary,
+            candidate.benefit_text,
+            *candidate.categories,
+            *candidate.tags,
+        ]
+    )
+    return tuple(sorted(terms & corpus))
+
+
 def _tokens(values: Iterable[str]) -> set[str]:
     return {
         token

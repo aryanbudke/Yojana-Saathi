@@ -9,7 +9,13 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.db.enums import GovernmentLevel, ReviewStatus, RuleSeverity, Verdict
-from app.db.models import EligibilityRule, MatchResult, MatchRun
+from app.db.models import (
+    ApplicationStep,
+    EligibilityRule,
+    MatchResult,
+    MatchRun,
+    RequiredDocument,
+)
 from app.repositories.schemes import published_schemes_statement, sources_for_versions
 from app.schemas.matching import RuleOutcome, RuleResult
 from app.services.profiles import require_active_session
@@ -48,6 +54,8 @@ class CandidateScheme:
     category: str = ""
     summary: str = ""
     benefit_text: str = ""
+    required_documents: tuple[str, ...] = ()
+    application_instructions: tuple[str, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -102,6 +110,10 @@ class MatchingRepository(CandidateRepository, MatchRunRepository):
         version_ids = [row[1].id for row in rows]
         source_map = sources_for_versions(self.session, version_ids)
         rule_map: dict[UUID, list[EligibilityRule]] = {version_id: [] for version_id in version_ids}
+        document_map: dict[UUID, list[RequiredDocument]] = {
+            version_id: [] for version_id in version_ids
+        }
+        step_map: dict[UUID, list[ApplicationStep]] = {version_id: [] for version_id in version_ids}
         if version_ids:
             fetched_rules = self.session.scalars(
                 select(EligibilityRule)
@@ -110,6 +122,20 @@ class MatchingRepository(CandidateRepository, MatchRunRepository):
             )
             for rule in fetched_rules:
                 rule_map[rule.scheme_version_id].append(rule)
+            documents = self.session.scalars(
+                select(RequiredDocument)
+                .where(RequiredDocument.scheme_version_id.in_(version_ids))
+                .order_by(RequiredDocument.scheme_version_id, RequiredDocument.name)
+            )
+            for document in documents:
+                document_map[document.scheme_version_id].append(document)
+            steps = self.session.scalars(
+                select(ApplicationStep)
+                .where(ApplicationStep.scheme_version_id.in_(version_ids))
+                .order_by(ApplicationStep.scheme_version_id, ApplicationStep.step_number)
+            )
+            for step in steps:
+                step_map[step.scheme_version_id].append(step)
 
         candidates: list[CandidateScheme] = []
         for scheme, version in rows:
@@ -155,6 +181,12 @@ class MatchingRepository(CandidateRepository, MatchRunRepository):
                     category=scheme.category,
                     summary=version.summary,
                     benefit_text=version.benefit_text,
+                    required_documents=tuple(
+                        document.name for document in document_map[version.id]
+                    ),
+                    application_instructions=tuple(
+                        step.instruction for step in step_map[version.id]
+                    ),
                 )
             )
         return candidates

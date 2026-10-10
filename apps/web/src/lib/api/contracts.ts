@@ -131,8 +131,14 @@ export const matchSchema = z.object({
   failed_rules: z.array(ruleSchema),
   unknown_rules: z.array(ruleSchema),
   manual_review_rules: z.array(ruleSchema).default([]),
-  last_verified_at: date,
-  official_source_urls: z.array(https).min(1),
+  last_verified_at: date.nullable(),
+  official_source_urls: z.array(https).default([]),
+  verification_status: z.enum(["verified", "preliminary"]).default("verified"),
+  matching_reasons: z.array(z.string()).default([]),
+  missing_information: z.array(z.string()).default([]),
+  benefit_text: z.string().nullable().default(null),
+  documents_text: z.string().nullable().default(null),
+  application_text: z.string().nullable().default(null),
 });
 export const matchesSchema = z.object({
   run_id: uuid,

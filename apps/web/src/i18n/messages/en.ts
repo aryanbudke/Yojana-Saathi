@@ -528,6 +528,15 @@ export const en = {
   },
   match: {
     supportAtAGlance: "Support at a glance",
+    preliminaryLabel: "Preliminary · unverified",
+    preliminaryText:
+      "This record matched your profile metadata, but its eligibility conditions and source have not been independently verified. Treat it as a lead for manual checking, not government guidance.",
+    matchingReasons: "Matching reasons",
+    missingInformation: "Still needed or must be verified",
+    noOfficialSource:
+      "No verified official source is attached to this preliminary record.",
+    documents: "Possible documents",
+    howToApply: "Draft application information",
     why: "Why this match?",
     whyText:
       "These are the service’s checks for the reviewed scheme version. An unknown condition still needs information. Passing these checks does not mean official approval.",

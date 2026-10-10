@@ -14,8 +14,8 @@ from sqlalchemy.pool import StaticPool
 
 from app.core.config import Settings
 from app.db.base import Base
-from app.db.enums import FactOrigin, ReviewStatus
-from app.db.models import MatchResult, ProfileFact, ProfileSession, SchemeVersion
+from app.db.enums import FactOrigin, GovernmentLevel, ReviewStatus, SchemeStatus
+from app.db.models import MatchResult, ProfileFact, ProfileSession, Scheme, SchemeVersion
 from app.db.seed import load_seed_file, seed_database
 from app.main import create_app
 
@@ -171,6 +171,64 @@ def test_model_origin_is_not_confirmed(context: tuple[TestClient, Session, str])
     )
     db.commit()
     assert match(client, sid, {})["results"][0]["status"] == "needs_information"
+
+
+def test_unverified_dataset_record_is_a_labelled_preliminary_match(
+    context: tuple[TestClient, Session, str],
+) -> None:
+    client, db, sid = context
+    scheme = Scheme(
+        slug="preliminary-farmer-support",
+        name="Preliminary Farmer Support",
+        government_level=GovernmentLevel.CENTRAL,
+        state_code=None,
+        category="Agriculture",
+        status=SchemeStatus.UNKNOWN,
+    )
+    db.add(scheme)
+    db.flush()
+    db.add(
+        SchemeVersion(
+            scheme_id=scheme.id,
+            version=1,
+            summary="Agriculture support for farmers.",
+            benefit_text="Unverified financial assistance description.",
+            eligibility_json={
+                "schema_version": "candidate-import-v1",
+                "unverified": True,
+                "raw_eligibility_text": (
+                    "Applicant must be a farmer. Annual family income must not exceed "
+                    "Rs. 2 lakh. Other local rules apply."
+                ),
+                "raw_application_text": "Apply at the listed local office.",
+                "raw_documents_text": "Income certificate may be requested.",
+                "raw_categories": ["Agriculture"],
+                "raw_tags": ["farmer", "financial assistance"],
+            },
+            review_status=ReviewStatus.DRAFT,
+        )
+    )
+    db.commit()
+
+    response = match(
+        client,
+        sid,
+        {"occupation": "farmer", "support_needs": ["agriculture"]},
+    )
+    preliminary = next(
+        item for item in response["results"] if item["verification_status"] == "preliminary"
+    )
+
+    assert preliminary["status"] == "manual_review"
+    assert preliminary["last_verified_at"] is None
+    assert preliminary["official_source_urls"] == []
+    assert preliminary["matched_rules"] == []
+    assert "family_income_inr" in preliminary["missing_information"]
+    assert "official source verification" in preliminary["missing_information"]
+    assert preliminary["benefit_text"].startswith("Unverified")
+    assert preliminary["documents_text"].startswith("Income certificate")
+    assert preliminary["application_text"].startswith("Apply")
+    assert all("probability" not in reason for reason in preliminary["matching_reasons"])
 
 
 def test_extraction_is_stateless_and_can_be_corrected_before_matching(

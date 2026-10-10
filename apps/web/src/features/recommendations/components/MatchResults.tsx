@@ -4,7 +4,13 @@ import React, { useState, useCallback } from "react";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { GlassCard } from "@/components/ui/GlassCard";
-import { Button, Select, Skeleton, EmptyState, InlineAlert } from "@/components/ui";
+import {
+  Button,
+  Select,
+  Skeleton,
+  EmptyState,
+  InlineAlert,
+} from "@/components/ui";
 import { EligibilityBadge } from "@/features/eligibility/components/EligibilityBadge";
 import { CriteriaChecklist } from "@/features/eligibility/components/CriteriaChecklist";
 import { MatchExplanation } from "./MatchExplanation";
@@ -52,7 +58,10 @@ export function MatchResults({ embedded = false }: MatchResultsProps) {
     return (
       <EmptyState title={t.startTitle}>
         <p>{t.startText}</p>
-        <Link className="button primary inline-flex items-center gap-2" href="/discover">
+        <Link
+          className="button primary inline-flex items-center gap-2"
+          href="/discover"
+        >
           <span>{t.createProfile}</span>
           <ArrowUpRight size={16} />
         </Link>
@@ -61,7 +70,9 @@ export function MatchResults({ embedded = false }: MatchResultsProps) {
   }
 
   return (
-    <div className={`recommendation-layout grid grid-cols-1 ${embedded ? "lg:grid-cols-1" : "lg:grid-cols-12"} gap-8`}>
+    <div
+      className={`recommendation-layout grid grid-cols-1 ${embedded ? "lg:grid-cols-1" : "lg:grid-cols-12"} gap-8`}
+    >
       {/* Matches Stream */}
       <div className={`${embedded ? "w-full" : "lg:col-span-8"} space-y-6`}>
         {r.loading ? (
@@ -80,10 +91,14 @@ export function MatchResults({ embedded = false }: MatchResultsProps) {
           <>
             <div className="section-heading flex items-center justify-between gap-4 flex-wrap pb-2 border-b border-slate-200/60">
               <div>
-                <h2 className="text-2xl font-bold text-slate-900 tracking-tight">{t.shortlist}</h2>
+                <h2 className="text-2xl font-bold text-slate-900 tracking-tight">
+                  {t.shortlist}
+                </h2>
                 <span className="small muted text-xs text-slate-500 font-medium">
                   {format(
-                    results.results.length === 1 ? t.evaluatedOne : t.evaluatedOther,
+                    results.results.length === 1
+                      ? t.evaluatedOne
+                      : t.evaluatedOther,
                     { count: results.results.length },
                   )}
                 </span>
@@ -91,7 +106,10 @@ export function MatchResults({ embedded = false }: MatchResultsProps) {
 
               {/* Status Filter Dropdown */}
               <div className="recommendation-toolbar flex items-center gap-3">
-                <label htmlFor="match-filter" className="text-xs font-bold text-slate-700">
+                <label
+                  htmlFor="match-filter"
+                  className="text-xs font-bold text-slate-700"
+                >
                   {t.showConditions}
                 </label>
                 <div className="w-48">
@@ -110,7 +128,10 @@ export function MatchResults({ embedded = false }: MatchResultsProps) {
                     ))}
                   </Select>
                 </div>
-                <span className="small muted text-xs text-slate-500 font-medium" aria-live="polite">
+                <span
+                  className="small muted text-xs text-slate-500 font-medium"
+                  aria-live="polite"
+                >
                   {format(t.shown, { count: visibleMatches.length })}
                 </span>
               </div>
@@ -118,7 +139,9 @@ export function MatchResults({ embedded = false }: MatchResultsProps) {
 
             {!visibleMatches.length && (
               <div className="empty p-8 text-center rounded-3xl bg-cream/60 backdrop-blur-md border border-slate-200/80">
-                <h3 className="text-base font-bold text-slate-800 mb-2">{t.noStatusTitle}</h3>
+                <h3 className="text-base font-bold text-slate-800 mb-2">
+                  {t.noStatusTitle}
+                </h3>
                 <Button variant="quiet" onClick={() => setFilter("all")}>
                   {t.showAll}
                 </Button>
@@ -145,7 +168,11 @@ export function MatchResults({ embedded = false }: MatchResultsProps) {
           {results && <QuestionCard matches={results} />}
           <ProfileSummary />
 
-          <GlassCard variant="standard" glow="emerald" className="p-6 space-y-3">
+          <GlassCard
+            variant="standard"
+            glow="emerald"
+            className="p-6 space-y-3"
+          >
             <span className="text-[11px] font-bold uppercase tracking-wider text-emerald-800">
               {t.guidanceNote}
             </span>
@@ -164,7 +191,13 @@ export function MatchResults({ embedded = false }: MatchResultsProps) {
 
 function MatchCardItem({ match }: { match: SchemeMatch }) {
   const m = useMessages();
-  const load = useCallback(() => api.detail(match.scheme_id), [match.scheme_id]);
+  const load = useCallback(
+    () =>
+      match.verification_status === "preliminary"
+        ? Promise.resolve(null)
+        : api.detail(match.scheme_id),
+    [match.scheme_id, match.verification_status],
+  );
   const d = useResource(load);
   const current =
     d.data?.scheme_version_id === match.scheme_version_id ? d.data : null;
@@ -178,6 +211,11 @@ function MatchCardItem({ match }: { match: SchemeMatch }) {
       <div className="flex items-center justify-between gap-3 flex-wrap">
         <div className="flex items-center gap-2.5">
           <EligibilityBadge status={match.status} />
+          {match.verification_status === "preliminary" && (
+            <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-900">
+              {m.match.preliminaryLabel}
+            </span>
+          )}
           {current && (
             <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700">
               {labelFor(m.categoryNames, current.category)}
@@ -188,9 +226,16 @@ function MatchCardItem({ match }: { match: SchemeMatch }) {
 
       <div>
         <h2 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
-          <Link href={`/schemes/${match.scheme_id}`} className="hover:text-emerald-800 transition-colors">
-            {match.scheme_name}
-          </Link>
+          {match.verification_status === "verified" ? (
+            <Link
+              href={`/schemes/${match.scheme_id}`}
+              className="hover:text-emerald-800 transition-colors"
+            >
+              {match.scheme_name}
+            </Link>
+          ) : (
+            match.scheme_name
+          )}
         </h2>
         {current && (
           <p className="text-sm text-slate-600 mt-1.5 match-summary leading-relaxed">
@@ -199,13 +244,24 @@ function MatchCardItem({ match }: { match: SchemeMatch }) {
         )}
       </div>
 
-      {current && (
+      {(current?.benefit_text || match.benefit_text) && (
         <div className="p-3.5 rounded-2xl bg-emerald-50/80 border border-emerald-200/70 text-xs text-emerald-950 font-medium">
           <span className="font-bold uppercase tracking-wider text-[11px] text-emerald-800 block mb-0.5">
             {m.match.supportAtAGlance}
           </span>
-          <p>{current.benefit_text}</p>
+          <p>{current?.benefit_text ?? match.benefit_text}</p>
         </div>
+      )}
+
+      {match.documents_text && (
+        <p className="text-xs text-slate-600">
+          <strong>{m.match.documents}:</strong> {match.documents_text}
+        </p>
+      )}
+      {match.application_text && (
+        <p className="text-xs text-slate-600">
+          <strong>{m.match.howToApply}:</strong> {match.application_text}
+        </p>
       )}
 
       <div className="pt-2">
@@ -233,13 +289,15 @@ function MatchCardItem({ match }: { match: SchemeMatch }) {
               )
             : m.match.readEvery}
         </span>
-        <Link
-          className="button quiet inline-flex items-center gap-1.5 text-emerald-800 font-bold hover:text-emerald-950"
-          href={`/schemes/${match.scheme_id}`}
-        >
-          <span>{m.match.explore}</span>
-          <ArrowUpRight size={15} />
-        </Link>
+        {match.verification_status === "verified" && (
+          <Link
+            className="button quiet inline-flex items-center gap-1.5 text-emerald-800 font-bold hover:text-emerald-950"
+            href={`/schemes/${match.scheme_id}`}
+          >
+            <span>{m.match.explore}</span>
+            <ArrowUpRight size={15} />
+          </Link>
+        )}
       </div>
     </GlassCard>
   );

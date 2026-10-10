@@ -9,7 +9,7 @@ tests and acceptance checks pass.
 | DM-02 | Add structured support-needs profile input | COMPLETED |
 | DM-03 | Normalize safe rules and query dataset directly with SQL | COMPLETED |
 | DM-04 | Filter mandatory failures and rank deterministic matches | COMPLETED |
-| DM-05 | Explain matches, missing facts, and preliminary status | PENDING |
+| DM-05 | Explain matches, missing facts, and preliminary status | COMPLETED |
 | DM-06 | Separate citizen matching routes from RAG/admin routes | PENDING |
 | DM-07 | Evaluate labelled profiles and run full regression checks | PENDING |
 
@@ -89,3 +89,26 @@ tests and acceptance checks pass.
   ranking ignores eligibility prose entirely.
 - **Commit reference:** This checkpoint's `feat(matching)` commit.
 - **Next task:** DM-05 — Add explanations, missing facts, and preliminary labels.
+
+## DM-05 — Explanations, missing information, and preliminary labels
+
+- **Status:** COMPLETED
+- **Files created or modified:** Matching response schema, verified repository
+  metadata, matching/ranking services and API tests; frontend contract, both
+  recommendation-card implementations, explanation panel, and English/Hindi/
+  Kannada messages.
+- **Tests executed:** Backend Ruff and focused mypy passed; API, ranking,
+  explanation, and fixture-contract tests passed (32 tests). Frontend typecheck
+  and ESLint passed; focused API/i18n tests passed (8 passed, 5 intentionally
+  skipped by environment guards).
+- **Problems encountered:** Preliminary records cannot satisfy the original
+  response requirement for an official URL and verification date. The contract
+  was extended additively with a verification discriminator, while a schema
+  validator prevents preliminary results from carrying verified metadata and
+  still requires verified results to have their date and source.
+- **Safety result:** Draft eligibility text is used only to identify information
+  that may need verification. It never produces pass/fail outcomes. Draft
+  scheme pages are not linked through the verified public detail endpoint.
+- **Commit reference:** This checkpoint's `feat(matching)` commit.
+- **Next task:** DM-06 — Separate citizen matching routes from RAG/admin routes
+  and complete targeted follow-up behavior.

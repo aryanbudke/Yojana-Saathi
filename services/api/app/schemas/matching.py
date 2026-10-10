@@ -2,9 +2,10 @@
 
 from datetime import datetime
 from enum import StrEnum
+from typing import Literal
 from uuid import UUID
 
-from pydantic import Field
+from pydantic import Field, model_validator
 
 from app.db.enums import Verdict
 from app.schemas.common import ContractModel, HttpsUrl
@@ -42,8 +43,26 @@ class SchemeMatchResult(ContractModel):
     failed_rules: list[RuleOutcome]
     unknown_rules: list[RuleOutcome]
     manual_review_rules: list[RuleOutcome] = Field(default_factory=list)
-    last_verified_at: datetime
-    official_source_urls: list[HttpsUrl] = Field(min_length=1)
+    last_verified_at: datetime | None
+    official_source_urls: list[HttpsUrl] = Field(default_factory=list)
+    verification_status: Literal["verified", "preliminary"] = "verified"
+    matching_reasons: list[str] = Field(default_factory=list)
+    missing_information: list[str] = Field(default_factory=list)
+    benefit_text: str | None = None
+    documents_text: str | None = None
+    application_text: str | None = None
+
+    @model_validator(mode="after")
+    def enforce_verification_boundary(self) -> "SchemeMatchResult":
+        if self.verification_status == "verified" and (
+            self.last_verified_at is None or not self.official_source_urls
+        ):
+            raise ValueError("Verified matches require a date and official source")
+        if self.verification_status == "preliminary" and (
+            self.last_verified_at is not None or self.official_source_urls
+        ):
+            raise ValueError("Preliminary matches cannot claim verification metadata")
+        return self
 
 
 class MatchesResponse(ContractModel):
