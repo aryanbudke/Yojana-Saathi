@@ -11,6 +11,22 @@ import {
 } from "react";
 import { api, errorMessage } from "@/lib/api";
 import type { SpeechLanguage } from "@/lib/api/client";
+import { useI18n } from "@/i18n/client";
+import type { Locale } from "@/i18n/config";
+import type { Messages } from "@/i18n/messages/en";
+
+/** Voice language matching each interface language. */
+export const SPEECH_LANGUAGES: Record<Locale, SpeechLanguage> = {
+  en: "en-IN",
+  hi: "hi-IN",
+  kn: "kn-IN",
+};
+
+/** Stored as a code or raw failure and worded at render time, so it follows a language switch. */
+type SpeechProblem =
+  | { kind: keyof Messages["speech"]["errors"] }
+  | { failure: unknown }
+  | null;
 
 const RECORDING_LIMIT_MS = 28_000;
 const NO_SPEECH_LIMIT_MS = 8_000;
@@ -18,11 +34,14 @@ const SILENCE_AFTER_SPEECH_MS = 1_200;
 const SPEECH_LEVEL_THRESHOLD = 0.018;
 
 function useSpeechState() {
-  const [language, setLanguage] = useState<SpeechLanguage>("en-IN");
+  const { locale, messages: m } = useI18n();
+  // Follows the interface language until the person picks a voice language.
+  const [chosenLanguage, setLanguage] = useState<SpeechLanguage | null>(null);
+  const language = chosenLanguage ?? SPEECH_LANGUAGES[locale];
   const [recording, setRecording] = useState(false);
   const [working, setWorking] = useState(false);
   const [speaking, setSpeaking] = useState(false);
-  const [error, setError] = useState("");
+  const [problem, setProblem] = useState<SpeechProblem>(null);
   const recorder = useRef<MediaRecorder | null>(null);
   const stream = useRef<MediaStream | null>(null);
   const chunks = useRef<Blob[]>([]);
@@ -55,9 +74,9 @@ function useSpeechState() {
 
   const startRecording = useCallback(
     async (onTranscript: (text: string) => void) => {
-      setError("");
+      setProblem(null);
       if (!navigator.mediaDevices?.getUserMedia || !window.MediaRecorder) {
-        setError("Voice recording is not supported in this browser.");
+        setProblem({ kind: "unsupported" });
         return;
       }
       try {
@@ -82,7 +101,7 @@ function useSpeechState() {
           if (event.data.size) chunks.current.push(event.data);
         };
         activeRecorder.onerror = () => {
-          setError("The recording could not be completed. Please try again.");
+          setProblem({ kind: "recordingFailed" });
           cleanupRecording();
         };
         activeRecorder.onstop = () => {
@@ -92,16 +111,14 @@ function useSpeechState() {
           const containsSpeech = heardSpeech.current;
           cleanupRecording();
           if (!containsSpeech) {
-            setError(
-              "No speech was detected. Please try again and speak clearly.",
-            );
+            setProblem({ kind: "noSpeech" });
             return;
           }
           setWorking(true);
           void api
             .transcribe(audio, language)
             .then((result) => receiveTranscript.current(result.transcript))
-            .catch((reason: unknown) => setError(errorMessage(reason)))
+            .catch((reason: unknown) => setProblem({ failure: reason }))
             .finally(() => setWorking(false));
         };
         activeRecorder.start(250);
@@ -158,7 +175,7 @@ function useSpeechState() {
         }, RECORDING_LIMIT_MS);
       } catch {
         cleanupRecording();
-        setError("Microphone permission is needed for voice input.");
+        setProblem({ kind: "microphone" });
       }
     },
     [cleanupRecording, language],
@@ -174,7 +191,7 @@ function useSpeechState() {
 
   const speak = useCallback(
     async (text: string, sourceLanguage: SpeechLanguage = "en-IN") => {
-      setError("");
+      setProblem(null);
       stopSpeaking();
       setWorking(true);
       try {
@@ -189,14 +206,14 @@ function useSpeechState() {
         player.current = nextPlayer;
         nextPlayer.onended = stopSpeaking;
         nextPlayer.onerror = () => {
-          setError("The generated audio could not be played.");
+          setProblem({ kind: "playback" });
           stopSpeaking();
         };
         setSpeaking(true);
         await nextPlayer.play();
       } catch (reason) {
         stopSpeaking();
-        setError(errorMessage(reason));
+        setProblem({ failure: reason });
       } finally {
         setWorking(false);
       }
@@ -220,8 +237,13 @@ function useSpeechState() {
     recording,
     working,
     speaking,
-    error,
-    clearError: () => setError(""),
+    error:
+      problem === null
+        ? ""
+        : "kind" in problem
+          ? m.speech.errors[problem.kind]
+          : errorMessage(problem.failure, m.errors),
+    clearError: () => setProblem(null),
     startRecording,
     stopRecording,
     speak,

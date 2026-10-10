@@ -41,6 +41,9 @@ export function errorMessage(
     if (error.status === 429) return text.rateLimited;
     if (error.status === 404 && error.code === "SESSION_EXPIRED")
       return text.sessionExpired;
+    // Codes the client raises itself say more than the HTTP status; HTTP_ERROR is the generic one.
+    if (error.code !== "HTTP_ERROR" && text.codes[error.code])
+      return text.codes[error.code];
     if (error.status >= 500) return text.unavailable;
     return text.codes[error.code] ?? error.message;
   }
