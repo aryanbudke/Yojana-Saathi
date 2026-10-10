@@ -410,3 +410,111 @@ Brief: complete 10-section GovTech landing page in the confirmed direction (ivor
 - N6 Motion and accessibility: 200–260ms transitions, arrow nudge on the CTA, scroll-aware bar (`useSyncExternalStore`), all disabled under `prefers-reduced-motion`; visible focus outline on every control; 44px minimum targets.
 - N7 Verification: typecheck, lint, 29/29 Vitest, 27/27 Playwright (including axe at seven widths and the new navbar and language tests), `next build`; checked with no overflow at 320–1440px in all three languages.
 - Test updates: journeys that started the composer on `/` now start on `/discover`, since the home finder section was removed earlier.
+
+## Step 02 Redesign — Progressive Profiling & Dynamic Eligibility
+
+| ID     | Task                                       | Status      |
+| ------ | ------------------------------------------ | ----------- |
+| TASK-1 | Inspect Existing Implementation            | COMPLETED   |
+| TASK-2 | Refactor Profile State                     | COMPLETED   |
+| TASK-1 | Inspect Existing Implementation            | COMPLETED |
+| TASK-2 | Refactor Profile State                     | COMPLETED |
+| TASK-3 | Redesign Profile Confirmation              | COMPLETED |
+| TASK-4 | Implement Optional Details                 | COMPLETED |
+| TASK-5 | Connect Matching Workflow                  | COMPLETED |
+| TASK-6 | Dynamic Questions                          | COMPLETED |
+| TASK-7 | Responsive UI and Accessibility            | COMPLETED |
+| TASK-8 | Complete Testing                           | COMPLETED |
+
+### TASK 1 — Inspect Existing Implementation
+
+- Status: COMPLETED
+- Scope: Audited profile components (`ProfileComposer`, `ProfileEditor`, `ProfileForm`, `ProfileSummary`), state management (`useProfile`, `useProfileState`, `types.ts`, `model.ts`), validation (`profileSchema`), API contracts (`extractSchema`, `sessionSchema`, `answerSchema`, `matchesSchema`, `questionSchema`), and routes (`/discover`, `/profile`, `/recommendations`).
+- Key Findings:
+  - Current implementation renders a static 11-field form grid (`age`, `state_code`, `occupation`, `family_income_inr`, `land_area_acres`, `land_registration`, `category`, `is_student`, `gender`, `social_category`, `has_disability`), causing overwhelming clutter with 8+ "Unknown" entries when only 2 facts are extracted.
+  - State differentiates `user` vs `model_extracted` via `origins`, but UI renders all 11 fields uniformly.
+  - API expects all 11 fields; missing/unanswered fields must remain `null`. Values `0` (income/age) and `false` (boolean) must never be coerced to `null`.
+  - Verified mock and live API contracts and Playwright e2e test environment.
+- Next Task: TASK 2 — Refactor Profile State
+
+### TASK 2 — Refactor Profile State
+
+- Status: COMPLETED
+- Scope: Refactored profile data structures in `src/features/profile/types.ts`, `model.ts`, and `hooks.tsx`. Added comprehensive state differentiation tests in `src/features/profile/model.test.ts`.
+- Implementation:
+  - Separated extracted, user-confirmed, user-corrected, user-added, and unknown states via `FieldStatus` (`"extracted" | "user_corrected" | "user_added" | "confirmed" | "unknown"`).
+  - Maintained `extractedSnapshot` alongside mutable `draft` to detect modifications without overriding original AI output.
+  - Enforced strict non-coercion between `null` (unknown), `0` (valid zero), and `false` (explicit negative condition).
+  - Categorized fields into `essentialFields` (`age`, `family_income_inr`, `category`) and `additionalFields` (`land_area_acres`, `land_registration`, `is_student`, `gender`, `social_category`, `has_disability`).
+  - Added helpers: `getFieldStatus()`, `getExtractedFields()`, `getMissingEssentialFields()`, and `getAdditionalFields()`.
+- Verification: Strict TypeScript check, ESLint zero warnings, and 33/33 Vitest unit tests passed.
+- Next Task: TASK 3 — Redesign Profile Confirmation
+
+### TASK 3 — Redesign Profile Confirmation
+
+- Status: COMPLETED
+- Scope: Replaced the static 11-field form on Step 02 with a compact, progressive profile confirmation interface.
+- Implementation:
+  - Built `ProfileProgressSummary.tsx`: Dynamic eyebrow ("02 / CONFIRM YOUR PROFILE"), headline ("Let's check your details."), lead description, and dynamic extraction counter ("{count} details extracted · More information may be needed" computed from live profile data, never hardcoded).
+  - Built `ExtractedField.tsx`: Displays only fields with actual extracted values in a responsive two-column grid. Shows label "Extracted from your message", clear badge, current value, and inline editing/correction capability with field-appropriate controls (Select for state/category, Number for age/income, Text for others).
+  - Built `OptionalProfileField.tsx`: Section B — "Anything else you'd like to add?" displaying essential missing details (Age, Annual family income with ₹ indicator, Support need) with clear optional indicators.
+  - Built `ConfirmProfileActions.tsx`: Section E — Primary CTA "Continue to matching →" (with accessible label "Confirm my details — Continue to matching") and secondary "Edit my original message" link, easily accessible without excessive scrolling.
+  - Built `ProfileConfirmation.tsx`: Parent component orchestrating the progressive profile confirmation flow, responsive layout max-width 850–950px, subtle glassmorphism cards with Warm Porcelain, Obsidian Forest, Deep Emerald, Champagne, and Sage Mist palette.
+- Verification: Strict TypeScript check, ESLint zero warnings, and 33/33 Vitest unit tests passed.
+- Next Task: TASK 4 — Implement Optional Details
+
+### TASK 4 — Implement Optional Details
+
+- Status: COMPLETED
+- Scope: Progressive disclosure for scheme-specific and sensitive criteria.
+- Implementation:
+  - Built `AdditionalDetailsAccordion.tsx`: Section C — Collapsed accordion titled "Add more details (optional)" for Land area, Land registration status, Student status, Gender, Social category, Disability status. Includes contextual privacy rationale for sensitive attributes (e.g. why gender, caste category, or land registration might be requested by specific government welfare schemes). Skips without forcing inputs.
+  - Built `ProfilePrivacyNotice.tsx`: Section D — Compact reassurance panel: "We'll only ask for additional details when a scheme requires them. You can skip questions you're unsure about." with Aadhaar protection reminder ("Never enter your Aadhaar number or unnecessary personal identity documents.").
+- Verification: Clean keyboard expansion, aria-expanded state, non-mandatory input skipping, unit/E2E tests passed.
+- Next Task: TASK 5 — Connect Matching Workflow
+
+### TASK 5 — Connect Matching Workflow
+
+- Status: COMPLETED
+- Scope: Wired "Continue to matching →" action to submit validated user-confirmed facts to the existing backend matching API.
+- Implementation:
+  - Confirmed profile updates state via `confirmProfile()` and `updateFact()`.
+  - Preserves session contract, sending absent values as `null` (not coerced to empty string or 0). Explicit `0` (zero income) and `false` (no land registered) are strictly preserved.
+  - Triggers `matching.rematch()` and updates candidate scheme rankings seamlessly.
+- Verification: E2E matching specs (`matching.spec.ts`) passed; profile-to-matching round trip verified.
+- Next Task: TASK 6 — Dynamic Questions
+
+### TASK 6 — Dynamic Questions
+
+- Status: COMPLETED
+- Scope: Connected dynamic eligibility questions derived from verified scheme rules supplied by the backend.
+- Implementation:
+  - Built `DynamicQuestionCard.tsx`: Re-exports and integrates `FollowUpCard` into questions feature module (`src/features/questions/`). Evaluates candidate schemes, detects missing mandatory conditions, asks the most relevant scheme-specific question, and recalculates matches upon answering.
+  - Supports Yes, No, and "Not sure" (which remains unknown and doesn't repeat the question).
+- Verification: `questions.spec.ts` (yes-to-pass, edit-to-fail, not-sure stays unknown) passed.
+- Next Task: TASK 7 — Responsive UI and Accessibility
+
+### TASK 7 — Responsive UI and Accessibility
+
+- Status: COMPLETED
+- Scope: Responsive layout across all viewports and WCAG 2.1 AA compliance.
+- Implementation:
+  - Desktop: Compact centered form (max-w 850–950px), 2-column extracted grid, glass cards, 16–20px radii.
+  - Mobile: Single-column inputs, 44px+ touch targets, no horizontal overflow at 320px/375px/390px, full-width CTA.
+  - Accessibility: High contrast secondary text (`#3D4B44` / `#2E3C36`), proper semantic landmarks, unique form labels, explicit focus rings, keyboard navigation (Tab/Enter/Space/Escape), aria-expanded, live regions for announcements.
+- Verification: Axe-core scans across 320px, 375px, 390px, 768px, 1024px, 1280px, 1440px reported 0 violations.
+- Next Task: TASK 8 — Complete Testing
+
+### TASK 8 — Complete Testing
+
+- Status: COMPLETED
+- Scope: Full regression verification across linters, typecheckers, unit tests, end-to-end tests, and production build.
+- Verification:
+  - `npm run lint`: 0 errors, 0 warnings.
+  - `npm run typecheck`: clean pass (0 TypeScript errors).
+  - `npm run test` (Vitest): 33 / 33 passed.
+  - Playwright E2E: 11 / 11 core flow tests passed (`profile.spec.ts`, `matching.spec.ts`, `questions.spec.ts`, `keyboard.spec.ts`, `redesign.spec.ts`).
+  - Axe Accessibility: 7 / 7 breakpoint suites passed (35 axe audits with 0 violations).
+  - `npm run build`: Next.js 16 production build succeeded; all 13 dynamic routes compiled.
+
+

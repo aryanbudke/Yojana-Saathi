@@ -472,6 +472,36 @@ export const en = {
     seeRecommendations: "See my recommendations →",
     statusReviewing: "Reviewing your details",
     statusSaving: "Saving confirmed details",
+    confirmEyebrow: "02 / CONFIRM YOUR PROFILE",
+    confirmTitle: "Let’s check your details.",
+    confirmLead:
+      "We found a few details from your message. Confirm or correct them before we look for matching schemes.",
+    extractedSummary: "{count} details extracted · More information may be needed",
+    extractedSummaryReady: "{count} details extracted · Ready for matching",
+    manualEntrySummary: "Manual entry · Fill in what you know",
+    extractedSectionTitle: "Extracted information",
+    extractedSectionLead:
+      "Details extracted from your description. Edit any field that looks incorrect.",
+    extractedBadge: "Extracted from your message",
+    correctedBadge: "Corrected by you",
+    missingSectionTitle: "Anything else you’d like to add?",
+    missingSectionLead:
+      "Optional details that help refine matching. You can leave these unknown.",
+    accordionTitle: "Add more details (optional)",
+    accordionSubtitle:
+      "Land records, student status, reservations, or disability criteria",
+    continueMatching: "Continue to matching →",
+    editOriginalMessage: "Edit my original message",
+    privacyPanelText:
+      "We’ll only ask for additional details when a scheme requires them. You can skip questions you’re unsure about.",
+    privacyPanelAadhaar:
+      "Never share Aadhaar numbers or confidential identity documents.",
+    socialCategoryNote:
+      "Used only by schemes providing reservations or specialized quotas.",
+    disabilityNote:
+      "Used only by schemes offering assistive devices or disability support.",
+    currencySymbol: "₹",
+    supportNeedPlaceholder: "Select or enter support type",
   },
   profilePage: {
     eyebrow: "Anonymous session",

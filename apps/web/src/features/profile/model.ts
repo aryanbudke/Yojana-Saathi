@@ -52,3 +52,75 @@ export function factLabel(
   if (field === "land_registration") return m.answers[value] ?? String(value);
   return String(value);
 }
+
+/** Determines whether a specific field is extracted, corrected, user added, confirmed, or unknown. */
+export function getFieldStatus(
+  field: ProfileField,
+  draft: ProfileDraft,
+  extractedSnapshot: ProfileFacts | null,
+  isConfirmed = false,
+): import("./types").FieldStatus {
+  if (isConfirmed && draft.facts[field] !== null) return "confirmed";
+
+  const currentValue = draft.facts[field];
+  const originalExtracted = extractedSnapshot
+    ? extractedSnapshot[field]
+    : draft.origins[field] === "model_extracted"
+      ? currentValue
+      : null;
+
+  if (currentValue === null) {
+    if (originalExtracted !== null && originalExtracted !== undefined) {
+      return "user_corrected";
+    }
+    return "unknown";
+  }
+
+  if (originalExtracted !== null && originalExtracted !== undefined) {
+    return currentValue === originalExtracted ? "extracted" : "user_corrected";
+  }
+
+  if (draft.origins[field] === "model_extracted") {
+    return "extracted";
+  }
+
+  return "user_added";
+}
+
+/** Returns the list of fields that were actually extracted by the AI from user input. */
+export function getExtractedFields(
+  extractedSnapshot: ProfileFacts | null,
+  draft: ProfileDraft,
+): ProfileField[] {
+  if (extractedSnapshot) {
+    return (Object.keys(extractedSnapshot) as ProfileField[]).filter(
+      (f) => extractedSnapshot[f] !== null,
+    );
+  }
+  return (Object.keys(draft.facts) as ProfileField[]).filter(
+    (f) => draft.origins[f] === "model_extracted" && draft.facts[f] !== null,
+  );
+}
+
+/** Returns missing essential fields (age, family_income_inr, category) that weren't extracted. */
+export function getMissingEssentialFields(
+  extractedFields: ProfileField[],
+): ProfileField[] {
+  const essentials: ProfileField[] = ["age", "family_income_inr", "category"];
+  return essentials.filter((f) => !extractedFields.includes(f));
+}
+
+/** Returns additional fields that were not extracted into Section A. */
+export function getAdditionalFields(
+  extractedFields: ProfileField[],
+): ProfileField[] {
+  const additionals: ProfileField[] = [
+    "land_area_acres",
+    "land_registration",
+    "is_student",
+    "gender",
+    "social_category",
+    "has_disability",
+  ];
+  return additionals.filter((f) => !extractedFields.includes(f));
+}
