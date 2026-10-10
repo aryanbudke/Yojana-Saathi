@@ -43,6 +43,24 @@ it("does not coerce blank and zero to the same fact", () => {
   expect(fieldValue("number", "0")).toBe(0);
   expect(fieldValue("boolean", "no")).toBe(false);
   expect(fieldValue("choice", "not_sure")).toBe("not_sure");
+  expect(fieldValue("list", " Education, housing, education ")).toEqual([
+    "education",
+    "housing",
+  ]);
+});
+it("validates bounded structured support needs", () => {
+  expect(
+    profileSchema.safeParse({
+      ...blankFacts,
+      support_needs: ["education", "housing"],
+    }).success,
+  ).toBe(true);
+  expect(
+    profileSchema.safeParse({
+      ...blankFacts,
+      support_needs: Array.from({ length: 11 }, (_, index) => `need-${index}`),
+    }).success,
+  ).toBe(false);
 });
 it("rejects out of range manual entries", () => {
   expect(profileSchema.safeParse({ ...blankFacts, age: 121 }).success).toBe(

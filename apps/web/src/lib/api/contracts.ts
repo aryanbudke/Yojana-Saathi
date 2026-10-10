@@ -14,6 +14,11 @@ export const profileSchema = z.object({
   gender: z.string().min(1).max(40).nullable(),
   has_disability: z.boolean().nullable(),
   is_student: z.boolean().nullable(),
+  support_needs: z
+    .array(z.string().trim().min(1).max(80))
+    .max(10)
+    .nullable()
+    .default(null),
 });
 export type ProfileFacts = z.infer<typeof profileSchema>;
 export type ProfileField = keyof ProfileFacts;
@@ -30,6 +35,7 @@ export const blankFacts: ProfileFacts = {
   gender: null,
   has_disability: null,
   is_student: null,
+  support_needs: null,
 };
 const uuid = z.uuid();
 const date = z.iso.datetime({ offset: true });

@@ -1,14 +1,17 @@
 """Profile extraction, anonymous-session, and confirmed-fact contracts."""
 
 from datetime import datetime
-from typing import Literal
+from typing import Annotated, Literal
 from uuid import UUID
 
-from pydantic import Field, field_validator
+from pydantic import Field, StringConstraints, field_validator
 
 from app.schemas.common import ContractModel, StateCode
 
-FactValue = str | int | float | bool | None
+type SupportNeed = Annotated[
+    str, StringConstraints(strip_whitespace=True, min_length=1, max_length=80)
+]
+FactValue = str | int | float | bool | list[str] | None
 ProfileField = Literal[
     "age",
     "state_code",
@@ -21,6 +24,7 @@ ProfileField = Literal[
     "gender",
     "has_disability",
     "is_student",
+    "support_needs",
 ]
 
 
@@ -38,6 +42,15 @@ class ProfileFacts(ContractModel):
     gender: str | None = Field(default=None, min_length=1, max_length=40)
     has_disability: bool | None = None
     is_student: bool | None = None
+    support_needs: list[SupportNeed] | None = Field(default=None, max_length=10)
+
+    @field_validator("support_needs")
+    @classmethod
+    def unique_support_needs(cls, value: list[str] | None) -> list[str] | None:
+        if value is None:
+            return None
+        normalized = list(dict.fromkeys(need.casefold() for need in value))
+        return normalized or None
 
 
 class ProfileExtractRequest(ContractModel):

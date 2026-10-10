@@ -6,7 +6,7 @@ tests and acceptance checks pass.
 | ID | Task | Status |
 |---|---|---|
 | DM-01 | Inspect dataset and matching/RAG dependency boundary | COMPLETED |
-| DM-02 | Add structured support-needs profile input | PENDING |
+| DM-02 | Add structured support-needs profile input | COMPLETED |
 | DM-03 | Normalize safe rules and query dataset directly with SQL | PENDING |
 | DM-04 | Filter mandatory failures and rank deterministic matches | PENDING |
 | DM-05 | Explain matches, missing facts, and preliminary status | PENDING |
@@ -32,3 +32,22 @@ tests and acceptance checks pass.
   eligibility guidance.
 - **Commit reference:** This checkpoint's `docs(matching)` commit.
 - **Next task:** DM-02 — Add structured support-needs profile input.
+
+## DM-02 — Structured support-needs profile input
+
+- **Status:** COMPLETED
+- **Files created or modified:** Backend profile schema, extraction prompt and
+  validation, profile boundary validation and tests; frontend API contract,
+  profile model/editors, English/Hindi/Kannada labels, and model tests.
+- **Tests executed:**
+  - Backend Ruff and focused mypy — passed.
+  - Backend profile/extraction/contract tests — 38 passed; one upstream
+    Starlette TestClient deprecation warning.
+  - Frontend typecheck and ESLint — passed.
+  - Frontend profile/i18n tests — 13 passed.
+- **Problems encountered:** A support-needs value is a list, while the existing
+  profile editor handled scalar values only. It now accepts comma-separated
+  input and converts it to a bounded, normalized, duplicate-free list.
+- **Commit reference:** This checkpoint's `feat(profile)` commit.
+- **Next task:** DM-03 — Normalize safe rules and query the dataset directly
+  with SQL.

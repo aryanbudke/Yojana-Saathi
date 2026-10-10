@@ -172,7 +172,8 @@ export const en = {
         "The service returned placeholder sources. Scheme guidance cannot be verified.",
       NETWORK_ERROR:
         "We couldn’t reach the service. Check your connection and try again.",
-      LIVE_API_REQUIRED: "Voice features need a connection to the live service.",
+      LIVE_API_REQUIRED:
+        "Voice features need a connection to the live service.",
     } as Record<string, string>,
   },
   categoryAudience: {
@@ -237,6 +238,7 @@ export const en = {
     gender: "Gender (only if needed)",
     social_category: "Social category (only if needed)",
     has_disability: "Disability status (only if needed)",
+    support_needs: "Support needed",
   },
   states: {
     AP: "Andhra Pradesh",
@@ -455,6 +457,7 @@ export const en = {
     needsReview: "Needs your review",
     reviewLead:
       "Correct anything that doesn’t look right. Blank fields stay unknown; nothing is assumed.",
+    supportNeedsPlaceholder: "education, housing, health (comma-separated)",
     provided: "{count} details provided",
     stillUnknown: "{count} still unknown",
     reviewLegend: "Review your profile facts",
@@ -745,14 +748,17 @@ export const en = {
     speak: "Speak instead",
     listening: "Listening…",
     transcribing: "Transcribing…",
-    listeningHint: "Listening… recording stops automatically when you finish speaking.",
-    privacyNote: "Your recording is sent to Sarvam AI and is not saved by Yojana Saathi.",
+    listeningHint:
+      "Listening… recording stops automatically when you finish speaking.",
+    privacyNote:
+      "Your recording is sent to Sarvam AI and is not saved by Yojana Saathi.",
     readAloud: "Read aloud",
     stopAudio: "Stop audio",
     translatedAudio: "AI-translated audio; check the original text.",
     errors: {
       unsupported: "Voice recording is not supported in this browser.",
-      recordingFailed: "The recording could not be completed. Please try again.",
+      recordingFailed:
+        "The recording could not be completed. Please try again.",
       noSpeech: "No speech was detected. Please try again and speak clearly.",
       microphone: "Microphone permission is needed for voice input.",
       playback: "The generated audio could not be played.",
