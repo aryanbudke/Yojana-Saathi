@@ -8,7 +8,7 @@ tests and acceptance checks pass.
 | DM-01 | Inspect dataset and matching/RAG dependency boundary | COMPLETED |
 | DM-02 | Add structured support-needs profile input | COMPLETED |
 | DM-03 | Normalize safe rules and query dataset directly with SQL | COMPLETED |
-| DM-04 | Filter mandatory failures and rank deterministic matches | PENDING |
+| DM-04 | Filter mandatory failures and rank deterministic matches | COMPLETED |
 | DM-05 | Explain matches, missing facts, and preliminary status | PENDING |
 | DM-06 | Separate citizen matching routes from RAG/admin routes | PENDING |
 | DM-07 | Evaluate labelled profiles and run full regression checks | PENDING |
@@ -70,3 +70,22 @@ tests and acceptance checks pass.
   fragment and no proposed rule is evaluated as citizen eligibility.
 - **Commit reference:** This checkpoint's `feat(matching)` commit.
 - **Next task:** DM-04 — Exclude mandatory failures and rank direct matches.
+
+## DM-04 — Mandatory filtering and deterministic ranking
+
+- **Status:** COMPLETED
+- **Files created or modified:** Verified candidate metadata/repository,
+  `app/modules/matching/ranking.py`, matching service, focused ranking tests,
+  and API expectations for excluded failures.
+- **Tests executed:** Ruff and focused mypy passed; rule, ranking, explanation,
+  API, and synthetic benchmark tests passed (121 tests).
+- **Problems encountered:** Existing API tests expected failed candidates to be
+  returned with a `not_eligible` status. The required behavior is to exclude
+  mandatory failures, so tests now verify an empty recommendation set while a
+  later corrected profile can still rematch successfully.
+- **Scoring boundary:** The score combines metadata overlap, geographic scope,
+  and the proportion of reviewed conditions satisfied. It is documented and
+  tested as an ordering signal, never an approval probability. Preliminary
+  ranking ignores eligibility prose entirely.
+- **Commit reference:** This checkpoint's `feat(matching)` commit.
+- **Next task:** DM-05 — Add explanations, missing facts, and preliminary labels.

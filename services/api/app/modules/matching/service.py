@@ -2,7 +2,6 @@
 
 import hashlib
 import json
-import re
 from typing import cast
 from uuid import UUID
 
@@ -14,6 +13,7 @@ from app.db.models import ProfileFact
 from app.modules.explanations.service import explain
 from app.modules.matching.evaluator import evaluate_candidate
 from app.modules.matching.facts import ConfirmedFacts
+from app.modules.matching.ranking import in_geographic_scope, verified_relevance
 from app.repositories.matching import CandidateScheme, MatchingRepository, MatchResultWrite
 from app.schemas.matching import MatchesResponse, RuleResult, SchemeMatchResult
 from app.schemas.profile import ProfileField
@@ -50,15 +50,9 @@ def profile_hash(facts: ConfirmedFacts) -> str:
 
 
 def relevance(candidate: CandidateScheme, facts: ConfirmedFacts) -> float:
-    # shortcut: name overlap only; add repository category/geography metadata before richer ranking.
-    terms = {
-        term
-        for value in (facts.occupation, facts.category)
-        if value
-        for term in re.findall(r"\w+", value.casefold())
-    }
-    name = set(re.findall(r"\w+", candidate.scheme_name.casefold()))
-    return round(len(terms & name) / len(terms), 6) if terms else 0.0
+    """Backward-compatible metadata-only relevance helper."""
+
+    return verified_relevance(candidate, facts)
 
 
 def match_profile(
@@ -87,8 +81,12 @@ def match_profile(
     writes = []
     results = []
     for candidate in repository.list_candidates():
+        if not in_geographic_scope(candidate, facts):
+            continue
         evaluation = explain(candidate, evaluate_candidate(candidate, facts))
-        score = relevance(candidate, facts)
+        if evaluation.verdict == Verdict.NOT_ELIGIBLE:
+            continue
+        score = verified_relevance(candidate, facts, evaluation.outcomes)
         writes.append(
             MatchResultWrite(
                 candidate.scheme_version_id,

@@ -8,7 +8,7 @@ from uuid import UUID
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app.db.enums import ReviewStatus, RuleSeverity, Verdict
+from app.db.enums import GovernmentLevel, ReviewStatus, RuleSeverity, Verdict
 from app.db.models import EligibilityRule, MatchResult, MatchRun
 from app.repositories.schemes import published_schemes_statement, sources_for_versions
 from app.schemas.matching import RuleOutcome, RuleResult
@@ -42,6 +42,12 @@ class CandidateScheme:
     verified_at: datetime
     sources: tuple[CandidateSource, ...]
     rules: tuple[CandidateRule, ...]
+    slug: str = ""
+    government_level: GovernmentLevel = GovernmentLevel.CENTRAL
+    state_code: str | None = None
+    category: str = ""
+    summary: str = ""
+    benefit_text: str = ""
 
 
 @dataclass(frozen=True)
@@ -143,6 +149,12 @@ class MatchingRepository(CandidateRepository, MatchRunRepository):
                         )
                         for rule in candidate_rules
                     ),
+                    slug=scheme.slug,
+                    government_level=scheme.government_level,
+                    state_code=scheme.state_code,
+                    category=scheme.category,
+                    summary=version.summary,
+                    benefit_text=version.benefit_text,
                 )
             )
         return candidates
