@@ -318,3 +318,31 @@ deployment, production migration, paid embedding calls or live success claims.
 - Verification: existing Settings accepts the reviewer pair, file mode0600 confirmed, Git ignore confirmed. Authenticated API/generation/citation checks not performed while full indexing is blocked.
 - Commit: private environment excluded; sanitized documentation recorded with the quota-blocker commit above.
 - Next task: use this configuration after full indexing passes; no further reviewer credential required in chat.
+
+## Authenticated integration continuation — 2026-10-10
+
+The user explicitly requested the following sequence. A real eight-record subset
+in a unique temporary PostgreSQL schema will exercise protected routes without
+claiming that the empty shared staging table is a full index. No auth dependency
+override, frontend change, publication or remote deployment is authorized here.
+
+| Task | Status | Verification / dependency |
+| --- | --- | --- |
+| AUTH-01 Private environment | COMPLETED | Settings/AISettings, private mode/ignore and read-only PostgreSQL schema checks |
+| AUTH-02 Authenticated retrieval | PENDING | Real actual-data subset and provider embeddings, normal reviewer auth |
+| AUTH-03 Grounded generation | PENDING | AUTH-02 committed; configured model and actual retrieved records |
+| AUTH-04 Citation/source review | PENDING | AUTH-03 committed; membership, raw-record equality and claim-support review |
+| AUTH-05 PostgreSQL integration tests | PENDING | Two existing isolated-schema tests; provider mocks explicitly distinguished |
+| AUTH-06 Full3397 indexing | PENDING | Verified quota headroom/pacing, native token guards and full transaction |
+| AUTH-07 Publication boundary | PENDING | No unverified draft enters published/public matching tables |
+| AUTH-08 Regression checks | PENDING | All tests, relevant lint/types and secret/frontend preservation |
+| AUTH-09 Final evidence/progress | PENDING | Completed, failed and blocked outcomes clearly separated |
+
+### AUTH-01 — Private environment verification
+
+- Status: COMPLETED
+- Files: `docs/rag/admin-environment-verification.json`, this progress document; private.env read without printing values and not modified.
+- Passing: existing Settings/AISettings accept database, Gemini key/models and reviewer token/actor pair; only presence booleans and non-secret model IDs reported. Private.env ignored by Git and mode0600. Database SELECT1 passes, revision20261009_0005, staging vector(768), RLS enabled; shared staging0 rows. No migrations/writes performed. Publisher role absent and not required.
+- Failed checks: none. Deployed server configuration remains unverified; local settings do not establish remote readiness.
+- Commit: `docs(ai): verify authorized RAG server configuration` (resolve by title).
+- Next task: AUTH-02 actual-subset authenticated retrieval, only after this commit.

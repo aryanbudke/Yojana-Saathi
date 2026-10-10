@@ -1,0 +1,25 @@
+{
+  "timestamp": "2026-10-10T03:58:04.925136+00:00",
+  "status": "passed",
+  "secrets_exposed": false,
+  "configured": {
+    "database": true,
+    "gemini_key": true,
+    "embedding_model": true,
+    "generation_model": true,
+    "reviewer_token": true,
+    "reviewer_id": true
+  },
+  "private_config_ignored": true,
+  "private_mode": "0600",
+  "migration": "20261009_0005",
+  "embedding_column": "vector(768)",
+  "staging_rls_enabled": true,
+  "shared_staging_rows": 0,
+  "publisher_configured": false,
+  "models": {
+    "embedding": "gemini-embedding-001",
+    "generation": "gemini-flash-lite-latest"
+  },
+  "deployed_configuration_verified": false
+}
