@@ -1,23 +1,26 @@
-import { ModeNotice } from "@/features/profile/ProfileComposer";
-import { FeatureStrip } from "@/features/landing/FeatureStrip";
-import { HeroSection } from "@/features/landing/HeroSection";
-import { HowItWorks } from "@/features/landing/HowItWorks";
+import React from "react";
+import { MockModeBanner } from "@/components/layout/MockModeBanner";
+import { HeroSection } from "@/features/home/components/HeroSection";
+import { BenefitsStrip } from "@/features/home/components/BenefitsStrip";
+import { HowItWorks } from "@/features/home/components/HowItWorks";
 import { SchemeFinder } from "@/features/landing/SchemeFinder";
 import { PopularCategories } from "@/features/landing/PopularCategories";
-import { OfficialSources } from "@/features/landing/OfficialSources";
+import { TrustedSources } from "@/features/home/components/TrustedSources";
 import { ApplicationGuidance } from "@/features/landing/ApplicationGuidance";
 
 export default function Home() {
   return (
-    <>
-      <ModeNotice />
-      <HeroSection />
-      <FeatureStrip />
-      <HowItWorks />
-      <SchemeFinder />
-      <PopularCategories />
-      <OfficialSources />
-      <ApplicationGuidance />
-    </>
+    <div>
+      <MockModeBanner />
+      <div className="space-y-12">
+        <HeroSection />
+        <BenefitsStrip />
+        <HowItWorks />
+        <SchemeFinder />
+        <PopularCategories />
+        <TrustedSources />
+        <ApplicationGuidance />
+      </div>
+    </div>
   );
 }

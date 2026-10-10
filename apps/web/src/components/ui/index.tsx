@@ -1,48 +1,18 @@
 export { AppHeader } from "@/components/AppHeader";
-import { ExternalLink, Info, LoaderCircle } from "lucide-react";
-import type {
-  ButtonHTMLAttributes,
-  InputHTMLAttributes,
-  TextareaHTMLAttributes,
-  ReactNode,
-} from "react";
-import { safeOfficialUrl } from "@/lib/urls";
+export { Button } from "./Button";
+export { GlassCard } from "./GlassCard";
+export { Badge } from "./Badge";
+export { Input, TextArea } from "./Input";
+export { Select } from "./Select";
+export { Modal } from "./Modal";
+export { Skeleton } from "./Skeleton";
 export { safeOfficialUrl } from "@/lib/urls";
 
-export function Button({
-  children,
-  className = "",
-  variant = "primary",
-  busy = false,
-  disabled,
-  ...props
-}: ButtonHTMLAttributes<HTMLButtonElement> & {
-  variant?: "primary" | "secondary" | "quiet";
-  busy?: boolean;
-}) {
-  return (
-    <button
-      className={`button ${variant} ${className}`}
-      disabled={disabled || busy}
-      aria-busy={busy}
-      {...props}
-    >
-      {busy && <LoaderCircle size={18} className="spin" aria-hidden="true" />}
-      {children}
-    </button>
-  );
-}
-export function Input(props: InputHTMLAttributes<HTMLInputElement>) {
-  return <input {...props} className={`input ${props.className ?? ""}`} />;
-}
-export function TextArea(props: TextareaHTMLAttributes<HTMLTextAreaElement>) {
-  return (
-    <textarea
-      {...props}
-      className={`input textarea ${props.className ?? ""}`}
-    />
-  );
-}
+import { ExternalLink, Info } from "lucide-react";
+import type { ReactNode } from "react";
+import { safeOfficialUrl } from "@/lib/urls";
+import { GlassCard } from "./GlassCard";
+
 export function GlassPanel({
   children,
   className = "",
@@ -50,17 +20,9 @@ export function GlassPanel({
   children: ReactNode;
   className?: string;
 }) {
-  return <section className={`glass ${className}`}>{children}</section>;
+  return <GlassCard className={className}>{children}</GlassCard>;
 }
-export function Badge({
-  children,
-  tone = "neutral",
-}: {
-  children: ReactNode;
-  tone?: string;
-}) {
-  return <span className={`badge ${tone}`}>{children}</span>;
-}
+
 export function InlineAlert({
   children,
   error = false,
@@ -70,26 +32,15 @@ export function InlineAlert({
 }) {
   return (
     <div
-      className={`alert ${error ? "error" : ""}`}
+      className={`alert ${error ? "error" : ""} rounded-2xl backdrop-blur-md`}
       role={error ? "alert" : "status"}
     >
-      <Info size={18} aria-hidden="true" />
+      <Info size={18} className="shrink-0 mt-0.5" aria-hidden="true" />
       <div>{children}</div>
     </div>
   );
 }
-export function Skeleton() {
-  return (
-    <div className="skeleton" role="status" aria-label="Loading">
-      <span className="sr-only">Loading…</span>
-      <span className="skeleton-line short" aria-hidden="true" />
-      <span className="skeleton-line title" aria-hidden="true" />
-      <span className="skeleton-line" aria-hidden="true" />
-      <span className="skeleton-line medium" aria-hidden="true" />
-      <span className="skeleton-line action" aria-hidden="true" />
-    </div>
-  );
-}
+
 export function SourceLink({
   url,
   children = "Official source",
@@ -100,7 +51,7 @@ export function SourceLink({
   const safe = safeOfficialUrl(url);
   return safe ? (
     <a
-      className="source-link"
+      className="source-link inline-flex items-center gap-1.5 text-emerald-800 hover:text-emerald-950 font-medium transition-colors"
       href={safe}
       target="_blank"
       rel="noopener noreferrer"
@@ -110,15 +61,16 @@ export function SourceLink({
       <span className="sr-only"> (opens in a new tab)</span>
     </a>
   ) : (
-    <span className="source-unavailable">
+    <span className="source-unavailable text-xs text-slate-500">
       Source link unavailable
       {url.includes(".invalid") ? " · synthetic fixture" : ""}
     </span>
   );
 }
+
 export function Disclaimer() {
   return (
-    <p className="disclaimer">
+    <p className="disclaimer text-xs text-slate-500 leading-relaxed">
       An independent project. This is preliminary guidance; the government
       portal makes final decisions. We do not submit or approve applications.
     </p>
@@ -135,15 +87,16 @@ export function SectionHeading({
   children?: ReactNode;
 }) {
   return (
-    <div className="section-heading">
+    <div className="section-heading mb-6 flex items-center justify-between gap-4 flex-wrap">
       <div>
-        <h2>{title}</h2>
-        {description && <p className="section-description">{description}</p>}
+        <h2 className="text-2xl font-bold tracking-tight text-slate-900">{title}</h2>
+        {description && <p className="section-description text-slate-600 text-sm mt-1">{description}</p>}
       </div>
       {children}
     </div>
   );
 }
+
 export function EmptyState({
   title,
   children,
@@ -152,9 +105,9 @@ export function EmptyState({
   children: ReactNode;
 }) {
   return (
-    <div className="empty">
-      <h2>{title}</h2>
-      <div className="empty-content">{children}</div>
+    <div className="empty rounded-3xl p-8 sm:p-12 text-center bg-white/60 backdrop-blur-md border border-slate-200/80">
+      <h3 className="text-lg font-bold text-slate-900 mb-2">{title}</h3>
+      <div className="empty-content text-slate-600 text-sm max-w-md mx-auto space-y-4">{children}</div>
     </div>
   );
 }

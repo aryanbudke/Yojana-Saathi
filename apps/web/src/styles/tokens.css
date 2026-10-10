@@ -1,0 +1,99 @@
+/* Modern Indian Civic Luxury Design Tokens */
+:root {
+  /* Core Palette */
+  --obsidian: #102A24;
+  --emerald-deep: #165541;
+  --emerald-hover: #0e3d2e;
+  --porcelain: #F7F5F0;
+  --champagne: #D8C5A1;
+  --gold: #B68A45;
+  --sage: #E7EDE7;
+  --sage-border: #D2DED2;
+  --ink: #17211D;
+  --slate: #68736D;
+  --white: #FFFFFF;
+
+  /* Extended Emerald Scale */
+  --emerald-50: #f0f7f3;
+  --emerald-100: #e0efe6;
+  --emerald-200: #c2dfce;
+  --emerald-300: #97c8ad;
+  --emerald-400: #66aa86;
+  --emerald-500: #3b8a62;
+  --emerald-600: #26704c;
+  --emerald-700: #165541;
+  --emerald-800: #124434;
+  --emerald-900: #102A24;
+  --emerald-950: #091a16;
+
+  /* Saffron / Warm Gold Scale */
+  --saffron-50: #faf7f0;
+  --saffron-100: #f4ecdc;
+  --saffron-200: #e8d7b7;
+  --saffron-300: #d8c5a1;
+  --saffron-400: #c5a973;
+  --saffron-500: #b68a45;
+  --saffron-600: #9a7235;
+  --saffron-700: #7d5a2a;
+  --saffron-800: #644723;
+  --saffron-900: #4e371d;
+
+  /* Cyan / Sage Scale */
+  --cyan-50: #f4f8f7;
+  --cyan-100: #e7ede7;
+  --cyan-500: #3e7b75;
+  --cyan-600: #2d635d;
+  --cyan-700: #204f4a;
+
+  /* Semantic Core */
+  --bg: #F7F5F0;
+  --bg-gradient: #F7F5F0;
+  --surface: #FFFFFF;
+  --surface-muted: #E7EDE7;
+  --ink: #17211D;
+  --secondary-ink: #334155;
+  --muted: #68736D;
+  --line: rgba(23, 33, 29, 0.08);
+  --line-highlight: rgba(255, 255, 255, 0.9);
+
+  /* Primary Brand */
+  --primary: #165541;
+  --primary-hover: #0e3d2e;
+  --primary-active: #0a2e22;
+  --primary-subtle: #e0efe6;
+
+  /* Accents */
+  --accent: #B68A45;
+  --accent-subtle: #faf7f0;
+
+  /* Status Colors */
+  --success: #165541;
+  --success-bg: #e0efe6;
+  --warning: #b68a45;
+  --warning-bg: #faf7f0;
+  --danger: #b91c1c;
+  --danger-bg: #fef2f2;
+  --info: #204f4a;
+  --info-bg: #e7ede7;
+
+  /* Glassmorphism Constants */
+  --glass-bg: rgba(255, 255, 255, 0.76);
+  --glass-bg-elevated: rgba(255, 255, 255, 0.88);
+  --glass-bg-subtle: rgba(255, 255, 255, 0.55);
+  --glass-border: rgba(255, 255, 255, 0.85);
+  --glass-border-subtle: rgba(23, 33, 29, 0.08);
+  --glass-blur: 16px;
+  --glass-blur-lg: 24px;
+
+  /* Shadows */
+  --shadow-glass-sm: 0 4px 12px -2px rgba(16, 42, 36, 0.04);
+  --shadow-glass-md: 0 12px 32px -4px rgba(16, 42, 36, 0.06), 0 4px 12px -2px rgba(16, 42, 36, 0.03);
+  --shadow-glass-lg: 0 20px 48px -6px rgba(16, 42, 36, 0.08), 0 8px 20px -3px rgba(16, 42, 36, 0.04);
+  --shadow-emerald-glow: 0 12px 32px -4px rgba(22, 85, 65, 0.22);
+  --shadow-gold-glow: 0 12px 32px -4px rgba(182, 138, 69, 0.22);
+
+  /* Typography */
+  --font-sans: "Inter Variable", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-serif: "Instrument Serif", Georgia, "Times New Roman", serif;
+  --font-script: "Caveat", "Brush Script MT", cursive;
+}

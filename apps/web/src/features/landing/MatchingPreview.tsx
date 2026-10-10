@@ -8,7 +8,7 @@ import { humanize } from "@/lib/format";
 export function MatchingPreview() {
   const p = useProfile();
   return (
-    <aside className="matching-preview" aria-labelledby="preview-title">
+    <aside className="matching-preview relative overflow-hidden" aria-labelledby="preview-title">
       <div className="section-heading">
         <h2 id="preview-title">Your matching preview</h2>
       </div>
@@ -40,7 +40,7 @@ export function MatchingPreview() {
       {p.confirmed ? (
         <Recommendations embedded />
       ) : (
-        <div className="preview-empty">
+        <div className="preview-empty relative z-10">
           <h3>
             {p.reviewing ? "Ready for your review" : "Start with your story"}
           </h3>
@@ -49,6 +49,19 @@ export function MatchingPreview() {
               ? "Correct the extracted details and confirm them to see matches and useful follow-up questions."
               : "Your extracted details, rule checks and follow-up question will appear here. No eligibility is assumed."}
           </p>
+        </div>
+      )}
+
+      {/* Decorative botanical tea leaf illustration in bottom-right corner */}
+      {!p.confirmed && (
+        <div className="absolute bottom-0 right-0 w-24 sm:w-28 h-24 sm:h-28 pointer-events-none select-none z-0 opacity-80">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/images/botanical-leaf.png"
+            alt=""
+            className="w-full h-full object-contain"
+            aria-hidden="true"
+          />
         </div>
       )}
     </aside>

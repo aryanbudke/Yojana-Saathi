@@ -1,81 +1,116 @@
+"use client";
+
+import React from "react";
 import Link from "next/link";
 import {
-  ArrowUpRight,
-  Sprout,
+  ArrowRight,
+  BriefcaseBusiness,
   GraduationCap,
   HeartHandshake,
   House,
-  HeartPulse,
-  BriefcaseBusiness,
+  Sprout,
+  UsersRound,
 } from "lucide-react";
-import styles from "./sections.module.css";
+import { GlassCard } from "@/components/ui/GlassCard";
 
 const items = [
   {
     name: "Agriculture",
     value: "agriculture",
-    label: "Farming & rural livelihoods",
     icon: Sprout,
+    circleBg: "bg-emerald-100 text-emerald-800",
   },
   {
     name: "Education",
     value: "education",
-    label: "Learning & student support",
     icon: GraduationCap,
+    circleBg: "bg-sky-100 text-sky-800",
   },
   {
-    name: "Women & Child Welfare",
+    name: "Women",
     value: "women",
-    label: "Support for women & families",
     icon: HeartHandshake,
+    circleBg: "bg-rose-100 text-rose-800",
+  },
+  {
+    name: "Senior Citizen",
+    value: "senior_citizen",
+    icon: UsersRound,
+    circleBg: "bg-teal-100 text-teal-800",
+  },
+  {
+    name: "Small Business",
+    value: "entrepreneurship",
+    icon: BriefcaseBusiness,
+    circleBg: "bg-emerald-100 text-emerald-800",
   },
   {
     name: "Housing",
     value: "housing",
-    label: "A place to call home",
     icon: House,
-  },
-  {
-    name: "Health & Wellness",
-    value: "health",
-    label: "Care & wellbeing",
-    icon: HeartPulse,
-  },
-  {
-    name: "Skill Development & Employment",
-    value: "employment",
-    label: "Skills & work opportunities",
-    icon: BriefcaseBusiness,
+    circleBg: "bg-amber-100 text-amber-900",
   },
 ];
 
 export function PopularCategories() {
   return (
-    <section className={styles.section} aria-labelledby="categories-title">
-      <div className={styles.sectionHead}>
-        <h2 id="categories-title" className={styles.sectionTitle}>
-          Popular categories
-        </h2>
-        <p className={styles.sectionLead}>
-          Explore schemes by your area of interest.
-        </p>
+    <div className="my-14 sm:my-20">
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
+        <div>
+          <h2 id="categories-title" className="text-2xl sm:text-3xl font-extrabold text-[#17211D] tracking-tight">
+            Explore scheme categories
+          </h2>
+          <p className="text-sm text-[#68736D] mt-1">
+            Browse by category to see relevant government schemes.
+          </p>
+        </div>
+        <Link
+          href="/discover#browse"
+          className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-bold text-[#165541] hover:text-[#0e3d2e] transition-colors shrink-0"
+        >
+          <span>View all schemes</span>
+          <ArrowRight size={15} />
+        </Link>
       </div>
-      <div className={styles.categoryGrid}>
-        {items.map(({ name, value, label, icon: Icon }) => (
+
+      <section aria-label="Popular categories">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3.5 sm:gap-4">
+        {items.map(({ name, value, icon: Icon, circleBg }) => (
           <Link
             key={value}
-            className={styles.categoryCard}
             href={`/discover?category=${value}#browse`}
+            className="group block"
           >
-            <Icon size={24} aria-hidden="true" />
-            <div>
-              <h3>{name}</h3>
-              <p>{label}</p>
-            </div>
-            <ArrowUpRight size={20} aria-hidden="true" />
+            <GlassCard
+              variant="standard"
+              interactive
+              className="p-4 sm:p-4.5 rounded-2xl bg-white/90 border border-white/95 shadow-xs group-hover:border-[#165541]/30 transition-all flex items-center justify-between gap-2 h-full"
+            >
+              <div className="flex items-center gap-2.5 min-w-0">
+                <div
+                  className={`w-9 h-9 rounded-full ${circleBg} flex items-center justify-center shrink-0 shadow-2xs`}
+                >
+                  <Icon size={18} aria-hidden="true" />
+                </div>
+                <div className="min-w-0">
+                  <h3 className="text-xs sm:text-sm font-bold text-[#17211D] truncate group-hover:text-[#165541] transition-colors">
+                    {name}
+                  </h3>
+                  <p className="text-[11px] text-[#68736D] truncate">
+                    Schemes
+                  </p>
+                </div>
+              </div>
+              <ArrowRight
+                size={14}
+                className="text-slate-400 group-hover:text-[#165541] group-hover:translate-x-0.5 transition-all shrink-0"
+                aria-hidden="true"
+              />
+            </GlassCard>
           </Link>
         ))}
       </div>
-    </section>
+      </section>
+    </div>
   );
 }

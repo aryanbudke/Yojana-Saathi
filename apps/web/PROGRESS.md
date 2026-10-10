@@ -350,3 +350,29 @@ Brief: complete 10-section GovTech landing page in the confirmed direction (ivor
 | SR-08 Responsive         | `9d18aca`                                                       |
 | SR-09 API journeys       | `0009c7f`                                                       |
 | SR-10 Final polish       | Commit containing this entry (`git log --oneline --grep=SR-10`) |
+
+## SR-11 — Modern Indian Civic Luxury UI/UX Redesign
+
+- Status: COMPLETED
+- Scope: Full visual and structural redesign aligned with the user-provided reference mockup (`media_1791581880002_05923fe7.jpg`).
+- Core Design System & Tokens:
+  - Palette: Obsidian Forest (`#102A24`), Deep Emerald (`#165541`), Warm Porcelain (`#F7F5F0`), Champagne (`#D8C5A1`), Antique Gold (`#8A6020`), Sage Mist (`#E7EDE7`), Ink (`#17211D`), Slate (`#68736D`), Pure White (`#FFFFFF`).
+  - Glassmorphism: Multi-layered `GlassCard` with specular top edge highlight, ambient drop shadow, and backdrop blur.
+  - Typography: Crisp geometric typography with tight headlines and warm editorial script notes.
+- Implemented Redesigned Sections:
+  1. Sticky Navigation: Floating white pill menu with Home / Discover / How it works / About, English language selector, and Deep Emerald CTA button.
+  2. Hero Section: Asymmetric two-column composition with authentic Rashtrapati Bhavan architecture + Indian flag background, handwritten script `"Real schemes. Real opportunities."` with curved directional arrow, and 3 cascading offset glass scheme cards (`PM-KISAN`, `PM-Vidyalaxmi`, `PMAY-Gramin`).
+  3. Benefits Strip: 4 glass cards with sage circle icons highlighting key civic values.
+  4. How It Works: 3-step connected workflow with numbered badges (`1`, `2`, `3`), plain language intake description, and interactive anchor.
+  5. Scheme Finder: Interactive citizen input with plain-language textarea, 6 category quick chips (`🌾 Farmer`, `🎓 Student`, `❤️ Women`, `👥 Senior Citizen`, `💼 Small Business`, `🏠 Housing`), combined with matching preview card featuring 6 extracted facts and botanical leaf illustration.
+  6. Explore Categories: 6 pastel circle cards with category icons, labels, and "View all schemes" button.
+  7. Trusted Official Sources: 4 cards with national emblem (`/images/emblem.png`, `/images/india-gov-logo.png`) and bottom reassurance banner.
+  8. Application Guidance: 4 numbered roadmap cards (`01`, `02`, `03`, `04`) with icons and direct link to help documentation.
+  9. Dark Editorial Footer: Obsidian Forest (`#102A24`) with Champagne headings, navigation links, and WCAG AA compliant disclosures.
+- Quality & Verification:
+  - TypeScript: Zero errors (`tsc --noEmit`).
+  - ESLint: Zero warnings (`eslint . --max-warnings=0`).
+  - Vitest: 21 / 21 unit & contract tests passing.
+  - Playwright E2E: 28 / 28 tests passing cleanly across all responsive breakpoints (`320px`, `375px`, `390px`, `768px`, `1024px`, `1280px`, `1440px`).
+  - Accessibility: Zero axe-core WCAG A/AA contrast violations across all screen sizes.
+  - Visual verification: Full-page captures at desktop (1440px) and mobile (390px) verified against the reference design.
