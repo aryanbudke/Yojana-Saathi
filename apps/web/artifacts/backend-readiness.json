@@ -1,6 +1,6 @@
 {
-  "checked_at_utc": "2026-10-09T20:22:45.820072+00:00",
-  "backend_main_commit": "f14fb2c6a9ee337c37d50479509b1c1e010d7ad1",
+  "checked_at_utc": "2026-10-10T02:50:00.947288+00:00",
+  "backend_main_commit": "39ba53024e9a1940ee911bd40396d2e782895b37",
   "inspection": "Static route audit only; not live integration",
   "available_routes": [
     "DELETE /api/v1/profiles/sessions/{session_id}",
