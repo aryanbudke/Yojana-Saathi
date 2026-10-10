@@ -406,8 +406,8 @@ Brief: complete 10-section GovTech landing page in the confirmed direction (ivor
 | ID     | Task                                       | Status      |
 | ------ | ------------------------------------------ | ----------- |
 | TASK-1 | Inspect Existing Implementation            | COMPLETED   |
-| TASK-2 | Refactor Profile State                     | IN_PROGRESS |
-| TASK-3 | Redesign Profile Confirmation              | PENDING     |
+| TASK-2 | Refactor Profile State                     | COMPLETED   |
+| TASK-3 | Redesign Profile Confirmation              | IN_PROGRESS |
 | TASK-4 | Implement Optional Details                 | PENDING     |
 | TASK-5 | Connect Matching Workflow                  | PENDING     |
 | TASK-6 | Dynamic Questions                          | PENDING     |
@@ -424,4 +424,17 @@ Brief: complete 10-section GovTech landing page in the confirmed direction (ivor
   - API expects all 11 fields; missing/unanswered fields must remain `null`. Values `0` (income/age) and `false` (boolean) must never be coerced to `null`.
   - Verified mock and live API contracts and Playwright e2e test environment.
 - Next Task: TASK 2 — Refactor Profile State
+
+### TASK 2 — Refactor Profile State
+
+- Status: COMPLETED
+- Scope: Refactored profile data structures in `src/features/profile/types.ts`, `model.ts`, and `hooks.tsx`. Added comprehensive state differentiation tests in `src/features/profile/model.test.ts`.
+- Implementation:
+  - Separated extracted, user-confirmed, user-corrected, user-added, and unknown states via `FieldStatus` (`"extracted" | "user_corrected" | "user_added" | "confirmed" | "unknown"`).
+  - Maintained `extractedSnapshot` alongside mutable `draft` to detect modifications without overriding original AI output.
+  - Enforced strict non-coercion between `null` (unknown), `0` (valid zero), and `false` (explicit negative condition).
+  - Categorized fields into `essentialFields` (`age`, `family_income_inr`, `category`) and `additionalFields` (`land_area_acres`, `land_registration`, `is_student`, `gender`, `social_category`, `has_disability`).
+  - Added helpers: `getFieldStatus()`, `getExtractedFields()`, `getMissingEssentialFields()`, and `getAdditionalFields()`.
+- Verification: Strict TypeScript check, ESLint zero warnings, and 33/33 Vitest unit tests passed.
+- Next Task: TASK 3 — Redesign Profile Confirmation
 

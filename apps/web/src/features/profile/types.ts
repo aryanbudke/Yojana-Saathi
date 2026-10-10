@@ -79,3 +79,35 @@ export const fields: {
     kind: "boolean",
   },
 ];
+
+export type FieldStatus =
+  | "extracted"
+  | "user_corrected"
+  | "user_added"
+  | "confirmed"
+  | "unknown";
+
+export const essentialFields: ProfileField[] = [
+  "age",
+  "family_income_inr",
+  "category",
+];
+
+export const additionalFields: ProfileField[] = [
+  "land_area_acres",
+  "land_registration",
+  "is_student",
+  "gender",
+  "social_category",
+  "has_disability",
+];
+
+export const supportCategoryOptions = [
+  { value: "agriculture", label: "Agriculture & Farming" },
+  { value: "education", label: "Education & Student Aid" },
+  { value: "housing", label: "Housing & Shelter" },
+  { value: "health", label: "Health & Wellness" },
+  { value: "business", label: "Small Business & Entrepreneurship" },
+  { value: "social_welfare", label: "Social Welfare & Security" },
+  { value: "employment", label: "Skill Development & Employment" },
+] as const;
