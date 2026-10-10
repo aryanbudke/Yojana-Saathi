@@ -1,0 +1,29 @@
+{
+  "started_at": "2026-10-10T03:22:49.837245+00:00",
+  "status": "blocked",
+  "published": false,
+  "actual_snapshot_indexed": false,
+  "generation_tested": false,
+  "input_sha256": "7a37ee1dd159521ea86e5fb21c86dceb5220b42bb43657d43d797d1d5a65392a",
+  "source_records": 3397,
+  "embedding_model": "gemini-embedding-001",
+  "dimensions": 768,
+  "shared_staging_rows_before": 0,
+  "chunks": 3417,
+  "chunked_records": 17,
+  "maximum_leaf_tokens": 2044,
+  "exact_embedded_text_coverage": true,
+  "cli_exit_code": 2,
+  "error_type": "RuntimeError",
+  "shared_staging_rows_after": 0,
+  "finished_at": "2026-10-10T03:54:00.682141+00:00",
+  "provider_requests": {
+    "metadata": 1,
+    "count_tokens": 3437,
+    "embedding_batches": 7,
+    "embedding_items_attempted": 700,
+    "http_failures": {
+      "429": 7
+    }
+  }
+}

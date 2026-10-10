@@ -9,7 +9,11 @@ three longest records and five other actual records passes16/16 title/topic
 queries against PostgreSQL in a disposable schema. This is an eight-record
 smoke check, not full-dataset relevance or citation verification. The shared
 staging snapshot is still empty; full indexing and authenticated answers are
-subsequent gates. Reviewer configuration remains absent. See
+subsequent gates. Reviewer configuration is now present privately. The full run
+passed native token coverage for3417 chunks but stopped before database writes
+with repeated HTTP429 responses for the initial100-input embedding batch.
+[Quota diagnostics](batch-quota-diagnostic.json) identify the request quota;
+verify smaller batches and pacing before retrying. A small query still passes. See
 [chunk smoke evidence](chunk-smoke-verification.json) and `PROGRESS.md`.
 Keep records unverified. Run these steps sequentially and stop on any failure.
 Use a backend environment installed from this checkout.

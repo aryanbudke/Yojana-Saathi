@@ -7,7 +7,10 @@ Gemini key now passes768-dimensional query preflight with the existing Blueprint
 models configured privately. Oversized text now uses native-token-checked chunks
 and pooled scheme vectors; eight actual records pass a16-query PostgreSQL smoke
 check. Full-snapshot indexing/quality and authenticated answers remain unverified;
-reviewer settings are absent.
+reviewer settings are now configured privately. Full indexing reached3417 token-safe
+chunks but stopped before database writes after repeated HTTP429 responses for
+a100-input batch. The confirmed request quota is100 per minute; a single query
+still returns768 values. Batch headroom/pacing needs verification before retrying.
 The connector's visible project is still
 unrelated/inactive; direct SQL access uses the user's supplied target instead.
 Do not use the unrelated project, example localhost URL or frontend environment files.

@@ -1,0 +1,5 @@
+{
+  "purpose": "single-small-query quota diagnosis; no database writes",
+  "http_status": 200,
+  "dimensions": 768
+}

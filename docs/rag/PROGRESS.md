@@ -296,3 +296,25 @@ deployment, production migration, paid embedding calls or live success claims.
 - Review: caller search confirmed only the owned index CLI used the previous guard; its fixtures/tests migrated with it. Schema, query embeddings/routes, public APIs and all source records are unchanged. Diff/secret exclusion/private.env0600/frontend-preservation checks passed. No extra dependencies or independent passage storage added.
 - Commit: `fix(ai): embed complete staging records with token-checked chunks` (resolve by title).
 - Next task: actual full-snapshot indexing, only after this task passes and is committed.
+
+### LIVE-05-D — Full actual-data PostgreSQL staging snapshot
+
+- Status: BLOCKED
+- Dependency: LIVE-05-C verified and committed as `1dd2ad6`; no next feature task started before that commit.
+- Scope: existing index CLI, authorized PostgreSQL target and actual3397-record cleaned JSON. No publication, frontend, schema/model switch or synthetic scheme vectors.
+- Passing: all3437 native token checks completed;3397 records produce3417 chunks,17 records split, maximum2044 leaf tokens against2048 allowed. Exact embedded-text reconstruction confirmed; canonical input still equals the original and uses the existing source hash.
+- Provider failure: the first100-input embedding batch received HTTP429 on every attempt (one initial request plus six bounded retries). Seven attempts are seven retries of that same batch, not700 successfully embedded records. CLI exits2 before database replacement. Shared staging rows remain0 before/after; actual_snapshot_indexed=false. Full indexing is not complete.
+- Diagnosis: subsequent single small query returns200 with768 values, confirming key/model access. A100-input short synthetic diagnostic receives429 with quotaMetric `generativelanguage.googleapis.com/embed_content_free_tier_requests`, quotaId `EmbedContentRequestsPerMinutePerUserPerProjectPerModel-FreeTier`, quotaValue100 and29s retry delay. This is available request-quota pressure, not evidence of missing credentials or disabled billing. Reduce batch size to leave quota headroom and verify pacing before retrying; do not repeatedly retry an oversized available-quota request or switch models.
+- Tests:369 regression tests passed with0 failures/0 skips before the live attempt. Live token coverage passed; bulk embedding operation failed with429; actual full-corpus retrieval and generated citations remain blocked. Eight-record actual-data smoke evidence still passes but is not full indexing.
+- Files: this progress document, `full-index-verification.json`, `quota-diagnostic.json`, `batch-quota-diagnostic.json`, workflow/setup documentation. Runtime code unchanged in this continuation.
+- Commit: `docs(ai): record indexing quota blocker and private reviewer setup` (resolve by title).
+- Next task: fix/verify quota-safe embedding batching within LIVE-05-D, rerun the existing full transaction/count/hash workflow, then authenticated full-corpus retrieval/answers. Do not mark this task complete until actual indexing is verified.
+
+### Private reviewer configuration — explicit user command continuation
+
+- Status: COMPLETED (configuration only; API verification pending LIVE-05-D)
+- User supplied actual actor ID `yojana-saathi-admin-01` and requested `openssl rand -hex 32`.
+- Files: ignored private `services/api/.env` only; generated64-character token through OpenSSL subprocess, retained solely in the private reviewer setting, and stored the authorized actor ID. No secret value printed in logs/chat/argv or committed. Existing database/Gemini settings preserved; no publisher role enabled.
+- Verification: existing Settings accepts the reviewer pair, file mode0600 confirmed, Git ignore confirmed. Authenticated API/generation/citation checks not performed while full indexing is blocked.
+- Commit: private environment excluded; sanitized documentation recorded with the quota-blocker commit above.
+- Next task: use this configuration after full indexing passes; no further reviewer credential required in chat.

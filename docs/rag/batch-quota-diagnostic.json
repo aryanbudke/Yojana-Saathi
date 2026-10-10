@@ -1,0 +1,15 @@
+{
+  "purpose": "100 short synthetic inputs diagnose batch quota; not scheme embeddings",
+  "database_writes": false,
+  "http_status": 429,
+  "quota_violations": [
+    {
+      "quotaMetric": "generativelanguage.googleapis.com/embed_content_free_tier_requests",
+      "quotaId": "EmbedContentRequestsPerMinutePerUserPerProjectPerModel-FreeTier",
+      "quotaValue": "100"
+    }
+  ],
+  "retry_delays": [
+    "29s"
+  ]
+}
