@@ -140,6 +140,52 @@ def test_answer_keeps_only_citations_from_retrieved_records(
     assert [record["slug"] for record in user["records"]] == ["farm-aid", "pension"]
 
 
+def test_answer_preserves_late_policy_clauses_in_long_records(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    calls: list[dict[str, Any]] = []
+
+    def transport(request: Request, *, timeout: int) -> BytesIO:
+        calls.append(json.loads(request.data))  # type: ignore[arg-type]
+        return generation({"answer": "SYNTHETIC minimum age18.", "cited_slugs": ["synthetic-long"]})
+
+    monkeypatch.setattr(staging_search, "urlopen", transport)
+    record = hit(
+        "synthetic-long",
+        details="SYNTHETIC description. " * 600,
+        eligibility="SYNTHETIC no applicants below18.",
+        documents="SYNTHETIC late document requirement.",
+    )
+    staging_search.answer(configured(), "synthetic eligibility?", [record])
+    user = json.loads(calls[0]["contents"][0]["parts"][0]["text"])
+    text = user["records"][0]["text"]
+    assert text == "\n".join(f"{field}: {value}" for field, value in record.record.items() if value)
+    assert "SYNTHETIC no applicants below18." in text
+    assert "SYNTHETIC late document requirement." in text
+
+
+def test_answer_refuses_oversized_context_without_sending_partial_evidence(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    transport = Mock(
+        return_value=generation({"answer": "SYNTHETIC", "cited_slugs": ["synthetic-long"]})
+    )
+    monkeypatch.setattr(staging_search, "urlopen", transport)
+    with pytest.raises(staging_search.AnswerUnavailable):
+        staging_search.answer(
+            configured(),
+            "synthetic question",
+            [
+                hit(
+                    "synthetic-long",
+                    details="SYNTHETIC " * 4000,
+                    eligibility="SYNTHETIC exclusion at end.",
+                ),
+            ],
+        )
+    transport.assert_not_called()
+
+
 def test_answer_rejects_fabricated_citations(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr(
         staging_search,

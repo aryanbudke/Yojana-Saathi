@@ -161,6 +161,12 @@ unverified records through the publication seed CLI or candidate repository.
 
 ## 4. Retrieval and answer verification
 
+Answer requests preserve each complete record up to32,000 characters. Larger
+records fail before a model request instead of silently dropping policy clauses.
+The [offline context check](answer-context-validation.json) inspected all3,397
+actual records: largest25,021 characters, zero truncations. This checks request
+construction only; provider acceptance and answer support still need live review.
+
 Run the existing two PostgreSQL integration tests first with
 `STAGING_SEARCH_PG_URL` supplied through an authorized disposable test environment:
 

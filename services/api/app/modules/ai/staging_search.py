@@ -23,7 +23,7 @@ from app.modules.ai.settings import AISettings
 
 _BATCH_SIZE = 100
 _RATE_LIMIT_WAIT_SECONDS = 30
-_CONTEXT_CHARS_PER_RECORD = 4000
+_CONTEXT_CHARS_PER_RECORD = 32000
 _DOCUMENT_FIELDS = (
     "scheme_name",
     "level",
@@ -180,15 +180,12 @@ def answer(
     key = settings.api_key
     if key is None or not key.get_secret_value().strip() or settings.model is None:
         raise AnswerUnavailable("GEMINI_API_KEY and GEMINI_MODEL are required")
-    context = [
-        {
-            "slug": hit.slug,
-            "text": "\n".join(f"{field}: {value}" for field, value in hit.record.items() if value)[
-                :_CONTEXT_CHARS_PER_RECORD
-            ],
-        }
-        for hit in hits
-    ]
+    context = []
+    for hit in hits:
+        text = "\n".join(f"{field}: {value}" for field, value in hit.record.items() if value)
+        if len(text) > _CONTEXT_CHARS_PER_RECORD:
+            raise AnswerUnavailable("Record exceeds answer context limit; review full source text")
+        context.append({"slug": hit.slug, "text": text})
     payload = {
         "systemInstruction": {"parts": [{"text": STAGING_ANSWER_PROMPT}]},
         "contents": [

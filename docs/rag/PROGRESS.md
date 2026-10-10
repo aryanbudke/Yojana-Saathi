@@ -129,7 +129,7 @@ The repeated dataset request triggered a new search including ignored files. The
 - Embeddings: existing NPY parsed with stdlib (NumPy not installed here; no dependency added); shape3397x384, float32, all finite/nonzero, max unit-norm deviation1.3230193540714197e-7. No FAISS deserialization or conversion attempted. Gemini768 re-embedding remains mandatory.
 - Limitations:1189/3397 raw answer contexts exceed the existing4000-character cap; maximum context25021 characters, maximum embedding document20581 characters. Some source text is truncated for answers; whole-record/full-policy coverage cannot be claimed. Actual provider input limits and retrieval usefulness require live checks. These are measured structural/coverage limits, not fabricated scheme guidance.
 - Verification: existing import CLI created the real3397-record local review artifact; hash equals original/canonical input (`7a37ee1dd159521ea86e5fb21c86dceb5220b42bb43657d43d797d1d5a65392a`), all review rows are draft/publication_allowed=false. Actual CSV/document/NPY/provenance assertions passed and measured JSON report written. Full backend323 passed,2 PostgreSQL skipped; Ruff lint/format and strict mypy97 files passed. No database/provider indexing calls or new dependencies. Dataset/review files are ignored; original files are untouched.
-- Commit: task commit `docs(ai): record actual dataset validation and review import` (resolve by title in branch history).
+- Commit: `d59285d` — `docs(ai): record actual dataset validation and review import`.
 - Next task: C2 when authorized resources become available.
 
 ### RAG-04-C2 — Remaining live gate
@@ -138,3 +138,23 @@ The repeated dataset request triggered a new search including ignored files. The
 - Dataset is available and offline-validated; earlier missing-dataset notes above are historical. Remaining missing resources are authorized PostgreSQL/pgvector test configuration and authorized Gemini/query/reviewer server environment. No backend `.env` or configured test URL found; `.env.example` is a template, not authorization or credentials.
 - Prepared workflow checks actual vector column/model compatibility before indexing; no saved MiniLM/FAISS vectors are used. Live indexing and retrieval, actual database schema/dimensions, model compatibility and semantic answer support remain unverified. No production data or frontend modified.
 - Next task: use authorized configuration to run PostgreSQL tests and the existing preflight/index/retrieval workflow, recording real outcomes before completing RAG-04.
+
+## Authorized live-verification continuation
+
+User authorized the next live-verification steps. Work remains backend-only and sequential; missing external configuration is not fabricated.
+
+| Task | Status | Acceptance / dependency |
+| --- | --- | --- |
+| RAG-05 Preserve complete bounded answer evidence | COMPLETED | Full-record request construction verified for all3397 records; oversized records rejected before transport; local checks passed |
+| RAG-06 Authorized PostgreSQL/provider live verification | BLOCKED | Correct server/test configuration and project/account required; no production schema/data changes or credentials in chat |
+
+### RAG-05 — Preserve complete bounded answer evidence
+
+- Status: COMPLETED
+- Files: `services/api/app/modules/ai/staging_search.py`, `services/api/tests/ai/test_staging_search.py`, `docs/rag/answer-context-validation.json`, `docs/rag/DATA_WORKFLOW.md`, `docs/rag/PROGRESS.md`. No frontend, prompt or shared database/schema changes.
+- Design: reuse existing answer request/citation validators; bounded full record contexts covering current maximum25021 characters. Oversized future records fail closed instead of silently losing clauses. No new chunking store/models/dependencies or claims of semantic answer accuracy.
+- Configuration audit: repository including ignored files still has no backend.env or supplied PostgreSQL test URL; configured key presence false. Supabase connector discovery returned only one inactive unrelated project, `tanvo`; no authorization/project correspondence to Yojana Saathi found, so no queries, restoration, branch creation or writes against that project. Requested actual configuration path/account name while proceeding locally.
+- Tests: two regression tests failed before the fix and passed afterward; focused52 passed/2 PostgreSQL skipped; full backend325 passed/2 PostgreSQL skipped,94% app coverage. Ruff lint/format108 files and strict mypy97 files passed. Offline intercepted requests inspected all3397 actual records with exact full-text equality; maximum25021 characters, zero truncations/rejections, zero provider/database calls. Existing Starlette test-client deprecation warning only.
+- Problems: live resources remain unavailable. The historical4000-character results in `dataset-validation.json` describe the previous implementation; `answer-context-validation.json` records the verified fix. Semantic relevance, provider acceptance and actual answers remain unverified.
+- Commit: task commit `fix(ai): preserve complete staging answer evidence` (resolve by title in branch history).
+- Next task: RAG-06 only when authorized configuration is available; record remaining embedding/provider compatibility limits.
