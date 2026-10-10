@@ -1,8 +1,10 @@
+"use client";
 import React from "react";
 import { Check, X, HelpCircle, FileQuestion } from "lucide-react";
 import { SourceLink } from "@/components/ui";
 import type { RuleOutcome, SourceReference } from "@/lib/api/contracts";
-import { ruleLabels } from "@/features/matching/types";
+import { useMessages } from "@/i18n/client";
+import { format } from "@/i18n/config";
 import { cn } from "@/lib/utils";
 
 const ruleIcons = {
@@ -41,6 +43,7 @@ export interface CriteriaChecklistProps {
 }
 
 export function CriteriaChecklist({ rules, sources = [] }: CriteriaChecklistProps) {
+  const m = useMessages();
   if (!rules.length) return null;
 
   return (
@@ -70,7 +73,7 @@ export function CriteriaChecklist({ rules, sources = [] }: CriteriaChecklistProp
             <div className="flex-1 space-y-1">
               <div className="flex items-center gap-2">
                 <span className="font-bold uppercase tracking-wider text-[11px]">
-                  {ruleLabels[rule.result]}
+                  {m.ruleResults[rule.result]}
                 </span>
                 <span className="text-[11px] text-slate-500 font-mono">
                   {rule.rule_key}
@@ -90,7 +93,7 @@ export function CriteriaChecklist({ rules, sources = [] }: CriteriaChecklistProp
                 </div>
               ) : (
                 <span className="source-unavailable text-[11px] text-slate-500">
-                  Source citation · {rule.source_id}
+                  {format(m.match.sourceCitation, { id: rule.source_id })}
                 </span>
               )}
             </div>

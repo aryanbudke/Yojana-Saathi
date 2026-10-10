@@ -6,10 +6,14 @@ import { SourceLink } from "@/components/ui";
 import { api } from "@/lib/api";
 import { useResource } from "@/lib/api/use-resource";
 import type { SchemeMatch } from "@/lib/api/contracts";
-import { displayDate } from "@/lib/format";
+import { labelFor } from "@/lib/format";
+import { useDisplayDate, useMessages } from "@/i18n/client";
+import { format } from "@/i18n/config";
 import { EligibilityBadge } from "./EligibilityBadge";
 import { RuleChecklist } from "./RuleChecklist";
 export function MatchCard({ match }: { match: SchemeMatch }) {
+  const m = useMessages();
+  const date = useDisplayDate();
   const load = useCallback(
     () => api.detail(match.scheme_id),
     [match.scheme_id],
@@ -21,7 +25,11 @@ export function MatchCard({ match }: { match: SchemeMatch }) {
     <article className="panel match-card">
       <div className="row">
         <EligibilityBadge status={match.status} />
-        {current && <span className="small muted">{current.category}</span>}
+        {current && (
+          <span className="small muted">
+            {labelFor(m.categoryNames, current.category)}
+          </span>
+        )}
       </div>
       <h2>
         <Link href={`/schemes/${match.scheme_id}`}>{match.scheme_name}</Link>
@@ -30,7 +38,7 @@ export function MatchCard({ match }: { match: SchemeMatch }) {
         <>
           <p className="muted match-summary">{current.summary}</p>
           <div className="benefit-line">
-            <span>SUPPORT AT A GLANCE</span>
+            <span>{m.match.supportAtAGlance}</span>
             <p>{current.benefit_text}</p>
           </div>
         </>
@@ -45,16 +53,14 @@ export function MatchCard({ match }: { match: SchemeMatch }) {
         sources={current?.official_sources}
       />
       <details className="explanation">
-        <summary>Why this match?</summary>
+        <summary>{m.match.why}</summary>
         <div>
-          <p>
-            These are the service’s checks for the reviewed scheme version. An
-            unknown condition still needs information. Passing these checks does
-            not mean official approval.
-          </p>
+          <p>{m.match.whyText}</p>
           <p className="small muted">
-            Last verified on {displayDate(match.last_verified_at)} · Version{" "}
-            {match.scheme_version_id}
+            {format(m.match.verifiedVersion, {
+              date: date(match.last_verified_at),
+              version: match.scheme_version_id,
+            })}
           </p>
           {match.official_source_urls.map((url) => (
             <SourceLink key={url} url={url} />
@@ -64,11 +70,16 @@ export function MatchCard({ match }: { match: SchemeMatch }) {
       <div className="scheme-card-footer">
         <span className="small muted">
           {match.unknown_rules.length
-            ? `${match.unknown_rules.length} condition${match.unknown_rules.length === 1 ? "" : "s"} still unknown`
-            : "Read every condition before applying"}
+            ? format(
+                match.unknown_rules.length === 1
+                  ? m.match.unknownOne
+                  : m.match.unknownOther,
+                { count: match.unknown_rules.length },
+              )
+            : m.match.readEvery}
         </span>
         <Link className="button quiet" href={`/schemes/${match.scheme_id}`}>
-          Explore this scheme
+          {m.match.explore}
           <ArrowUpRight size={16} />
         </Link>
       </div>

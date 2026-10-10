@@ -1,6 +1,8 @@
+"use client";
 import React from "react";
 import { Input } from "@/components/ui/Input";
-import { humanize } from "@/lib/utils";
+import { labelFor } from "@/lib/format";
+import { useMessages } from "@/i18n/client";
 import type { NextQuestion } from "@/lib/api/contracts";
 
 export interface AnswerOptionsProps {
@@ -16,6 +18,7 @@ export function AnswerOptions({
   onChange,
   disabled = false,
 }: AnswerOptionsProps) {
+  const m = useMessages();
   if (question.answer_type === "single_choice") {
     return (
       <div className="question-options grid grid-cols-1 sm:grid-cols-2 gap-3 my-4">
@@ -40,7 +43,7 @@ export function AnswerOptions({
                 className="w-4 h-4 text-emerald-700 accent-emerald-600 focus:ring-emerald-500"
                 required
               />
-              <span className="text-sm">{humanize(option)}</span>
+              <span className="text-sm">{labelFor(m.answers, option)}</span>
             </label>
           );
         })}
@@ -61,7 +64,7 @@ export function AnswerOptions({
         maxLength={120}
         required
         disabled={disabled}
-        placeholder="Enter your answer…"
+        placeholder={m.followUp.answerPlaceholder}
         onChange={(e) => onChange(e.target.value)}
       />
     </div>

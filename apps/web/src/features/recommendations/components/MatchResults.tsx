@@ -14,7 +14,9 @@ import { useProfile } from "@/features/profile/hooks";
 import { useMatching } from "@/features/matching/hooks";
 import { useResource } from "@/lib/api/use-resource";
 import { api } from "@/lib/api";
-import { verdictLabels } from "@/features/matching/types";
+import { labelFor } from "@/lib/format";
+import { useMessages } from "@/i18n/client";
+import { format } from "@/i18n/config";
 import type { SchemeMatch } from "@/lib/api/contracts";
 
 export interface MatchResultsProps {
@@ -22,6 +24,8 @@ export interface MatchResultsProps {
 }
 
 export function MatchResults({ embedded = false }: MatchResultsProps) {
+  const m = useMessages();
+  const t = m.recommendations;
   const [filter, setFilter] = useState<SchemeMatch["status"] | "all">("all");
   const p = useProfile();
   const matching = useMatching();
@@ -46,13 +50,10 @@ export function MatchResults({ embedded = false }: MatchResultsProps) {
 
   if (!sessionId) {
     return (
-      <EmptyState title="Start with your details">
-        <p>
-          Review and confirm a profile before checking scheme conditions.
-          Profile data stays in this tab’s memory.
-        </p>
+      <EmptyState title={t.startTitle}>
+        <p>{t.startText}</p>
         <Link className="button primary inline-flex items-center gap-2" href="/discover">
-          <span>Create my profile</span>
+          <span>{t.createProfile}</span>
           <ArrowUpRight size={16} />
         </Link>
       </EmptyState>
@@ -72,23 +73,26 @@ export function MatchResults({ embedded = false }: MatchResultsProps) {
           <div className="space-y-4">
             <InlineAlert error>{r.error}</InlineAlert>
             <Button variant="secondary" onClick={r.retry}>
-              Retry matching
+              {t.retry}
             </Button>
           </div>
         ) : results?.results.length ? (
           <>
             <div className="section-heading flex items-center justify-between gap-4 flex-wrap pb-2 border-b border-slate-200/60">
               <div>
-                <h2 className="text-2xl font-bold text-slate-900 tracking-tight">Your shortlist</h2>
+                <h2 className="text-2xl font-bold text-slate-900 tracking-tight">{t.shortlist}</h2>
                 <span className="small muted text-xs text-slate-500 font-medium">
-                  {results.results.length} scheme{results.results.length === 1 ? "" : "s"} evaluated
+                  {format(
+                    results.results.length === 1 ? t.evaluatedOne : t.evaluatedOther,
+                    { count: results.results.length },
+                  )}
                 </span>
               </div>
 
               {/* Status Filter Dropdown */}
               <div className="recommendation-toolbar flex items-center gap-3">
                 <label htmlFor="match-filter" className="text-xs font-bold text-slate-700">
-                  Show conditions
+                  {t.showConditions}
                 </label>
                 <div className="w-48">
                   <Select
@@ -98,25 +102,25 @@ export function MatchResults({ embedded = false }: MatchResultsProps) {
                       setFilter(e.target.value as SchemeMatch["status"] | "all")
                     }
                   >
-                    <option value="all">All statuses</option>
-                    {Object.entries(verdictLabels).map(([status, label]) => (
+                    <option value="all">{t.allStatuses}</option>
+                    {Object.entries(m.verdicts).map(([status, label]) => (
                       <option key={status} value={status}>
-                        {label.text}
+                        {label}
                       </option>
                     ))}
                   </Select>
                 </div>
                 <span className="small muted text-xs text-slate-500 font-medium" aria-live="polite">
-                  {visibleMatches.length} shown
+                  {format(t.shown, { count: visibleMatches.length })}
                 </span>
               </div>
             </div>
 
             {!visibleMatches.length && (
               <div className="empty p-8 text-center rounded-3xl bg-cream/60 backdrop-blur-md border border-slate-200/80">
-                <h3 className="text-base font-bold text-slate-800 mb-2">No schemes with this status</h3>
+                <h3 className="text-base font-bold text-slate-800 mb-2">{t.noStatusTitle}</h3>
                 <Button variant="quiet" onClick={() => setFilter("all")}>
-                  Show all statuses
+                  {t.showAll}
                 </Button>
               </div>
             )}
@@ -126,12 +130,10 @@ export function MatchResults({ embedded = false }: MatchResultsProps) {
             ))}
           </>
         ) : (
-          <EmptyState title="No matches found yet">
-            <p>
-              Try correcting your details or explore the scheme catalogue.
-            </p>
+          <EmptyState title={t.noMatchesTitle}>
+            <p>{t.noMatchesText}</p>
             <Link className="button secondary" href="/discover">
-              Edit profile or browse
+              {t.editOrBrowse}
             </Link>
           </EmptyState>
         )}
@@ -145,13 +147,13 @@ export function MatchResults({ embedded = false }: MatchResultsProps) {
 
           <GlassCard variant="standard" glow="emerald" className="p-6 space-y-3">
             <span className="text-[11px] font-bold uppercase tracking-wider text-emerald-800">
-              Guidance note
+              {t.guidanceNote}
             </span>
             <h3 className="text-base font-bold text-slate-900 tracking-tight">
-              Read the conditions · Check the source
+              {t.guidanceTitle}
             </h3>
             <p className="text-xs text-slate-600 leading-relaxed">
-              Only the relevant government authority can determine official eligibility and approve an application. A match is your starting point.
+              {t.guidanceText}
             </p>
           </GlassCard>
         </aside>
@@ -161,6 +163,7 @@ export function MatchResults({ embedded = false }: MatchResultsProps) {
 }
 
 function MatchCardItem({ match }: { match: SchemeMatch }) {
+  const m = useMessages();
   const load = useCallback(() => api.detail(match.scheme_id), [match.scheme_id]);
   const d = useResource(load);
   const current =
@@ -177,7 +180,7 @@ function MatchCardItem({ match }: { match: SchemeMatch }) {
           <EligibilityBadge status={match.status} />
           {current && (
             <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700">
-              {current.category}
+              {labelFor(m.categoryNames, current.category)}
             </span>
           )}
         </div>
@@ -199,7 +202,7 @@ function MatchCardItem({ match }: { match: SchemeMatch }) {
       {current && (
         <div className="p-3.5 rounded-2xl bg-emerald-50/80 border border-emerald-200/70 text-xs text-emerald-950 font-medium">
           <span className="font-bold uppercase tracking-wider text-[11px] text-emerald-800 block mb-0.5">
-            SUPPORT AT A GLANCE
+            {m.match.supportAtAGlance}
           </span>
           <p>{current.benefit_text}</p>
         </div>
@@ -222,16 +225,19 @@ function MatchCardItem({ match }: { match: SchemeMatch }) {
       <div className="scheme-card-footer pt-4 border-t border-slate-200/70 flex items-center justify-between gap-3 flex-wrap text-xs">
         <span className="small muted text-slate-500 font-medium">
           {match.unknown_rules.length
-            ? `${match.unknown_rules.length} condition${
-                match.unknown_rules.length === 1 ? "" : "s"
-              } still unknown`
-            : "Read every condition before applying"}
+            ? format(
+                match.unknown_rules.length === 1
+                  ? m.match.unknownOne
+                  : m.match.unknownOther,
+                { count: match.unknown_rules.length },
+              )
+            : m.match.readEvery}
         </span>
         <Link
           className="button quiet inline-flex items-center gap-1.5 text-emerald-800 font-bold hover:text-emerald-950"
           href={`/schemes/${match.scheme_id}`}
         >
-          <span>Explore this scheme</span>
+          <span>{m.match.explore}</span>
           <ArrowUpRight size={15} />
         </Link>
       </div>

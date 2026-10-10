@@ -1,4 +1,6 @@
+"use client";
 import React from "react";
+import { useMessages } from "@/i18n/client";
 import { cn } from "@/lib/utils";
 
 export interface SkeletonProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -6,6 +8,7 @@ export interface SkeletonProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 export function Skeleton({ className = "", variant = "card", ...props }: SkeletonProps) {
+  const m = useMessages();
   if (variant === "line") {
     return (
       <div
@@ -14,7 +17,7 @@ export function Skeleton({ className = "", variant = "card", ...props }: Skeleto
           className,
         )}
         role="status"
-        aria-label="Loading content"
+        aria-label={m.common.loadingContent}
         {...props}
       />
     );
@@ -28,7 +31,7 @@ export function Skeleton({ className = "", variant = "card", ...props }: Skeleto
           className,
         )}
         role="status"
-        aria-label="Loading content"
+        aria-label={m.common.loadingContent}
         {...props}
       />
     );
@@ -41,10 +44,10 @@ export function Skeleton({ className = "", variant = "card", ...props }: Skeleto
         className,
       )}
       role="status"
-      aria-label="Loading content"
+      aria-label={m.common.loadingContent}
       {...props}
     >
-      <span className="sr-only">Loading…</span>
+      <span className="sr-only">{m.common.loading}</span>
       <div className="h-4 w-28 rounded-md bg-slate-200/80" />
       <div className="h-6 w-3/4 rounded-lg bg-slate-200/90" />
       <div className="space-y-2">

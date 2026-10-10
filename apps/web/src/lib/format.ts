@@ -1,8 +1,12 @@
-export function displayDate(value: string) {
+export function displayDate(
+  value: string,
+  intlLocale = "en-IN",
+  unavailable = "Verification date unavailable",
+) {
   const d = new Date(value);
   return Number.isNaN(d.getTime())
-    ? "Verification date unavailable"
-    : new Intl.DateTimeFormat("en-IN", {
+    ? unavailable
+    : new Intl.DateTimeFormat(intlLocale, {
         day: "numeric",
         month: "short",
         year: "numeric",
@@ -11,4 +15,8 @@ export function displayDate(value: string) {
 }
 export function humanize(value: string) {
   return value.replaceAll("_", " ").replace(/^./, (s) => s.toUpperCase());
+}
+/** Translated label for an API code, falling back to a readable version of the code. */
+export function labelFor(labels: Record<string, string>, value: string) {
+  return labels[value] ?? humanize(value);
 }

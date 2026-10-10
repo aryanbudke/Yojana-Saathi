@@ -6,25 +6,24 @@ import {
   ModeNotice,
   ProfileComposer,
 } from "@/features/profile/ProfileComposer";
+import { getMessages } from "@/i18n/server";
 
-export const metadata: Metadata = {
-  title: "Discover schemes — yojana saathi",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return { title: (await getMessages()).meta.discover };
+}
 
-export default function DiscoverPage() {
+export default async function DiscoverPage() {
+  const m = await getMessages();
   return (
     <>
       <ModeNotice />
       <section className="page-heading" aria-labelledby="discover-title">
-        <p className="section-eyebrow">Discover schemes</p>
+        <p className="section-eyebrow">{m.discover.eyebrow}</p>
         <h1 id="discover-title">
-          Find support that fits your situation
+          {m.discover.title}
           <span className="green">.</span>
         </h1>
-        <p className="muted">
-          Describe your situation for a personal shortlist, or browse the
-          catalogue by category and state.
-        </p>
+        <p className="muted">{m.discover.lead}</p>
       </section>
       <div className="home-workspace">
         <ProfileComposer />

@@ -1,0 +1,336 @@
+/* Site navigation: sticky glass bar, three primary links, language, CTA, mobile drawer.
+   Colours come from the theme tokens in globals.css (teal #035352 on Sidecar Yellow). */
+
+.site-header {
+  --nav-height: 72px;
+  --nav-ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  height: var(--nav-height);
+  background: rgb(243 232 188 / 72%);
+  border-bottom: 1px solid rgb(2 44 43 / 8%);
+  backdrop-filter: blur(16px) saturate(140%);
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
+  transition:
+    background-color 220ms var(--nav-ease),
+    border-color 220ms var(--nav-ease),
+    box-shadow 220ms var(--nav-ease);
+}
+/* Once content scrolls under the bar it firms up, so text behind it never competes. */
+.site-header[data-scrolled] {
+  background: rgb(250 244 220 / 90%);
+  border-bottom-color: rgb(2 44 43 / 12%);
+  box-shadow: 0 10px 24px -20px rgb(2 44 43 / 45%);
+}
+@supports not (backdrop-filter: blur(16px)) {
+  .site-header,
+  .site-header[data-scrolled] {
+    background: var(--surface);
+  }
+}
+
+.site-header-inner {
+  display: grid;
+  /* auto-1fr-auto, not 1fr-auto-1fr: equal side columns waste the width the
+     longest translations need. The nav centres itself in the middle track. */
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 24px;
+  height: 100%;
+  max-width: 80rem;
+  margin-inline: auto;
+  padding-inline: 32px;
+}
+.site-brand {
+  justify-self: start;
+  color: var(--ink);
+  border-radius: 12px;
+}
+
+/* ---------- Primary links ---------- */
+.site-nav {
+  justify-self: center;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.site-nav-link {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding-inline: 14px;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--muted);
+  white-space: nowrap;
+  transition: color 200ms var(--nav-ease);
+}
+.site-nav-link::after {
+  content: "";
+  position: absolute;
+  left: 14px;
+  right: 14px;
+  bottom: 6px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--primary);
+  opacity: 0;
+  transform: scaleX(0.4);
+  transition:
+    opacity 200ms var(--nav-ease),
+    transform 220ms var(--nav-ease);
+}
+.site-nav-link:hover {
+  color: var(--ink);
+}
+.site-nav-link:hover::after {
+  opacity: 0.35;
+  transform: scaleX(1);
+}
+.site-nav-link[aria-current="page"] {
+  color: var(--ink);
+  font-weight: 600;
+}
+.site-nav-link[aria-current="page"]::after {
+  opacity: 1;
+  transform: scaleX(1);
+}
+
+/* ---------- Right side ---------- */
+.site-actions {
+  justify-self: end;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.site-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  padding-inline: 20px;
+  border-radius: 999px;
+  background: var(--primary);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+  white-space: nowrap;
+  box-shadow: 0 1px 2px rgb(2 44 43 / 14%);
+  transition:
+    background-color 200ms var(--nav-ease),
+    box-shadow 200ms var(--nav-ease);
+}
+.site-cta:hover {
+  background: var(--primary-hover);
+  box-shadow: 0 8px 18px -8px rgb(3 83 82 / 55%);
+}
+.site-cta-arrow {
+  transition: transform 200ms var(--nav-ease);
+}
+.site-cta:hover .site-cta-arrow {
+  transform: translateX(3px);
+}
+.site-menu-button {
+  display: none;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  color: var(--ink);
+  background: transparent;
+  transition: background-color 200ms var(--nav-ease);
+}
+.site-menu-button:hover {
+  background: rgb(2 44 43 / 6%);
+}
+
+/* One focus treatment for every control in the bar and drawer. */
+.site-header :is(a, button):focus-visible,
+.site-drawer :is(a, button):focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 3px;
+}
+
+/* ---------- Mobile drawer ---------- */
+.site-drawer {
+  margin: 0 0 0 auto;
+  padding: 0;
+  width: min(88vw, 380px);
+  max-width: none;
+  height: 100dvh;
+  max-height: none;
+  border: none;
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow: -24px 0 48px -28px rgb(2 44 43 / 45%);
+  transform: translateX(100%);
+  transition:
+    transform 260ms var(--nav-ease),
+    overlay 260ms allow-discrete,
+    display 260ms allow-discrete;
+}
+.site-drawer[open] {
+  transform: none;
+}
+@starting-style {
+  .site-drawer[open] {
+    transform: translateX(100%);
+  }
+}
+.site-drawer::backdrop {
+  background: rgb(2 44 43 / 0%);
+  transition:
+    background-color 260ms var(--nav-ease),
+    overlay 260ms allow-discrete,
+    display 260ms allow-discrete;
+}
+.site-drawer[open]::backdrop {
+  background: rgb(2 44 43 / 40%);
+}
+@starting-style {
+  .site-drawer[open]::backdrop {
+    background: rgb(2 44 43 / 0%);
+  }
+}
+.site-drawer-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  height: 100%;
+  padding: 12px 20px max(24px, env(safe-area-inset-bottom));
+}
+.site-drawer-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.site-drawer-title {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.site-drawer .site-drawer-close {
+  display: inline-grid;
+  margin-right: -8px;
+}
+.site-drawer-links {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.site-drawer-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 56px;
+  padding-inline: 12px 4px;
+  border-bottom: 1px solid rgb(2 44 43 / 8%);
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--ink);
+  transition:
+    color 200ms var(--nav-ease),
+    box-shadow 200ms var(--nav-ease);
+}
+.site-drawer-link svg {
+  color: var(--muted);
+  transition: transform 200ms var(--nav-ease);
+}
+.site-drawer-link:hover svg {
+  transform: translateX(3px);
+}
+.site-drawer-link[aria-current="page"] {
+  color: var(--primary);
+  box-shadow: inset 3px 0 0 var(--primary);
+}
+.site-drawer-language {
+  display: none;
+  align-self: flex-start;
+}
+.site-cta-block {
+  margin-top: auto;
+  width: 100%;
+  min-height: 52px;
+  font-size: 16px;
+}
+html.nav-locked {
+  overflow: hidden;
+}
+
+/* ---------- Breakpoints ---------- */
+/* Three links, the selector and the CTA need ~1100px in Kannada; tighten first. */
+@media (max-width: 1279px) {
+  .site-header-inner {
+    gap: 16px;
+    padding-inline: 24px;
+  }
+  .site-nav {
+    gap: 0;
+  }
+  .site-nav-link {
+    padding-inline: 10px;
+    font-size: 14px;
+  }
+  .site-nav-link::after {
+    left: 10px;
+    right: 10px;
+  }
+  .site-cta {
+    padding-inline: 16px;
+    font-size: 14px;
+  }
+}
+/* Tablets and phones use the drawer: the full bar cannot fit every language below 1024px. */
+@media (max-width: 1023px) {
+  .site-header {
+    --nav-height: 64px;
+  }
+  .site-header-inner {
+    grid-template-columns: 1fr auto;
+    padding-inline: 16px;
+  }
+  .site-nav,
+  .site-actions > .site-cta {
+    display: none;
+  }
+  .site-actions {
+    gap: 4px;
+  }
+  .site-menu-button {
+    display: inline-grid;
+  }
+}
+/* The language selector stays in the bar only while it fits beside the logo. */
+@media (max-width: 359px) {
+  .site-actions > .site-language {
+    display: none;
+  }
+  .site-drawer-language {
+    display: inline-flex;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-header,
+  .site-nav-link,
+  .site-nav-link::after,
+  .site-cta,
+  .site-cta-arrow,
+  .site-menu-button,
+  .site-drawer,
+  .site-drawer::backdrop,
+  .site-drawer-link,
+  .site-drawer-link svg {
+    transition: none;
+  }
+  .site-cta:hover .site-cta-arrow,
+  .site-drawer-link:hover svg {
+    transform: none;
+  }
+}

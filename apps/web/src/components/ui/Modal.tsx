@@ -2,6 +2,7 @@
 
 import React, { useEffect, useRef } from "react";
 import { X } from "lucide-react";
+import { useMessages } from "@/i18n/client";
 import { cn } from "@/lib/utils";
 
 export interface ModalProps {
@@ -21,6 +22,7 @@ export function Modal({
   children,
   maxWidth = "md",
 }: ModalProps) {
+  const m = useMessages();
   const dialogRef = useRef<HTMLDialogElement>(null);
 
   useEffect(() => {
@@ -66,7 +68,7 @@ export function Modal({
           </div>
           <button
             onClick={onClose}
-            aria-label="Close modal"
+            aria-label={m.common.closeModal}
             className="p-2 -mr-2 -mt-2 rounded-xl text-slate-500 hover:text-slate-800 hover:bg-slate-100/70 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
           >
             <X size={20} aria-hidden="true" />

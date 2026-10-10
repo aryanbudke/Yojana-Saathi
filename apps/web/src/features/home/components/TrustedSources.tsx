@@ -2,41 +2,31 @@ import React from "react";
 import Link from "next/link";
 import { ArrowRight, ExternalLink, ShieldCheck } from "lucide-react";
 import { GlassCard } from "@/components/ui/GlassCard";
+import { getMessages } from "@/i18n/server";
 
-const sources = [
-  {
-    name: "Ministry of Agriculture & Farmers Welfare",
-    url: "https://agricoop.gov.in/",
-    type: "emblem",
-  },
-  {
-    name: "Ministry of Education",
-    url: "https://www.education.gov.in/",
-    type: "emblem",
-  },
-  {
-    name: "Ministry of Rural Development",
-    url: "https://rural.gov.in/",
-    type: "emblem",
-  },
-  {
-    name: "National Portal of India",
-    subtitle: "Government of India",
-    url: "https://www.india.gov.in/",
-    type: "gov",
-  },
-];
-
-export function TrustedSources() {
+export async function TrustedSources() {
+  const m = await getMessages();
+  const t = m.home.sources;
+  const sources = [
+    { name: t.agriculture, url: "https://agricoop.gov.in/", type: "emblem" },
+    { name: t.education, url: "https://www.education.gov.in/", type: "emblem" },
+    { name: t.rural, url: "https://rural.gov.in/", type: "emblem" },
+    {
+      name: t.nationalPortal,
+      subtitle: t.governmentOfIndia,
+      url: "https://www.india.gov.in/",
+      type: "gov",
+    },
+  ];
   return (
     <div className="my-14 sm:my-20">
-      <section aria-label="Trusted official sources">
+      <section aria-label={t.title}>
         <div className="mb-8">
           <h2 id="sources-title" className="text-2xl sm:text-3xl font-extrabold text-[#022c2b] tracking-tight">
-            Trusted official sources
+            {t.title}
           </h2>
           <p className="text-sm text-[#3d5654] mt-1">
-            All scheme information is sourced from official government portals.
+            {t.lead}
           </p>
         </div>
 
@@ -106,10 +96,10 @@ export function TrustedSources() {
           </div>
           <div>
             <p className="text-xs sm:text-sm font-bold text-[#022c2b]">
-              We help you prepare. We don’t submit, approve or track applications on your behalf.
+              {t.calloutTitle}
             </p>
             <p className="text-xs text-[#3D4741] mt-0.5">
-              Follow official procedures and use the provided links to complete your application.
+              {t.calloutText}
             </p>
           </div>
         </div>
@@ -117,7 +107,7 @@ export function TrustedSources() {
           href="/help"
           className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-cream hover:bg-slate-50 text-xs font-bold text-[#035352] border border-[#022c2b]/10 shadow-2xs shrink-0 self-start sm:self-auto transition-colors"
         >
-          <span>Explore scheme guidance</span>
+          <span>{t.calloutLink}</span>
           <ArrowRight size={13} />
         </Link>
       </div>

@@ -2,7 +2,7 @@ import { test, expect, type Locator } from "@playwright/test";
 test("complete the core journey using Tab, text input, Enter and Space", async ({
   page,
 }) => {
-  await page.goto("/");
+  await page.goto("/discover");
   async function tabTo(target: Locator) {
     for (let n = 0; n < 60; n++) {
       if (

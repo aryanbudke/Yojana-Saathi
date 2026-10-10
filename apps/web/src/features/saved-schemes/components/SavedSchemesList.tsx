@@ -7,22 +7,24 @@ import { GlassCard } from "@/components/ui/GlassCard";
 import { Badge } from "@/components/ui/Badge";
 import { EmptyState, Button } from "@/components/ui";
 import { useSavedSchemes } from "../hooks/useSavedSchemes";
-import { displayDate, humanize } from "@/lib/utils";
+import { labelFor } from "@/lib/format";
+import { useDisplayDate, useMessages } from "@/i18n/client";
+import { format } from "@/i18n/config";
 
 export function SavedSchemesList() {
   const { saved, loaded, removeScheme } = useSavedSchemes();
+  const m = useMessages();
+  const t = m.saved;
+  const date = useDisplayDate();
 
   if (!loaded) return null;
 
   if (saved.length === 0) {
     return (
-      <EmptyState title="No saved schemes yet">
-        <p>
-          As you explore schemes in discovery or recommendations, you can save
-          them here to revisit anytime during your session.
-        </p>
+      <EmptyState title={t.emptyTitle}>
+        <p>{t.emptyText}</p>
         <Link className="button primary inline-flex items-center gap-2" href="/discover">
-          <span>Explore schemes</span>
+          <span>{m.common.exploreSchemes}</span>
           <ArrowUpRight size={16} />
         </Link>
       </EmptyState>
@@ -33,7 +35,9 @@ export function SavedSchemesList() {
     <div className="space-y-6">
       <div className="flex items-center justify-between pb-3 border-b border-slate-200/60">
         <span className="text-sm font-semibold text-slate-700">
-          {saved.length} scheme{saved.length === 1 ? "" : "s"} bookmarked
+          {format(saved.length === 1 ? t.countOne : t.countOther, {
+            count: saved.length,
+          })}
         </span>
       </div>
 
@@ -47,9 +51,9 @@ export function SavedSchemesList() {
           >
             <div>
               <div className="flex items-center justify-between gap-2 mb-3">
-                <Badge tone="neutral">{humanize(scheme.category)}</Badge>
+                <Badge tone="neutral">{labelFor(m.categoryNames, scheme.category)}</Badge>
                 <Badge tone={scheme.status === "active" ? "success" : "warning"}>
-                  {scheme.status === "active" ? "Active" : "Closed"}
+                  {scheme.status === "active" ? m.common.active : m.common.closed}
                 </Badge>
               </div>
 
@@ -62,7 +66,7 @@ export function SavedSchemesList() {
               </p>
 
               <p className="text-xs text-slate-500 mt-3">
-                Bookmarked on {displayDate(scheme.savedAt)}
+                {format(t.bookmarkedOn, { date: date(scheme.savedAt) })}
               </p>
             </div>
 
@@ -74,14 +78,14 @@ export function SavedSchemesList() {
                 className="text-rose-700 hover:text-rose-900 hover:bg-rose-50"
               >
                 <Trash2 size={14} />
-                <span>Remove</span>
+                <span>{t.remove}</span>
               </Button>
 
               <Link
                 href={`/schemes/${scheme.id}`}
                 className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 text-emerald-800 font-bold hover:bg-emerald-100 transition-colors"
               >
-                <span>View details</span>
+                <span>{m.common.viewDetails}</span>
                 <ArrowUpRight size={14} />
               </Link>
             </div>

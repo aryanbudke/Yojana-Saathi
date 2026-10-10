@@ -12,12 +12,15 @@ import { useMatching } from "@/features/matching/hooks";
 import { fields } from "@/features/profile/types";
 import { answerValue, describeChanges } from "@/features/questions/model";
 import type { MatchesResponse, NextQuestion } from "@/lib/api/contracts";
+import { useMessages } from "@/i18n/client";
 
 export interface QuestionCardProps {
   matches: MatchesResponse;
 }
 
 export function QuestionCard({ matches }: QuestionCardProps) {
+  const m = useMessages();
+  const t = m.followUp;
   const p = useProfile();
   const matching = useMatching();
   const id = p.session?.session_id;
@@ -42,15 +45,15 @@ export function QuestionCard({ matches }: QuestionCardProps) {
     setBusy(true);
     setError("");
     try {
-      const answer = answerValue(q, skip ? "not_sure" : value);
+      const answer = answerValue(q, skip ? "not_sure" : value, m);
       const facts = await p.applyAnswer(answer.field, answer.value);
       setLast(q);
       const next = await matching.rematch(id, facts);
-      setNotice(describeChanges(matches, next));
+      setNotice(describeChanges(matches, next, m));
       setEditing(false);
       setValue("");
     } catch (e) {
-      setError(errorMessage(e));
+      setError(errorMessage(e, m.errors));
     } finally {
       setBusy(false);
     }
@@ -69,12 +72,12 @@ export function QuestionCard({ matches }: QuestionCardProps) {
           <HelpCircle size={17} aria-hidden="true" />
         </span>
         <p className="eyebrow text-xs font-bold uppercase tracking-wider text-amber-900">
-          One helpful question
+          {t.eyebrow}
         </p>
       </div>
 
       <h3 id="question-title" className="text-xl font-bold text-slate-900 tracking-tight">
-        Check a missing detail
+        {t.title}
       </h3>
 
       {notice && <InlineAlert>{notice}</InlineAlert>}
@@ -86,7 +89,7 @@ export function QuestionCard({ matches }: QuestionCardProps) {
         <div className="space-y-3">
           <InlineAlert error>{r.error}</InlineAlert>
           <Button variant="secondary" size="sm" onClick={r.retry}>
-            Retry question
+            {t.retry}
           </Button>
         </div>
       ) : q?.question ? (
@@ -113,7 +116,7 @@ export function QuestionCard({ matches }: QuestionCardProps) {
               {q.reason && (
                 <details className="question-reason text-xs text-slate-600 bg-amber-50/60 p-3 rounded-xl border border-amber-200/50">
                   <summary className="font-semibold text-amber-900 cursor-pointer">
-                    Why we ask this
+                    {t.why}
                   </summary>
                   <p className="mt-1.5 leading-relaxed">{q.reason}</p>
                 </details>
@@ -127,7 +130,7 @@ export function QuestionCard({ matches }: QuestionCardProps) {
                 busy={busy}
                 disabled={!value || busy}
               >
-                <span>Update my matches</span>
+                <span>{t.update}</span>
                 <ArrowRight size={15} />
               </Button>
 
@@ -138,7 +141,7 @@ export function QuestionCard({ matches }: QuestionCardProps) {
                 onClick={() => void submit(true)}
                 className="text-slate-600 hover:text-slate-900"
               >
-                Skip for now
+                {t.skip}
               </Button>
 
               {editing && (
@@ -148,20 +151,19 @@ export function QuestionCard({ matches }: QuestionCardProps) {
                   onClick={() => setEditing(false)}
                   className="text-slate-500"
                 >
-                  Cancel edit
+                  {t.cancel}
                 </Button>
               )}
             </div>
           </form>
         ) : (
           <InlineAlert>
-            This question needs manual review. No sensitive information is collected.
+            {t.manual}
           </InlineAlert>
         )
       ) : (
         <p className="text-xs text-slate-500">
-          There are no further questions right now. Check any remaining unknown
-          conditions on the official source.
+          {t.none}
         </p>
       )}
 
@@ -179,7 +181,7 @@ export function QuestionCard({ matches }: QuestionCardProps) {
             className="text-xs text-emerald-800 font-semibold"
           >
             <RotateCcw size={13} />
-            <span>Edit my previous answer</span>
+            <span>{t.editPrevious}</span>
           </Button>
         </div>
       )}
