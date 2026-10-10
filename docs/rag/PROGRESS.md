@@ -332,7 +332,7 @@ override, frontend change, publication or remote deployment is authorized here.
 | AUTH-02 Authenticated retrieval | COMPLETED | Real actual-data subset and provider embeddings, normal reviewer auth |
 | AUTH-03 Grounded generation | COMPLETED | AUTH-02 committed; configured model and actual retrieved records |
 | AUTH-04 Citation/source review | COMPLETED | AUTH-03 committed; membership, raw-record equality and claim-support review |
-| AUTH-05 PostgreSQL integration tests | PENDING | Two existing isolated-schema tests; provider mocks explicitly distinguished |
+| AUTH-05 PostgreSQL integration tests | COMPLETED | Two existing isolated-schema tests; provider mocks explicitly distinguished |
 | AUTH-06 Full3397 indexing | PENDING | Verified quota headroom/pacing, native token guards and full transaction |
 | AUTH-07 Publication boundary | PENDING | No unverified draft enters published/public matching tables |
 | AUTH-08 Regression checks | PENDING | All tests, relevant lint/types and secret/frontend preservation |
@@ -379,3 +379,14 @@ override, frontend change, publication or remote deployment is authorized here.
 - Problems: none after AUTH-03 request fix. Temporary server/schema cleanup verified; shared staging remains0 before/after.
 - Commit: `test(ai): verify actual retrieved citation and pension claim support` (resolve by title).
 - Next task: AUTH-05 two PostgreSQL integration tests after this commit.
+
+### AUTH-05 — PostgreSQL/pgvector integration tests
+
+- Status: COMPLETED
+- Dependency: AUTH-04 committed as `9cc8d22`.
+- Tests: both previously conditional database tests pass on the authorized PostgreSQL target: similarity ordering and retrieved-record answer/citation plumbing.2 passed,0 failed,0 skipped. Config supplied internally from private.env; no credentials printed.
+- Scope: real PostgreSQL/pgvector, isolated temporary schemas, synthetic fixtures and mocked provider responses. Actual provider/source/HTTP verification is AUTH-02 through AUTH-04 and is not inferred from these tests.
+- Verification: shared staging remains0, temporary-schema inventory unchanged after cleanup; no frontend/publication changes.
+- Files: postgresql-integration-verification.json and this progress file.
+- Problems: none. Commit: `test(ai): run both authorized pgvector integration checks` (resolve by title).
+- Next task: AUTH-06 quota-safe full3397 indexing after this commit.
