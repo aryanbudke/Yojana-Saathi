@@ -1,0 +1,21 @@
+{
+  "exit_code": 0,
+  "results": [
+    {
+      "test": "tests/ai/test_staging_search.py::test_search_ranks_unverified_records_by_similarity",
+      "outcome": "passed"
+    },
+    {
+      "test": "tests/ai/test_staging_search.py::test_ask_answers_from_retrieved_records_with_checked_citations",
+      "outcome": "passed"
+    }
+  ],
+  "passed": 2,
+  "failed": 0,
+  "skipped": 0,
+  "real_postgresql": true,
+  "provider_mocked": true,
+  "fixture_data": "synthetic; actual-source/provider checks are separate AUTH02-04 evidence",
+  "shared_staging_rows": 0,
+  "temporary_schema_inventory_unchanged": true
+}

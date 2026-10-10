@@ -1,0 +1,38 @@
+{
+  "checked_at_utc": "2026-10-10T02:55:07.695304+00:00",
+  "embedding_model": "gemini-embedding-001",
+  "provider_attempts": 10,
+  "initial_request": {
+    "result": "rejected by strict client",
+    "http_status": 200,
+    "requested_dimensions": 768,
+    "observed_dimensions": [
+      3072
+    ],
+    "response_bytes": 66889
+  },
+  "corrected_request": {
+    "result": "passed",
+    "verified_dimensions": 768,
+    "configuration": "top-level taskType and outputDimensionality; autoTruncate=false sent in embedContentConfig"
+  },
+  "input_coverage": {
+    "model_input_token_limit": 2048,
+    "largest_document_characters": 20581,
+    "largest_document_tokens": 4825,
+    "provider_accepted_over_limit_document": true,
+    "truncation_flag_guarantees_full_coverage": false
+  },
+  "guarded_actual_index_command": {
+    "exit_code": 2,
+    "preflight_endpoints": [
+      "gemini-embedding-001",
+      "gemini-embedding-001:countTokens"
+    ],
+    "oversized_record_refused_before_bulk_embedding": true
+  },
+  "bulk_indexing_started": false,
+  "actual_dataset_indexed": false,
+  "generation_model_access_verified": false,
+  "actual_query_quality_verified": false
+}

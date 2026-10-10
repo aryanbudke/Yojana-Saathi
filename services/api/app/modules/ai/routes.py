@@ -4,6 +4,7 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import ValidationError
+from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
 from app.api.dependencies import get_db_session
@@ -108,16 +109,19 @@ def search_staging_schemes(
 ) -> StagingSearchResponse:
     """Find unverified notebook records worth curating. Never used for citizen matching."""
 
+    q = q.strip()
+    if len(q) < 2:
+        raise HTTPException(status_code=422, detail="Enter at least two non-space characters.")
     try:
-        [query_vector] = embed(ai_settings, [q.strip()], "RETRIEVAL_QUERY")
-    except EmbeddingUnavailable:
+        [query_vector] = embed(ai_settings, [q], "RETRIEVAL_QUERY")
+        return StagingSearchResponse(
+            results=[
+                _result(scheme, similarity)
+                for scheme, similarity in search(session, query_vector, limit)
+            ]
+        )
+    except (EmbeddingUnavailable, SQLAlchemyError):
         raise HTTPException(status_code=503, detail="Staging search is unavailable.") from None
-    return StagingSearchResponse(
-        results=[
-            _result(scheme, similarity)
-            for scheme, similarity in search(session, query_vector, limit)
-        ]
-    )
 
 
 @router.post("/admin/staging-schemes/ask", response_model=StagingAskResponse, tags=["admin"])
@@ -129,15 +133,18 @@ def ask_staging_schemes(
 ) -> StagingAskResponse:
     """Answer a curator question from retrieved unverified records, with checked citations."""
 
+    question = payload.question.strip()
+    if len(question) < 2:
+        raise HTTPException(status_code=422, detail="Enter at least two non-space characters.")
     try:
-        [query_vector] = embed(ai_settings, [payload.question.strip()], "RETRIEVAL_QUERY")
+        [query_vector] = embed(ai_settings, [question], "RETRIEVAL_QUERY")
         hits = search(session, query_vector, payload.limit)
         if not hits:
             return StagingAskResponse(
                 answer="No staging records are indexed yet.", cited_slugs=[], sources=[]
             )
-        text, cited = answer(ai_settings, payload.question.strip(), [hit for hit, _ in hits])
-    except (EmbeddingUnavailable, AnswerUnavailable):
+        text, cited = answer(ai_settings, question, [hit for hit, _ in hits])
+    except (EmbeddingUnavailable, AnswerUnavailable, SQLAlchemyError):
         raise HTTPException(status_code=503, detail="Staging answers are unavailable.") from None
     return StagingAskResponse(
         answer=text,

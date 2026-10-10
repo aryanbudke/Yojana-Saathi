@@ -4,6 +4,7 @@ Results are discovery leads for curation. They never feed matching, questions or
 """
 
 import json
+import math
 import time
 from collections.abc import Mapping, Sequence
 from functools import lru_cache
@@ -12,7 +13,7 @@ from typing import Literal, cast
 from urllib.error import HTTPError
 from urllib.request import Request, urlopen
 
-from pydantic import BaseModel, Field, ValidationError
+from pydantic import BaseModel, ConfigDict, Field, ValidationError
 from sqlalchemy import delete, select
 from sqlalchemy.orm import Session
 
@@ -20,9 +21,10 @@ from app.db.models import STAGING_EMBEDDING_DIMENSIONS, StagingScheme
 from app.modules.ai.prompts import STAGING_ANSWER_PROMPT
 from app.modules.ai.settings import AISettings
 
-_BATCH_SIZE = 100
+# Leave headroom below the observed100 per-minute input quota; bounded429 retries pace bulk work.
+_BATCH_SIZE = 20
 _RATE_LIMIT_WAIT_SECONDS = 30
-_CONTEXT_CHARS_PER_RECORD = 4000
+_CONTEXT_CHARS_PER_RECORD = 32000
 _DOCUMENT_FIELDS = (
     "scheme_name",
     "level",
@@ -45,6 +47,7 @@ class AnswerUnavailable(RuntimeError):
 
 
 class _AnswerDraft(BaseModel):
+    model_config = ConfigDict(strict=True, extra="forbid")
     answer: str = Field(min_length=1, max_length=6000)
     cited_slugs: list[str] = Field(max_length=50)
 
@@ -53,6 +56,93 @@ def document_text(record: dict[str, str | None]) -> str:
     """Text embedded per record; application steps and documents add noise to retrieval."""
 
     return "\n".join(f"{field}: {record.get(field) or ''}" for field in _DOCUMENT_FIELDS)
+
+
+def prepare_document_chunks(
+    settings: AISettings, texts: Sequence[str]
+) -> list[list[tuple[str, int]]]:
+    """Preserve full text; count every final chunk before generating any embeddings."""
+
+    key, model = settings.api_key, settings.embedding_model
+    if key is None or not key.get_secret_value().strip() or model is None:
+        raise EmbeddingUnavailable("GEMINI_API_KEY and GEMINI_EMBEDDING_MODEL are required")
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}"
+    headers = {"Content-Type": "application/json", "x-goog-api-key": key.get_secret_value()}
+    try:
+        with urlopen(Request(url, headers=headers), timeout=30) as response:
+            raw = response.read(64001)
+        if len(raw) > 64000:
+            raise ValueError("Oversized model metadata")
+        limit = json.loads(raw)["inputTokenLimit"]
+        if isinstance(limit, bool) or not isinstance(limit, int) or limit < 1:
+            raise ValueError("Invalid input token limit")
+
+        def split(text: str) -> list[tuple[str, int]]:
+            payload = {"contents": [{"parts": [{"text": text}]}]}
+            request = Request(
+                url + ":countTokens", data=json.dumps(payload).encode(), headers=headers
+            )
+            with urlopen(request, timeout=30) as response:
+                raw = response.read(64001)
+            if len(raw) > 64000:
+                raise ValueError("Oversized token count")
+            count = json.loads(raw)["totalTokens"]
+            if isinstance(count, bool) or not isinstance(count, int) or count < 1:
+                raise ValueError("Invalid token count")
+            if count <= limit:
+                return [(text, count)]
+            if len(text) < 2:
+                raise EmbeddingUnavailable(
+                    "Gemini token limit cannot accommodate a complete character"
+                )
+            boundary = text.rfind("\n", len(text) // 4, 3 * len(text) // 4)
+            midpoint = boundary + 1 if boundary >= 0 else len(text) // 2
+            return split(text[:midpoint]) + split(text[midpoint:])
+
+        groups: list[list[tuple[str, int]]] = [[] for _ in texts]
+        for index, text in sorted(enumerate(texts), key=lambda item: len(item[1]), reverse=True):
+            groups[index] = split(text)
+        return groups
+    except (OSError, HTTPException, ValueError, TypeError, KeyError, RecursionError):
+        raise EmbeddingUnavailable("Gemini document token preflight failed") from None
+
+
+def pool_document_vectors(
+    chunks: Sequence[Sequence[tuple[str, int]]], vectors: Sequence[Sequence[float]]
+) -> list[list[float]]:
+    """Token-weight normalized chunks into the existing one-vector-per-scheme contract."""
+
+    try:
+        _validate_vectors(vectors, sum(len(group) for group in chunks))
+        result = []
+        offset = 0
+        for group in chunks:
+            if not group or any(
+                isinstance(count, bool) or not isinstance(count, int) or count < 1
+                for _, count in group
+            ):
+                raise ValueError("Invalid chunk weights")
+            total = sum(count for _, count in group)
+            normalized = []
+            for vector in vectors[offset : offset + len(group)]:
+                norm = math.hypot(*vector)
+                normalized.append([value / norm for value in vector])
+            # shortcut: pooling dilutes narrow clauses; use passage storage if recall fails review.
+            pooled = [
+                math.fsum(
+                    vector[axis] * (count / total)
+                    for (_, count), vector in zip(group, normalized, strict=True)
+                )
+                for axis in range(STAGING_EMBEDDING_DIMENSIONS)
+            ]
+            norm = math.hypot(*pooled)
+            if norm <= 1e-12:
+                raise ValueError("Degenerate pooled embedding")
+            result.append([value / norm for value in pooled])
+            offset += len(group)
+        return result
+    except (ValueError, TypeError, OverflowError):
+        raise EmbeddingUnavailable("Invalid document chunk embeddings or weights") from None
 
 
 def embed(
@@ -72,6 +162,7 @@ def embed(
                     "content": {"parts": [{"text": text}]},
                     "taskType": task,
                     "outputDimensionality": STAGING_EMBEDDING_DIMENSIONS,
+                    "embedContentConfig": {"autoTruncate": False},
                 }
                 for text in batch
             ]
@@ -92,21 +183,47 @@ def _post_batch(
     for attempt in range(retries + 1):
         try:
             with urlopen(request, timeout=30) as response:
-                embeddings = json.loads(response.read())["embeddings"]
-            vectors = [[float(value) for value in item["values"]] for item in embeddings]
-            if len(vectors) != expected or any(
-                len(vector) != STAGING_EMBEDDING_DIMENSIONS for vector in vectors
-            ):
-                raise ValueError("Unexpected embedding shape")
-            return vectors
+                limit = expected * STAGING_EMBEDDING_DIMENSIONS * 32 + 4096
+                raw = response.read(limit + 1)
+            if len(raw) > limit:
+                raise ValueError("Oversized embedding response")
+            embeddings = json.loads(raw)["embeddings"]
+            vectors = [item["values"] for item in embeddings]
+            _validate_vectors(vectors, expected)
+            return [[float(value) for value in vector] for vector in vectors]
         except HTTPError as error:
             if error.code == 429 and attempt < retries:
                 time.sleep(_RATE_LIMIT_WAIT_SECONDS)
                 continue
             raise EmbeddingUnavailable(f"Gemini embedding request failed ({error.code})") from None
-        except (OSError, HTTPException, ValueError, TypeError, KeyError):
+        except (
+            OSError,
+            HTTPException,
+            ValueError,
+            TypeError,
+            KeyError,
+            AttributeError,
+            RecursionError,
+            OverflowError,
+        ):
             raise EmbeddingUnavailable("Gemini embedding request failed") from None
     raise EmbeddingUnavailable("Gemini embedding rate limit persisted")
+
+
+def _validate_vectors(vectors: Sequence[Sequence[float]], expected: int) -> None:
+    if len(vectors) != expected or any(
+        len(vector) != STAGING_EMBEDDING_DIMENSIONS
+        or any(
+            isinstance(value, bool)
+            or not isinstance(value, (int, float))
+            or not math.isfinite(value)
+            or abs(value) > 3.4028234663852886e38  # pgvector stores float32 components.
+            for value in vector
+        )
+        or not any(vector)
+        for vector in vectors
+    ):
+        raise ValueError("Invalid embedding values or shape")
 
 
 def replace_snapshot(
@@ -115,9 +232,10 @@ def replace_snapshot(
     """Swap the whole staging table for one validated export; the caller commits."""
 
     staged = staged_export["records"]
-    assert isinstance(staged, list) and len(staged) == len(vectors)
-    session.execute(delete(StagingScheme))
-    session.add_all(
+    if not isinstance(staged, list) or not staged:
+        raise ValueError("A nonempty validated staging export is required")
+    _validate_vectors(vectors, len(staged))
+    rows = [
         StagingScheme(
             slug=(item["record"]["slug"] or "").strip(),
             name=(item["record"]["scheme_name"] or "").strip(),
@@ -127,35 +245,36 @@ def replace_snapshot(
             embedding=list(vector),
         )
         for item, vector in zip(staged, vectors, strict=True)
-    )
-    return len(staged)
+    ]
+    session.execute(delete(StagingScheme))
+    session.add_all(rows)
+    return len(rows)
 
 
 def search(
     session: Session, query_vector: Sequence[float], limit: int
 ) -> list[tuple[StagingScheme, float]]:
     distance = StagingScheme.embedding.cosine_distance(list(query_vector)).label("distance")
-    rows = session.execute(select(StagingScheme, distance).order_by(distance).limit(limit))
+    rows = session.execute(
+        select(StagingScheme, distance).order_by(distance, StagingScheme.slug).limit(limit)
+    )
     return [(row[0], 1.0 - cast(float, row[1])) for row in rows]
 
 
 def answer(
     settings: AISettings, question: str, hits: Sequence[StagingScheme]
 ) -> tuple[str, list[str]]:
-    """Gemini answer grounded in retrieved records; citations outside them are dropped."""
+    """Curator draft answer; reject unknown citations and replace uncited claims with abstention."""
 
     key = settings.api_key
     if key is None or not key.get_secret_value().strip() or settings.model is None:
         raise AnswerUnavailable("GEMINI_API_KEY and GEMINI_MODEL are required")
-    context = [
-        {
-            "slug": hit.slug,
-            "text": "\n".join(f"{field}: {value}" for field, value in hit.record.items() if value)[
-                :_CONTEXT_CHARS_PER_RECORD
-            ],
-        }
-        for hit in hits
-    ]
+    context = []
+    for hit in hits:
+        text = "\n".join(f"{field}: {value}" for field, value in hit.record.items() if value)
+        if len(text) > _CONTEXT_CHARS_PER_RECORD:
+            raise AnswerUnavailable("Record exceeds answer context limit; review full source text")
+        context.append({"slug": hit.slug, "text": text})
     payload = {
         "systemInstruction": {"parts": [{"text": STAGING_ANSWER_PROMPT}]},
         "contents": [
@@ -180,17 +299,35 @@ def answer(
     )
     try:
         with urlopen(request, timeout=30) as response:
-            candidates = json.loads(response.read())["candidates"]
+            raw = response.read(64001)
+        if len(raw) > 64000:
+            raise ValueError("Oversized answer response")
+        candidates = json.loads(raw)["candidates"]
         if len(candidates) != 1 or candidates[0]["finishReason"] != "STOP":
             raise ValueError("Incomplete generation")
         output = "".join(
             part["text"] for part in candidates[0]["content"]["parts"] if not part.get("thought")
         )
         draft = _AnswerDraft.model_validate_json(output)
-    except (OSError, HTTPException, ValueError, TypeError, KeyError, IndexError):
+        if not draft.answer.strip() or set(draft.cited_slugs) - {hit.slug for hit in hits}:
+            raise ValueError("Empty answer or unsupported citations")
+    except (
+        OSError,
+        HTTPException,
+        ValueError,
+        TypeError,
+        KeyError,
+        IndexError,
+        AttributeError,
+        RecursionError,
+    ):
         raise AnswerUnavailable("Gemini answer request failed") from None
-    allowed = {hit.slug for hit in hits}
-    return draft.answer, list(dict.fromkeys(s for s in draft.cited_slugs if s in allowed))
+    if not draft.cited_slugs:
+        return (
+            "The retrieved draft records do not provide enough evidence to answer this question.",
+            [],
+        )
+    return draft.answer.strip(), list(dict.fromkeys(draft.cited_slugs))
 
 
 @lru_cache

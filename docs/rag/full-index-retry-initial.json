@@ -1,0 +1,33 @@
+{
+  "status": "blocked",
+  "scope": "full actual dataset, existing CLI, real Gemini HTTPS with connection reuse and real PostgreSQL",
+  "records": 3397,
+  "input_sha256": "7a37ee1dd159521ea86e5fb21c86dceb5220b42bb43657d43d797d1d5a65392a",
+  "models": {
+    "embedding": "gemini-embedding-001",
+    "generation": "gemini-flash-lite-latest"
+  },
+  "dimensions": 768,
+  "batch_size": 20,
+  "database_before": {
+    "staging_schemes": 0,
+    "schemes": 3397,
+    "scheme_versions": 3397
+  },
+  "native_token_checks": 1300,
+  "successful_embedding_inputs": 0,
+  "embedding_batch_sizes": [],
+  "provider_errors": [],
+  "actual_snapshot_indexed": false,
+  "full_corpus_retrieval_verified": false,
+  "phase": "blocked",
+  "error_type": "NativeTokenPreflightUnavailable",
+  "exit_code": 2,
+  "database_after": {
+    "staging_schemes": 0,
+    "schemes": 3397,
+    "scheme_versions": 3397
+  },
+  "native_token_checks_are_last_checkpoint": true,
+  "problem": "Preflight helper refused a request; transport failure reason was not captured. Pending stale pooled read-only final connection terminated; separate authorized connection confirms staging remains0."
+}

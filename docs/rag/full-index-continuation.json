@@ -1,0 +1,56 @@
+{
+  "status": "stopped_by_user",
+  "scope": "full actual dataset, existing CLI, real Gemini HTTPS with connection reuse and real PostgreSQL",
+  "records": 3397,
+  "input_sha256": "7a37ee1dd159521ea86e5fb21c86dceb5220b42bb43657d43d797d1d5a65392a",
+  "models": {
+    "embedding": "gemini-embedding-001",
+    "generation": "gemini-flash-lite-latest"
+  },
+  "dimensions": 768,
+  "batch_size": 20,
+  "database_before": {
+    "staging_schemes": 0,
+    "schemes": 3397,
+    "scheme_versions": 3397
+  },
+  "native_token_checks": 3437,
+  "successful_embedding_inputs": 120,
+  "embedding_batch_sizes": [
+    20,
+    20,
+    20,
+    20,
+    20,
+    20
+  ],
+  "provider_errors": [
+    {
+      "kind": "embedding",
+      "status": 429,
+      "batch_size": 20,
+      "sanitized_body": "{\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \",\n    \"status\": \"RESOURCE_EXHAUSTED\",\n    \"details\": [\n      {\n        \"@type\": \"type.googleapis.com/google.rpc.Help\",\n        \"links\": [\n          {\n            \"description\": \"Learn more about Gemini API quotas\",\n            \"url\": \"https://ai.google.dev/gemini-api/docs/rate-limits\"\n          }\n        ]\n      }\n    ]\n  }\n}\n"
+    },
+    {
+      "kind": "embedding",
+      "status": 429,
+      "batch_size": 20,
+      "sanitized_body": "{\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \",\n    \"status\": \"RESOURCE_EXHAUSTED\",\n    \"details\": [\n      {\n        \"@type\": \"type.googleapis.com/google.rpc.Help\",\n        \"links\": [\n          {\n            \"description\": \"Learn more about Gemini API quotas\",\n            \"url\": \"https://ai.google.dev/gemini-api/docs/rate-limits\"\n          }\n        ]\n      }\n    ]\n  }\n}\n"
+    },
+    {
+      "kind": "embedding",
+      "status": 429,
+      "batch_size": 20,
+      "sanitized_body": "{\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \",\n    \"status\": \"RESOURCE_EXHAUSTED\",\n    \"details\": [\n      {\n        \"@type\": \"type.googleapis.com/google.rpc.Help\",\n        \"links\": [\n          {\n            \"description\": \"Learn more about Gemini API quotas\",\n            \"url\": \"https://ai.google.dev/gemini-api/docs/rate-limits\"\n          }\n        ]\n      }\n    ]\n  }\n}\n"
+    }
+  ],
+  "actual_snapshot_indexed": false,
+  "full_corpus_retrieval_verified": false,
+  "phase": "stopped",
+  "chunks": 3417,
+  "split_records": 17,
+  "max_chunk_tokens": 2044,
+  "exact_source_coverage": true,
+  "stopped_before_database_transaction": true,
+  "reason": "User requested stopping live tests; full indexing unverified. Latest embedding attempts received Gemini429 quota responses."
+}

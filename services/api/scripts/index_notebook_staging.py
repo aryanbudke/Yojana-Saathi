@@ -6,6 +6,8 @@ Records stay unverified drafts. This never touches schemes, versions, matching o
 import argparse
 from pathlib import Path
 
+from pydantic import ValidationError
+from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
 from app.db.session import create_database_engine
@@ -15,6 +17,8 @@ from app.modules.ai.staging_search import (
     EmbeddingUnavailable,
     document_text,
     embed,
+    pool_document_vectors,
+    prepare_document_chunks,
     replace_snapshot,
 )
 
@@ -29,23 +33,36 @@ def main() -> None:
         parser.error(str(exc))
     records = staged["records"]
     assert isinstance(records, list)
-    print(f"Validated {len(records)} records; embedding with Gemini...")
+    print(f"Validated {len(records)} records; checking Gemini input limits...")
     try:
-        vectors = embed(
-            AISettings(),
-            [document_text(item["record"]) for item in records],
+        settings = AISettings()
+        texts = [document_text(item["record"]) for item in records]
+        chunks = prepare_document_chunks(settings, texts)
+        print(f"Token-checked {sum(map(len, chunks))} chunks; generating scheme embeddings...")
+        chunk_vectors = embed(
+            settings,
+            [text for group in chunks for text, _ in group],
             "RETRIEVAL_DOCUMENT",
             retries=6,
         )
+        vectors = pool_document_vectors(chunks, chunk_vectors)
+    except ValidationError:
+        parser.error("Invalid Gemini configuration; check server environment settings")
     except EmbeddingUnavailable as exc:
         parser.error(str(exc))
-    engine = create_database_engine()
+    engine = None
     try:
-        with Session(engine) as session:
+        engine = create_database_engine()
+        with Session(engine) as session, session.begin():
             count = replace_snapshot(session, staged, vectors)
-            session.commit()
+    except (SQLAlchemyError, ValueError):
+        parser.error(
+            "Indexing failed; no staging changes committed. Check database configuration, "
+            "migrations and embedding values."
+        )
     finally:
-        engine.dispose()
+        if engine is not None:
+            engine.dispose()
     print(f"Indexed {count} unverified draft records for curator search.")
 
 

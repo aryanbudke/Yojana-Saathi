@@ -1,0 +1,6 @@
+{
+  "purpose": "diagnose existing generation request against actual draft source; not authenticated API verification",
+  "provider_http_status": 400,
+  "sanitized_message": "Invalid value at 'generation_config.response_format.text.mime_type' (type.googleapis.com/google.ai.generativelanguage.v1beta.TextResponseFormat.MimeType), \"application/json\"",
+  "error_type": "AnswerUnavailable"
+}

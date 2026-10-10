@@ -1,0 +1,12 @@
+{
+  "input_sha256": "7a37ee1dd159521ea86e5fb21c86dceb5220b42bb43657d43d797d1d5a65392a",
+  "records_inspected": 3397,
+  "method": "Intercepted actual answer requests with offline transport and compared complete source text; no model answers generated",
+  "answer_context_character_limit": 32000,
+  "largest_record_context_characters": 25021,
+  "records_truncated": 0,
+  "records_rejected_as_oversized": 0,
+  "provider_requests_sent": 0,
+  "database_queries_executed": 0,
+  "live_answer_support_verified": false
+}

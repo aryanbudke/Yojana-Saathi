@@ -1,0 +1,16 @@
+{
+  "passed": 369,
+  "failed": 0,
+  "skipped": 0,
+  "exit_code": 0,
+  "app_coverage_percent": 94.0,
+  "coverage_gate_percent": 80,
+  "chunk_helpers_statement_coverage_percent": {
+    "prepare_document_chunks": 100.0,
+    "pool_document_vectors": 100.0
+  },
+  "shared_staging_rows_before": 0,
+  "shared_staging_rows_after": 0,
+  "temporary_schemas_cleaned": true,
+  "provider_calls_during_regression": false
+}

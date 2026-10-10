@@ -1,0 +1,57 @@
+{
+  "status": "passed",
+  "scope": "one actual-source generated answer; manual claim support review plus source integrity assertions",
+  "source_sha256": "7a37ee1dd159521ea86e5fb21c86dceb5220b42bb43657d43d797d1d5a65392a",
+  "cited_slugs": [
+    "apy"
+  ],
+  "retrieved_slugs": [
+    "apy",
+    "pmjdy",
+    "ky-smsp"
+  ],
+  "all_citations_retrieved": true,
+  "raw_sources_equal_export": true,
+  "claims": [
+    {
+      "claim": "Rs. 1000/- per month",
+      "source_slug": "apy",
+      "field": "benefits",
+      "supported": true
+    },
+    {
+      "claim": "Rs. 2000/- per month",
+      "source_slug": "apy",
+      "field": "benefits",
+      "supported": true
+    },
+    {
+      "claim": "Rs. 3000/- per month",
+      "source_slug": "apy",
+      "field": "benefits",
+      "supported": true
+    },
+    {
+      "claim": "Rs. 4000/- per month",
+      "source_slug": "apy",
+      "field": "benefits",
+      "supported": true
+    },
+    {
+      "claim": "Rs. 5000/- per month",
+      "source_slug": "apy",
+      "field": "benefits",
+      "supported": true
+    },
+    {
+      "claim": "pension after age60 until death",
+      "source_slug": "apy",
+      "field": "benefits",
+      "supported": true
+    }
+  ],
+  "draft_framing_present": true,
+  "official_verification_claimed": false,
+  "full_corpus_verified": false,
+  "publication_allowed": false
+}

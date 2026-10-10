@@ -1,0 +1,14 @@
+{
+  "scope": "local eight-record reviewer demo; no full index",
+  "backend_ready": true,
+  "health_status": 200,
+  "negative_auth_statuses": [
+    403,
+    403
+  ],
+  "authenticated_search_status": 200,
+  "top_hit": "apy",
+  "publication_allowed": false,
+  "public_catalogue_status": 200,
+  "public_catalogue_count": 0
+}
