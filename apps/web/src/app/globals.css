@@ -136,6 +136,48 @@ button:disabled {
   cursor: wait;
   opacity: 0.65;
 }
+
+/* Shared field treatment for the sign-in and sign-up cards. */
+.auth-shell {
+  min-height: min(680px, calc(100dvh - 144px));
+  margin-block: clamp(24px, 4vw, 48px) clamp(40px, 6vw, 72px);
+}
+.auth-input {
+  width: 100%;
+  min-height: 48px;
+  border: 1px solid rgb(216 201 138 / 80%);
+  border-radius: 14px;
+  background: rgb(250 244 220 / 78%);
+  color: var(--ink);
+  padding: 11px 16px 11px 46px;
+  font-size: 14px;
+  transition:
+    border-color 180ms var(--ease),
+    background-color 180ms var(--ease),
+    box-shadow 180ms var(--ease);
+}
+.auth-input::placeholder {
+  color: #5e6b62;
+}
+.auth-input.auth-input-with-action {
+  padding-right: 52px;
+}
+.auth-input:hover {
+  border-color: rgb(3 83 82 / 45%);
+  background: var(--surface);
+}
+.auth-input:focus-visible {
+  border-color: var(--primary);
+  outline: none;
+  background: var(--surface);
+  box-shadow: 0 0 0 3px rgb(3 83 82 / 16%);
+}
+@media (max-width: 639px) {
+  .auth-shell {
+    min-height: auto;
+    margin-block: 20px 40px;
+  }
+}
 a,
 button {
   touch-action: manipulation;
