@@ -13,7 +13,8 @@ export const en = {
     eligibilityDescription:
       "Detailed eligibility criteria, rule results and preconditions.",
     profile: "My profile — yojana saathi",
-    profileDescription: "Review and edit your profile details for scheme matching.",
+    profileDescription:
+      "Review and edit your profile details for scheme matching.",
     saved: "Saved schemes — yojana saathi",
     savedDescription:
       "Your bookmarked government schemes and application checklists.",
@@ -60,10 +61,64 @@ export const en = {
     matches: "Matches",
     profile: "Profile",
     saved: "Saved",
+    signIn: "Sign in",
+    signOut: "Sign out",
+    signingOut: "Signing out…",
     menu: "Menu",
     findMySchemes: "Find my schemes",
     openNavigation: "Open navigation",
     closeNavigation: "Close navigation",
+  },
+  auth: {
+    eyebrow: "Your Yojana Saathi account",
+    signInTitle: "Welcome back",
+    signInLead: "Sign in to continue your saved scheme journey and profile.",
+    signUpTitle: "Create your account",
+    signUpLead:
+      "Keep your profile, saved schemes and next steps together in one place.",
+    asideTitle: "Your scheme journey, kept together.",
+    asideText:
+      "Return to saved schemes, review your profile and continue preparing your next steps.",
+    privacyNote:
+      "Never enter Aadhaar, bank account or identity-document details here.",
+    name: "Full name",
+    namePlaceholder: "Enter your full name",
+    email: "Email address",
+    emailPlaceholder: "you@example.com",
+    password: "Password",
+    passwordPlaceholder: "At least 8 characters",
+    confirmPassword: "Confirm password",
+    confirmPasswordPlaceholder: "Enter the password again",
+    showPassword: "Show password",
+    hidePassword: "Hide password",
+    signIn: "Sign in",
+    signUp: "Create an account",
+    createAccount: "Create account",
+    submitting: "Please wait…",
+    noAccount: "New to Yojana Saathi?",
+    haveAccount: "Already have an account?",
+    checkEmail:
+      "Account created. Check your email and confirm your address before signing in.",
+    termsPrefix: "By creating an account, you agree to our",
+    privacyPolicy: "privacy policy",
+    termsJoin: "and",
+    disclaimer: "disclaimer",
+    errors: {
+      nameRequired: "Please enter your full name.",
+      required: "Please enter both your email and password.",
+      invalidEmail: "Please enter a valid email address.",
+      passwordLength: "Use a password with at least 8 characters.",
+      passwordMismatch: "The passwords do not match.",
+      configuration:
+        "Account access is not configured. Please contact support.",
+      invalidCredentials: "The email or password is incorrect.",
+      emailNotConfirmed: "Confirm your email address before signing in.",
+      accountExists:
+        "An account with this email already exists. Try signing in.",
+      signupDisabled: "New account registration is currently unavailable.",
+      rateLimited: "Too many attempts. Wait a moment and try again.",
+      submitFailed: "We couldn’t complete that request. Please try again.",
+    },
   },
   mobileNav: {
     label: "Mobile quick dock",
@@ -296,7 +351,8 @@ export const en = {
       step1Text: "Describe your background, needs and goals in plain language.",
       step1Link: "Describe your situation",
       step2Title: "Get a personalised match",
-      step2Text: "We find relevant schemes and show key details for your review.",
+      step2Text:
+        "We find relevant schemes and show key details for your review.",
       step2Tag: "AI + Rule checks",
       step3Title: "Take the next step",
       step3Text:
@@ -442,7 +498,8 @@ export const en = {
     noStatusTitle: "No schemes with this status",
     showAll: "Show all statuses",
     noMatchesTitle: "No matches found yet",
-    noMatchesText: "Try correcting your details or explore the scheme catalogue.",
+    noMatchesText:
+      "Try correcting your details or explore the scheme catalogue.",
     editOrBrowse: "Edit profile or browse",
     yourProfile: "Your profile",
     editProfile: "Edit profile",
@@ -513,7 +570,8 @@ export const en = {
     exclusions: "Exclusions",
     noExclusions:
       "No separate exclusion entries were supplied. This is not a guarantee that no exclusions apply.",
-    notCheckedBefore: "Your profile has not been checked against this scheme version.",
+    notCheckedBefore:
+      "Your profile has not been checked against this scheme version.",
     notCheckedLink: "Review your profile",
     notCheckedAfter: "to get matching results.",
     documents: "Documents",
@@ -666,26 +724,28 @@ export const en = {
       "Share only the details needed to understand scheme requirements. Do not enter Aadhaar numbers, bank account numbers or identity-document images.",
     keepsTitle: "What this interface keeps",
     keepsText:
-      "Your description and editable profile stay in this tab’s memory. The interface does not save them in long-term browser storage. In live mode, confirmed facts are also sent to an anonymous backend session. Your language choice is saved in a cookie so pages open in that language.",
+      "Your description stays in this tab’s memory. When you are signed in, only profile facts you confirm are saved with your Supabase account so they can be restored for matching and application guidance. In live mode, confirmed facts are also sent to a temporary backend session. Your language choice is saved in a cookie.",
     aiTitle: "When you use AI extraction",
     aiText:
       "In live mode, your description is sent to the configured backend, which can use Gemini to extract profile details. You can use manual entry instead. Provider handling and retention depend on that service’s configuration and policies.",
     clearTitle: "Clearing your details",
     clearText:
-      "“Clear my details” requests deletion of the backend session and clears this interface’s profile and matching state when deletion succeeds. Backend sessions also expire. This action does not promise deletion of records held by external providers.",
+      "“Clear my details” removes the confirmed profile from your signed-in account, requests deletion of the backend session and clears this interface’s profile and matching state. Backend sessions also expire. This action does not promise deletion of records held by external providers.",
     mockText:
       "Mock mode runs synthetic examples in the frontend instead of making those live API requests.",
     cta: "Review or clear my profile",
   },
   guidePage: {
     meta: "Application guide — yojana saathi",
-    metaDescription: "How to prepare a government scheme application: documents, steps and official portals.",
+    metaDescription:
+      "How to prepare a government scheme application: documents, steps and official portals.",
     eyebrow: "Application guide",
     title: "Prepare your application with confidence",
     lead: "Each scheme has its own documents and steps, taken from its official source. Choose a scheme to open its personal checklist and official application route.",
     stagesTitle: "Four stages, every scheme",
     schemesTitle: "Choose a scheme",
-    schemesLead: "Documents and steps appear only where a reviewed official source lists them. We never fill gaps with guesses.",
+    schemesLead:
+      "Documents and steps appear only where a reviewed official source lists them. We never fill gaps with guesses.",
     prepare: "Prepare checklist",
     empty: "No schemes are available right now.",
     browseAll: "Browse all schemes",

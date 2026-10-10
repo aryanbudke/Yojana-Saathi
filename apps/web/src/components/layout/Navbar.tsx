@@ -2,12 +2,13 @@
 
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { ArrowRight, ChevronRight, Menu, X } from "lucide-react";
 import { Brand } from "@/components/Brand";
 import { useMessages } from "@/i18n/client";
 import type { Messages } from "@/i18n/messages/en";
 import { LanguageSwitcher } from "./LanguageSwitcher";
+import { useAuth } from "@/features/auth/AuthProvider";
 
 interface NavLink {
   href: string;
@@ -32,7 +33,11 @@ const navLinks: NavLink[] = [
     isActive: (p) =>
       p.startsWith("/recommendations") || p.startsWith("/eligibility"),
   },
-  { href: "/profile", label: "profile", isActive: (p) => p.startsWith("/profile") },
+  {
+    href: "/profile",
+    label: "profile",
+    isActive: (p) => p.startsWith("/profile"),
+  },
   { href: "/saved", label: "saved", isActive: (p) => p.startsWith("/saved") },
 ];
 
@@ -49,7 +54,10 @@ function subscribeToScroll(onChange: () => void) {
 export function Navbar() {
   const m = useMessages();
   const pathname = usePathname();
+  const router = useRouter();
+  const { user, loading: authLoading, signOut } = useAuth();
   const [open, setOpen] = useState(false);
+  const [signingOut, setSigningOut] = useState(false);
   const drawerRef = useRef<HTMLDialogElement>(null);
   const scrolled = useSyncExternalStore(
     subscribeToScroll,
@@ -67,7 +75,8 @@ export function Navbar() {
     document.documentElement.classList.toggle("nav-locked", open);
     if (!open) return;
     const desktop = window.matchMedia(DESKTOP_QUERY);
-    const closeOnDesktop = (e: MediaQueryListEvent) => e.matches && setOpen(false);
+    const closeOnDesktop = (e: MediaQueryListEvent) =>
+      e.matches && setOpen(false);
     desktop.addEventListener("change", closeOnDesktop);
     return () => {
       desktop.removeEventListener("change", closeOnDesktop);
@@ -76,6 +85,18 @@ export function Navbar() {
   }, [open]);
 
   const close = () => setOpen(false);
+
+  const handleSignOut = async () => {
+    setSigningOut(true);
+    try {
+      await signOut();
+      close();
+      router.push("/signin");
+      router.refresh();
+    } finally {
+      setSigningOut(false);
+    }
+  };
 
   return (
     <header className="site-header" data-scrolled={scrolled || undefined}>
@@ -102,9 +123,32 @@ export function Navbar() {
 
         <div className="site-actions">
           <LanguageSwitcher className="site-language" />
+          {!authLoading &&
+            (user ? (
+              <button
+                type="button"
+                className="site-auth-link"
+                disabled={signingOut}
+                onClick={handleSignOut}
+              >
+                {signingOut ? m.nav.signingOut : m.nav.signOut}
+              </button>
+            ) : (
+              <Link
+                className="site-auth-link"
+                href="/signin"
+                aria-current={pathname === "/signin" ? "page" : undefined}
+              >
+                {m.nav.signIn}
+              </Link>
+            ))}
           <Link className="site-cta" href={CTA_HREF}>
             <span>{m.nav.findMySchemes}</span>
-            <ArrowRight size={16} aria-hidden="true" className="site-cta-arrow" />
+            <ArrowRight
+              size={16}
+              aria-hidden="true"
+              className="site-cta-arrow"
+            />
           </Link>
           <button
             type="button"
@@ -157,12 +201,47 @@ export function Navbar() {
                   </li>
                 );
               })}
+              {!authLoading && (
+                <li>
+                  {user ? (
+                    <button
+                      type="button"
+                      className="site-drawer-link w-full"
+                      disabled={signingOut}
+                      onClick={handleSignOut}
+                    >
+                      <span>
+                        {signingOut ? m.nav.signingOut : m.nav.signOut}
+                      </span>
+                      <ChevronRight size={18} aria-hidden="true" />
+                    </button>
+                  ) : (
+                    <Link
+                      href="/signin"
+                      className="site-drawer-link"
+                      aria-current={pathname === "/signin" ? "page" : undefined}
+                      onClick={close}
+                    >
+                      <span>{m.nav.signIn}</span>
+                      <ChevronRight size={18} aria-hidden="true" />
+                    </Link>
+                  )}
+                </li>
+              )}
             </ul>
           </nav>
           <LanguageSwitcher className="site-drawer-language" />
-          <Link className="site-cta site-cta-block" href={CTA_HREF} onClick={close}>
+          <Link
+            className="site-cta site-cta-block"
+            href={CTA_HREF}
+            onClick={close}
+          >
             <span>{m.nav.findMySchemes}</span>
-            <ArrowRight size={18} aria-hidden="true" className="site-cta-arrow" />
+            <ArrowRight
+              size={18}
+              aria-hidden="true"
+              className="site-cta-arrow"
+            />
           </Link>
         </div>
       </dialog>

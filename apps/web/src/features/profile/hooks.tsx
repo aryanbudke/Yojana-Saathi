@@ -1,6 +1,7 @@
 "use client";
 import {
   createContext,
+  useEffect,
   useContext,
   useState,
   useRef,
@@ -17,8 +18,18 @@ import {
 } from "@/lib/api/contracts";
 import { fieldsToConfirm, mergeExtraction } from "./model";
 import type { ProfileDraft } from "./types";
+import {
+  useAuth,
+  type StoredYojanaProfile,
+} from "@/features/auth/AuthProvider";
 function useProfileState() {
   const { language } = useSpeech();
+  const {
+    user,
+    loading: authLoading,
+    saveProfileFacts,
+    clearProfileFacts,
+  } = useAuth();
   const [draft, setDraft] = useState<ProfileDraft>({
     facts: { ...blankFacts },
     origins: {},
@@ -28,6 +39,65 @@ function useProfileState() {
   const [confirmed, setConfirmed] = useState(false);
   const [session, setSession] = useState<ProfileSession | null>(null);
   const revision = useRef(0);
+  const hydratedUserId = useRef<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    void (async () => {
+      await Promise.resolve();
+      if (cancelled || authLoading) return;
+
+      if (!user) {
+        if (hydratedUserId.current) {
+          revision.current++;
+          setText("");
+          setDraft({ facts: { ...blankFacts }, origins: {} });
+          setSession(null);
+          setReviewing(false);
+          setConfirmed(false);
+        }
+        hydratedUserId.current = null;
+        return;
+      }
+
+      if (hydratedUserId.current === user.id) return;
+      hydratedUserId.current = user.id;
+
+      const stored = user.user_metadata?.yojana_profile as
+        StoredYojanaProfile | null | undefined;
+      const parsed = profileSchema.safeParse(stored?.facts);
+      if (!parsed.success) return;
+
+      const facts = parsed.data;
+      setDraft({
+        facts,
+        origins: Object.fromEntries(
+          Object.keys(facts).map((field) => [field, "imported"]),
+        ),
+      });
+      setReviewing(true);
+      setConfirmed(false);
+
+      let active = await api.createSession();
+      for (const field of fieldsToConfirm(facts, active.facts)) {
+        const response = await api.answer(
+          active.session_id,
+          field,
+          facts[field],
+        );
+        active = { ...active, facts: response.facts };
+      }
+      if (cancelled) return;
+      setSession(active);
+      setConfirmed(true);
+    })().catch(() => {
+      if (!cancelled) setConfirmed(false);
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [authLoading, user]);
 
   async function saveFacts(facts: ProfileFacts) {
     let active =
@@ -80,6 +150,7 @@ function useProfileState() {
   async function confirm() {
     const facts = profileSchema.parse(draft.facts);
     const active = await saveFacts(facts);
+    if (user) await saveProfileFacts(facts);
     setDraft({
       facts,
       origins: Object.fromEntries(Object.keys(facts).map((k) => [k, "user"])),
@@ -95,6 +166,7 @@ function useProfileState() {
         if (!(e instanceof ApiError) || e.status !== 404) throw e;
       }
     }
+    if (user) await clearProfileFacts();
     revision.current++;
     setText("");
     setDraft({ facts: { ...blankFacts }, origins: {} });
@@ -114,6 +186,7 @@ function useProfileState() {
       facts: response.facts,
       origins: { ...prev.origins, [field]: "user" },
     }));
+    if (user) await saveProfileFacts(response.facts);
     return response.facts;
   }
   return {
