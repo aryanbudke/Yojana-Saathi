@@ -397,6 +397,36 @@ export const hi: Messages = {
     seeRecommendations: "मेरे सुझाव देखें →",
     statusReviewing: "आपकी जानकारी देखी जा रही है",
     statusSaving: "पुष्टि की गई जानकारी सहेजी जा रही है",
+    confirmEyebrow: "02 / प्रोफ़ाइल की पुष्टि करें",
+    confirmTitle: "आइए आपकी जानकारी जाँचें।",
+    confirmLead:
+      "हमें आपके संदेश से कुछ विवरण मिले हैं। योजनाएँ खोजने से पहले इनकी पुष्टि करें या सुधारें।",
+    extractedSummary: "{count} विवरण प्राप्त हुए · अतिरिक्त जानकारी की आवश्यकता हो सकती है",
+    extractedSummaryReady: "{count} विवरण प्राप्त हुए · मिलान के लिए तैयार",
+    manualEntrySummary: "मैन्युअल प्रविष्टि · जो जानते हैं उसे भरें",
+    extractedSectionTitle: "प्राप्त जानकारी",
+    extractedSectionLead:
+      "आपके विवरण से निकाले गए तथ्य। यदि कुछ गलत लगे तो सुधारें।",
+    extractedBadge: "आपके संदेश से प्राप्त",
+    correctedBadge: "आपके द्वारा संशोधित",
+    missingSectionTitle: "क्या आप कुछ और जोड़ना चाहते हैं?",
+    missingSectionLead:
+      "वैकल्पिक विवरण जो बेहतर मिलान में मदद करते हैं। आप इन्हें खाली छोड़ सकते हैं।",
+    accordionTitle: "अधिक विवरण जोड़ें (वैकल्पिक)",
+    accordionSubtitle:
+      "भूमि रिकॉर्ड, छात्र स्थिति, आरक्षण या दिव्यांगता मानदंड",
+    continueMatching: "मिलान जारी रखें →",
+    editOriginalMessage: "मूल संदेश संपादित करें",
+    privacyPanelText:
+      "हम अतिरिक्त विवरण तभी पूछेंगे जब किसी योजना के लिए उनकी आवश्यकता होगी। आप अनिश्चित प्रश्नों को छोड़ सकते हैं।",
+    privacyPanelAadhaar:
+      "कभी भी आधार संख्या या गोपनीय पहचान दस्तावेज़ दर्ज न करें।",
+    socialCategoryNote:
+      "केवल आरक्षण या विशेष सहायता प्रदान करने वाली योजनाओं के लिए उपयोग किया जाता है।",
+    disabilityNote:
+      "केवल सहायक उपकरण या विशेष सहायता प्रदान करने वाली योजनाओं के लिए उपयोग किया जाता है।",
+    currencySymbol: "₹",
+    supportNeedPlaceholder: "सहायता प्रकार चुनें या दर्ज करें",
   },
   profilePage: {
     eyebrow: "गुमनाम सत्र",

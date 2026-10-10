@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 import {
   ArrowRight,
   ShieldCheck,
@@ -11,18 +11,15 @@ import {
   Button,
   GlassPanel,
   InlineAlert,
-  Input,
   TextArea,
 } from "@/components/ui";
 import { errorMessage, isMock } from "@/lib/api";
 import { useProfile } from "./hooks";
 import { useMatching } from "@/features/matching/hooks";
-import { fields, states } from "./types";
-import { fieldValue } from "./model";
 import { useMessages } from "@/i18n/client";
 import { format } from "@/i18n/config";
-import Link from "next/link";
 import { SpeechInputControls } from "@/features/speech/SpeechControls";
+import { ProfileConfirmation } from "./ProfileConfirmation";
 
 export function ModeNotice() {
   const m = useMessages();
@@ -43,10 +40,6 @@ export function ProfileComposer() {
     null,
   );
   const [error, setError] = useState("");
-  const reviewHeading = useRef<HTMLHeadingElement>(null);
-  useEffect(() => {
-    if (p.reviewing) reviewHeading.current?.focus();
-  }, [p.reviewing]);
   async function run(kind: "extract" | "confirm" | "clear") {
     setBusy(kind);
     setError("");
@@ -138,158 +131,18 @@ export function ProfileComposer() {
         {error && !p.reviewing && <InlineAlert error>{error}</InlineAlert>}
       </GlassPanel>
       {p.reviewing && (
-        <section
-          className="panel profile-review"
-          aria-labelledby="review-heading"
-        >
-          <div className="section-heading">
-            <div>
-              <p className="eyebrow">{t.reviewEyebrow}</p>
-              <h2 id="review-heading" ref={reviewHeading} tabIndex={-1}>
-                {t.reviewTitle}
-              </h2>
-            </div>
-            <Badge tone={p.confirmed ? "success" : "warning"}>
-              {p.confirmed ? m.common.confirmedByYou : t.needsReview}
-            </Badge>
-          </div>
-          <p className="muted">{t.reviewLead}</p>
-          <div className="review-summary" aria-live="polite">
-            <span>
-              {format(t.provided, {
-                count: fields.filter((f) => p.draft.facts[f.key] !== null)
-                  .length,
-              })}
-            </span>
-            <span>
-              {format(t.stillUnknown, {
-                count: fields.filter((f) => p.draft.facts[f.key] === null)
-                  .length,
-              })}
-            </span>
-          </div>
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              void run("confirm");
-            }}
-          >
-            <fieldset
-              className="profile-edit-fields"
-              disabled={busy === "confirm" || busy === "clear"}
-            >
-              <legend className="sr-only">{t.reviewLegend}</legend>
-              <div className="profile-fields">
-                {fields.map((f) => {
-                  const v = p.draft.facts[f.key];
-                  const id = "fact-" + f.key;
-                  return (
-                    <div className="field" key={f.key}>
-                      <label htmlFor={id}>{m.fields[f.key]}</label>
-                      {f.kind === "state" ||
-                      f.kind === "choice" ||
-                      f.kind === "boolean" ? (
-                        <select
-                          id={id}
-                          aria-describedby={`${id}-origin`}
-                          className="input"
-                          value={
-                            v === null
-                              ? ""
-                              : typeof v === "boolean"
-                                ? v
-                                  ? "yes"
-                                  : "no"
-                                : String(v)
-                          }
-                          onChange={(e) =>
-                            p.edit(f.key, fieldValue(f.kind, e.target.value))
-                          }
-                        >
-                          <option value="">{m.common.unknown}</option>
-                          {f.kind === "state" ? (
-                            states.map((code) => (
-                              <option key={code} value={code}>
-                                {m.states[code]}
-                              </option>
-                            ))
-                          ) : (
-                            <>
-                              <option value="yes">{m.common.yes}</option>
-                              <option value="no">{m.common.no}</option>
-                              {f.kind === "choice" && (
-                                <option value="not_sure">
-                                  {m.common.notSure}
-                                </option>
-                              )}
-                            </>
-                          )}
-                        </select>
-                      ) : (
-                        <Input
-                          id={id}
-                          aria-describedby={`${id}-origin`}
-                          type={f.kind === "number" ? "number" : "text"}
-                          min={f.kind === "number" ? 0 : undefined}
-                          max={f.max}
-                          maxLength={
-                            f.key === "occupation"
-                              ? 120
-                              : f.key === "gender"
-                                ? 40
-                                : 80
-                          }
-                          step={f.key === "land_area_acres" ? "any" : 1}
-                          value={v === null ? "" : String(v)}
-                          placeholder={m.common.unknown}
-                          onChange={(e) =>
-                            p.edit(f.key, fieldValue(f.kind, e.target.value))
-                          }
-                        />
-                      )}
-                      <span id={`${id}-origin`} className="field-origin">
-                        {p.draft.origins[f.key] === "user"
-                          ? t.originUser
-                          : v === null
-                            ? t.originBlank
-                            : t.originExtracted}
-                      </span>
-                    </div>
-                  );
-                })}
-              </div>
-            </fieldset>
-            <div className="review-actions">
-              <Button
-                type="submit"
-                busy={busy === "confirm"}
-                disabled={busy !== null}
-              >
-                {p.confirmed ? t.confirmUpdated : t.confirm}
-                <ArrowRight size={16} />
-              </Button>
-              <Button
-                type="button"
-                variant="quiet"
-                busy={busy === "clear"}
-                disabled={busy !== null}
-                onClick={() => void run("clear")}
-              >
-                {t.clear}
-              </Button>
-            </div>
-          </form>
-          {error && <InlineAlert error>{error}</InlineAlert>}
-          {p.confirmed && (
-            <InlineAlert>
-              {t.confirmedNotice}{" "}
-              <Link href="/recommendations" className="text-link">
-                {t.seeRecommendations}
-              </Link>
-            </InlineAlert>
-          )}
-        </section>
+        <ProfileConfirmation
+          onEditOriginalMessage={() => {
+            const el = document.getElementById("profile-text");
+            el?.scrollIntoView({ behavior: "smooth", block: "center" });
+            el?.focus();
+          }}
+          onClear={() => {
+            matching.reset();
+          }}
+        />
       )}
+
       <div className="sr-only" role="status">
         {busy === "extract"
           ? t.statusReviewing

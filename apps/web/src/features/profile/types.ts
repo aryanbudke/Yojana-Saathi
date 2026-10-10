@@ -3,6 +3,7 @@ import type {
   ProfileField,
   FactOrigin,
 } from "@/lib/api/contracts";
+export type { ProfileField };
 export type Origins = Partial<Record<ProfileField, FactOrigin>>;
 export type ProfileDraft = { facts: ProfileFacts; origins: Origins };
 /** State and union-territory codes; names live in messages `states`. */
