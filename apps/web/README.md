@@ -78,3 +78,9 @@ Optional Saved, Hindi, RAG and public admin UI are not exposed. Saved and Hindi 
 The header links to Dashboard, and profile confirmation links back to it. Browser verification can use an alternate port with `PLAYWRIGHT_PORT=3010 npm run test:e2e`; a separate checkout/copy is needed when another Next development server already holds this checkout's lock. Dashboard screenshots use explicitly labeled synthetic fixtures and are saved under `artifacts/dashboard/`.
 
 See `HANDOFF.md` for endpoint/session details and limitations, and `PROGRESS.md` for sequential task checks and commits.
+
+## Recovering stale development output
+
+If a hydration error shows old navigation text on the server and new links in the browser after a code update, stop the running development server and restart it. If the mismatch persists, remove only the generated `.next/dev` directory while the server is stopped, then run `npm run dev` again. Reload the browser after the server is ready. Guest profile details are held in memory and are cleared by a reload.
+
+`npx playwright test e2e/hydration.spec.ts` verifies server-rendered navigation and checks direct dashboard loads, reloads and client navigation for hydration errors on both `localhost` and `127.0.0.1`. It can reuse the running development server and does not depend on live API responses.

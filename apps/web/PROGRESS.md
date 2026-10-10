@@ -235,3 +235,12 @@ The remaining dependency order is packaging/handoff → live API verification �
 - Problems encountered during verification: Existing Next dev server held this checkout's lock, so browser tests used an isolated temporary copy with Webpack and bundled Node. Production build needed permission to launch TypeScript subprocesses outside the sandbox. One refresh test timed out waiting for the development server's full load event; waiting for DOM content plus explicit UI assertions passed on rerun. No outstanding dashboard verification failures.
 - Commit reference: `7723ed5` — feat(web): add accessible guest user dashboard.
 - Next task: Dashboard complete. Live API/deployment verification remains separate.
+
+## DASH-02 — Resolve stale-header hydration mismatch
+
+- Status: COMPLETED
+- Files: e2e/hydration.spec.ts, README.md, PROGRESS.md.
+- Problem: A direct request to the running Turbopack server returned the old two-link header (Discover and How it works) while the source/client included Dashboard. This was stale development output, not a pathname or component-rendering defect. Fresh requests subsequently rebuilt the header; the existing server was also stopped, its generated development cache archived outside the repository, and a clean Turbopack server started on port 3000.
+- Tests executed: Five browser checks passed against the refreshed server: server-rendered links and active routes on both localhost addresses, dashboard direct load/reload/client navigation with no page or hydration errors on both addresses, and the existing mobile keyboard navigation regression. ESLint, strict TypeScript, targeted formatting and diff checks passed. The user's existing dashboard tab displayed the updated header with no error overlay. API availability was not part of this regression and is unchanged.
+- Commit reference: Commit containing this entry, resolved by `git log --oneline --grep="fix(web): recover stale dashboard hydration"`.
+- Next task: Hydration recovery complete; live API/deployment gate remains separate.
