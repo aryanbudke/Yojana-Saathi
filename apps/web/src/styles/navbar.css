@@ -402,3 +402,11 @@ html.nav-locked {
     transform: none;
   }
 }
+
+/* Leave room for translated dashboard/account labels on small laptops.
+   Discover remains in the primary navigation and opens the same finder. */
+@media (min-width: 1024px) and (max-width: 1199px) {
+  .site-actions > .site-cta {
+    display: none;
+  }
+}

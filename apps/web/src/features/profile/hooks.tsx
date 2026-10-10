@@ -51,13 +51,22 @@ function useProfileState() {
   const revision = useRef(0);
   const hydratedUserId = useRef<string | null>(null);
 
+  // Auth can emit the same user as different objects during initial restoration.
+  // Depend on identity and serialized facts so that notification cannot cancel
+  // an in-flight matching-session restore for the same account and profile.
+  const userId = user?.id ?? null;
+  const storedFacts = JSON.stringify(
+    (user?.user_metadata?.yojana_profile as StoredYojanaProfile | undefined)
+      ?.facts ?? null,
+  );
+
   useEffect(() => {
     let cancelled = false;
     void (async () => {
       await Promise.resolve();
       if (cancelled || authLoading) return;
 
-      if (!user) {
+      if (!userId) {
         if (hydratedUserId.current) {
           revision.current++;
           setText("");
@@ -70,12 +79,10 @@ function useProfileState() {
         return;
       }
 
-      if (hydratedUserId.current === user.id) return;
-      hydratedUserId.current = user.id;
+      if (hydratedUserId.current === userId) return;
+      hydratedUserId.current = userId;
 
-      const stored = user.user_metadata?.yojana_profile as
-        StoredYojanaProfile | null | undefined;
-      const parsed = profileSchema.safeParse(stored?.facts);
+      const parsed = profileSchema.safeParse(JSON.parse(storedFacts));
       if (!parsed.success) return;
 
       const facts = parsed.data;
@@ -107,7 +114,7 @@ function useProfileState() {
     return () => {
       cancelled = true;
     };
-  }, [authLoading, user]);
+  }, [authLoading, userId, storedFacts]);
 
   async function saveFacts(facts: ProfileFacts) {
     let active =

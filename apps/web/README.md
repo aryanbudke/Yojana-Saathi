@@ -71,15 +71,31 @@ Deployment/live demo require a backend URL, working extraction/matching/question
 ## Routes and state
 
 - `/`: full landing page with hero, benefits, three-step explanation, interactive finder/preview, categories, official sources, application guidance and footer.
+- `/dashboard`: profile overview, current scheme checks, saved schemes on this browser, next steps and source-linked catalogue preview.
 - `/discover`: composer, editable profile and searchable/filterable catalogue.
+- `/profile`: natural-language intake and editable facts.
+- `/saved`: bookmarks stored on this browser.
+- `/signin` and `/signup`: optional Supabase account access.
 - `/recommendations`: confirmed-profile matches and follow-up questions.
 - `/schemes/[schemeId]`: benefit, eligibility, exclusions, document and source sections.
 - `/schemes/[schemeId]/apply`: personal checklist, verified steps and safe official-portal action.
 - `/help`: privacy-aware explanation of the workflow and expandable FAQ.
 - `/about`, `/privacy`, `/disclaimer`: implemented informational pages linked from the footer.
 
-Profile facts and origins stay in React memory across client navigation. Confirmation creates an anonymous expiring server session and saves provided fields through `/profiles/answers`, leaving new blanks unanswered for follow-up. Clearing a saved field sends null. Clear deletes that session before clearing memory. A refresh intentionally clears local profile state; there is no local storage, persistent profile, account sync, ID upload or backend submission flow. Personal document checkbox state is page-local and never claims official verification.
+Guest profile facts stay in React memory across navigation and clear on reload. For signed-in users, confirmed facts are saved by the existing Supabase Auth provider and restored into a new temporary matching session. Configure `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` to use accounts; service-role/database keys never belong in the browser. Clearing a profile uses the existing session deletion and account metadata flow.
 
-Optional Saved, Hindi, RAG and public admin UI are not exposed. Saved and Hindi depend on the complete core live gate; admin curation remains the backend owner's responsibility.
+Saved schemes use this browser's local storage; they do not sync between accounts or devices. The dashboard catalogue provides reversible bookmark controls and reports a storage failure. Saving a scheme does not create a match, application or eligibility verdict. Personal document checkboxes remain page-local notes.
+
+The dashboard uses the same teal (`#035352`), warm yellow (`#F3E8BC`), cream, Inter, glass cards, shared navbar and mobile dock as the pushed UI. Dashboard navigation replaces the primary Profile destination; the profile editor remains linked throughout the dashboard and in the footer. English, Hindi and Kannada labels follow the existing language selector. All checks require the current confirmed facts and an unexpired matching session; edits suppress stale results.
+
+## Dashboard verification and captures
+
+`npx playwright test e2e/dashboard.spec.ts e2e/hydration.spec.ts` exercises responsive layouts, translations, bookmarks, profile corrections, stale-match suppression, keyboard navigation and hydration. Use `PLAYWRIGHT_PORT=3010` in a separate checkout/copy when another Next server holds this checkout's development lock. Screenshots in `artifacts/dashboard/` show explicitly labeled synthetic fixtures.
+
+The account restoration test runs only with `DASHBOARD_TEST_AUTH=1` and an isolated build configured with `NEXT_PUBLIC_SUPABASE_URL=https://dashboard-ui-check.supabase.co` and a fixture publishable key. It intercepts every request to that fixture host and uses `citizen@example.invalid`; it creates no real account. For stable release verification, build that isolated copy with `NEXT_PUBLIC_API_MODE=mock` and point its Playwright webServer command to `npm run start -- --port 3010`. These tests do not prove live authentication, backend availability or policy accuracy.
+
+## Recovering stale development output
+
+After pulling route or shared-layout changes, restart the development server. If a hydration error persists, stop it, remove only its generated `.next` directory, restart and reload the browser. This also removes stale generated route types after route renames. Reloading clears guest profile details; signed-in profiles use the existing restore flow.
 
 See `HANDOFF.md` for endpoint/session details and limitations, and `PROGRESS.md` for sequential task checks and commits.

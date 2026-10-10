@@ -3,7 +3,7 @@ import { test, expect } from "@playwright/test";
 test("navbar links, active route, CTA and keyboard mobile drawer", async ({
   page,
 }) => {
-  const destinations = ["Home", "Discover", "Matches", "Profile", "Saved"];
+  const destinations = ["Home", "Discover", "Matches", "Dashboard", "Saved"];
   await page.setViewportSize({ width: 1280, height: 720 });
   await page.goto("/");
   const nav = page.getByRole("banner").getByRole("navigation", {
@@ -15,13 +15,15 @@ test("navbar links, active route, CTA and keyboard mobile drawer", async ({
     "page",
   );
   await expect(
-    page.locator(".site-actions").getByRole("link", { name: "Find my schemes" }),
+    page
+      .locator(".site-actions")
+      .getByRole("link", { name: "Find my schemes" }),
   ).toHaveAttribute("href", "/discover");
 
   for (const [name, url] of [
     ["Discover", /\/discover$/],
     ["Matches", /\/recommendations$/],
-    ["Profile", /\/profile$/],
+    ["Dashboard", /\/dashboard$/],
     ["Saved", /\/saved$/],
   ] as const) {
     await nav.getByRole("link", { name }).click();
@@ -48,6 +50,7 @@ test("navbar links, active route, CTA and keyboard mobile drawer", async ({
   await expect(drawer).toBeVisible();
   await expect(drawer.getByRole("link")).toHaveText([
     ...destinations,
+    "Sign in",
     "Find my schemes",
   ]);
   await expect
@@ -63,7 +66,9 @@ test("navbar links, active route, CTA and keyboard mobile drawer", async ({
   await expect(page).toHaveURL(/\/saved$/);
   await expect(drawer).toBeHidden();
   expect(
-    await page.evaluate(() => document.documentElement.scrollWidth - innerWidth),
+    await page.evaluate(
+      () => document.documentElement.scrollWidth - innerWidth,
+    ),
   ).toBe(0);
 });
 
@@ -81,7 +86,7 @@ test("language selector translates the page and keeps working state", async ({
       .getByRole("banner")
       .getByRole("navigation", { name: "मुख्य नेविगेशन" })
       .getByRole("link"),
-  ).toHaveText(["होम", "खोजें", "मिलान", "प्रोफ़ाइल", "सहेजी गई"]);
+  ).toHaveText(["होम", "खोजें", "मिलान", "डैशबोर्ड", "सहेजी गई"]);
   // A refresh, not a reload: the description typed before switching is still there.
   await expect(page.locator("#profile-text")).toHaveValue(text);
   // Voice input follows the interface language until the person picks one.

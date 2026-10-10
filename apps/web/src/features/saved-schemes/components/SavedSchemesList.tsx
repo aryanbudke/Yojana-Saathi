@@ -23,7 +23,10 @@ export function SavedSchemesList() {
     return (
       <EmptyState title={t.emptyTitle}>
         <p>{t.emptyText}</p>
-        <Link className="button primary inline-flex items-center gap-2" href="/discover">
+        <Link
+          className="button primary inline-flex items-center gap-2"
+          href="/discover"
+        >
           <span>{m.common.exploreSchemes}</span>
           <ArrowUpRight size={16} />
         </Link>
@@ -51,9 +54,15 @@ export function SavedSchemesList() {
           >
             <div>
               <div className="flex items-center justify-between gap-2 mb-3">
-                <Badge tone="neutral">{labelFor(m.categoryNames, scheme.category)}</Badge>
-                <Badge tone={scheme.status === "active" ? "success" : "warning"}>
-                  {scheme.status === "active" ? m.common.active : m.common.closed}
+                <Badge tone="neutral">
+                  {labelFor(m.categoryNames, scheme.category)}
+                </Badge>
+                <Badge
+                  tone={scheme.status === "active" ? "success" : "warning"}
+                >
+                  {scheme.status === "active"
+                    ? m.common.active
+                    : m.common.closed}
                 </Badge>
               </div>
 

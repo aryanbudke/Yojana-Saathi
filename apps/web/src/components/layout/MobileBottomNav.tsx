@@ -3,7 +3,13 @@
 import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Compass, Sparkles, User, Bookmark } from "lucide-react";
+import {
+  Home,
+  Compass,
+  Sparkles,
+  LayoutDashboard,
+  Bookmark,
+} from "lucide-react";
 import { useMessages } from "@/i18n/client";
 import { cn } from "@/lib/utils";
 
@@ -15,7 +21,7 @@ export function MobileBottomNav() {
     { href: "/", label: m.nav.home, icon: Home },
     { href: "/discover", label: m.nav.discover, icon: Compass },
     { href: "/recommendations", label: m.nav.matches, icon: Sparkles },
-    { href: "/profile", label: m.nav.profile, icon: User },
+    { href: "/dashboard", label: m.nav.dashboard, icon: LayoutDashboard },
     { href: "/saved", label: m.nav.saved, icon: Bookmark },
   ];
 
@@ -27,9 +33,7 @@ export function MobileBottomNav() {
       {items.map((item) => {
         const Icon = item.icon;
         const active =
-          item.href === "/"
-            ? pathname === "/"
-            : pathname.startsWith(item.href);
+          item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
 
         return (
           <Link
@@ -50,7 +54,9 @@ export function MobileBottomNav() {
             >
               <Icon size={19} aria-hidden="true" />
             </div>
-            <span className="text-[10px] mt-0.5 tracking-tight">{item.label}</span>
+            <span className="text-[10px] mt-0.5 tracking-tight">
+              {item.label}
+            </span>
           </Link>
         );
       })}

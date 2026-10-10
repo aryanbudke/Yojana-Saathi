@@ -1,8 +1,11 @@
 "use client";
 
 import { useSyncExternalStore, useCallback } from "react";
-import type { SchemeSummary } from "@/lib/api/contracts";
+import { schemeSchema, type SchemeSummary } from "@/lib/api/contracts";
 import type { SavedSchemeItem } from "../types";
+
+const EMPTY_SAVED: SavedSchemeItem[] = [];
+const getServerSnapshot = () => EMPTY_SAVED;
 
 const STORAGE_KEY = "yojana_saathi_saved_schemes";
 
@@ -10,7 +13,14 @@ function getSnapshot(): SavedSchemeItem[] {
   if (typeof window === "undefined") return [];
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? JSON.parse(raw) : [];
+    const parsed: unknown = raw ? JSON.parse(raw) : [];
+    if (!Array.isArray(parsed)) return EMPTY_SAVED;
+    return parsed.filter(
+      (item): item is SavedSchemeItem =>
+        schemeSchema.safeParse(item).success &&
+        typeof item.savedAt === "string" &&
+        Number.isFinite(Date.parse(item.savedAt)),
+    );
   } catch {
     return [];
   }
@@ -36,11 +46,15 @@ function notify() {
 }
 
 export function useSavedSchemes() {
-  const saved = useSyncExternalStore(subscribe, () => cachedSnapshot, () => []);
+  const saved = useSyncExternalStore(
+    subscribe,
+    () => cachedSnapshot,
+    getServerSnapshot,
+  );
 
   const saveScheme = useCallback((scheme: SchemeSummary) => {
     const current = getSnapshot();
-    if (current.some((s) => s.id === scheme.id)) return;
+    if (current.some((s) => s.id === scheme.id)) return true;
     const updated: SavedSchemeItem[] = [
       ...current,
       { ...scheme, savedAt: new Date().toISOString() },
@@ -48,7 +62,10 @@ export function useSavedSchemes() {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
       notify();
-    } catch {}
+      return true;
+    } catch {
+      return false;
+    }
   }, []);
 
   const removeScheme = useCallback((schemeId: string) => {
@@ -57,7 +74,10 @@ export function useSavedSchemes() {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
       notify();
-    } catch {}
+      return true;
+    } catch {
+      return false;
+    }
   }, []);
 
   const isSaved = useCallback(

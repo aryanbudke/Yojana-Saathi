@@ -4,6 +4,10 @@ test("complete the core journey using Tab, text input, Enter and Space", async (
 }) => {
   await page.goto("/discover");
   async function tabTo(target: Locator) {
+    // Extracted fields can appear while the session answers are still saving.
+    // Wait for the real control to become available before testing Tab order.
+    await expect(target).toBeVisible();
+    await expect(target).toBeEnabled();
     for (let n = 0; n < 60; n++) {
       if (
         await target

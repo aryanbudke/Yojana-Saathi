@@ -16,7 +16,7 @@ interface NavLink {
   isActive: (path: string) => boolean;
 }
 
-/** Primary destinations; the mobile bottom dock shows the same five. */
+/** Primary destinations; profile editing is available within the dashboard. */
 const navLinks: NavLink[] = [
   { href: "/", label: "home", isActive: (p) => p === "/" },
   {
@@ -34,9 +34,9 @@ const navLinks: NavLink[] = [
       p.startsWith("/recommendations") || p.startsWith("/eligibility"),
   },
   {
-    href: "/profile",
-    label: "profile",
-    isActive: (p) => p.startsWith("/profile"),
+    href: "/dashboard",
+    label: "dashboard",
+    isActive: (p) => p.startsWith("/dashboard") || p.startsWith("/profile"),
   },
   { href: "/saved", label: "saved", isActive: (p) => p.startsWith("/saved") },
 ];

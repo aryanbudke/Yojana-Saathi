@@ -413,18 +413,18 @@ Brief: complete 10-section GovTech landing page in the confirmed direction (ivor
 
 ## Step 02 Redesign — Progressive Profiling & Dynamic Eligibility
 
-| ID     | Task                                       | Status      |
-| ------ | ------------------------------------------ | ----------- |
-| TASK-1 | Inspect Existing Implementation            | COMPLETED   |
-| TASK-2 | Refactor Profile State                     | COMPLETED   |
-| TASK-1 | Inspect Existing Implementation            | COMPLETED |
-| TASK-2 | Refactor Profile State                     | COMPLETED |
-| TASK-3 | Redesign Profile Confirmation              | COMPLETED |
-| TASK-4 | Implement Optional Details                 | COMPLETED |
-| TASK-5 | Connect Matching Workflow                  | COMPLETED |
-| TASK-6 | Dynamic Questions                          | COMPLETED |
-| TASK-7 | Responsive UI and Accessibility            | COMPLETED |
-| TASK-8 | Complete Testing                           | COMPLETED |
+| ID     | Task                            | Status    |
+| ------ | ------------------------------- | --------- |
+| TASK-1 | Inspect Existing Implementation | COMPLETED |
+| TASK-2 | Refactor Profile State          | COMPLETED |
+| TASK-1 | Inspect Existing Implementation | COMPLETED |
+| TASK-2 | Refactor Profile State          | COMPLETED |
+| TASK-3 | Redesign Profile Confirmation   | COMPLETED |
+| TASK-4 | Implement Optional Details      | COMPLETED |
+| TASK-5 | Connect Matching Workflow       | COMPLETED |
+| TASK-6 | Dynamic Questions               | COMPLETED |
+| TASK-7 | Responsive UI and Accessibility | COMPLETED |
+| TASK-8 | Complete Testing                | COMPLETED |
 
 ### TASK 1 — Inspect Existing Implementation
 
@@ -517,4 +517,33 @@ Brief: complete 10-section GovTech landing page in the confirmed direction (ivor
   - Axe Accessibility: 7 / 7 breakpoint suites passed (35 axe audits with 0 violations).
   - `npm run build`: Next.js 16 production build succeeded; all 13 dynamic routes compiled.
 
+## DASH-01 — User dashboard
 
+- Status: COMPLETED
+- Scope: Guest dashboard, actual profile and match summaries, next-step navigation, published catalogue preview, category links and responsive accessible layout.
+- Files: src/app/dashboard/{page.tsx,dashboard.css}, src/features/dashboard/{Dashboard.tsx,model.ts,model.test.ts}, src/components/AppHeader.tsx, src/features/profile/ProfileComposer.tsx, e2e/dashboard.spec.ts, playwright.config.ts, artifacts/dashboard/*.png, README.md, HANDOFF.md, PROGRESS.md.
+- Tests executed: ESLint, strict TypeScript, 23 unit/contract tests, 14 distinct browser checks, full formatting checks and production build passed. Seven axe scans passed: guest dashboard at 320/375/768/1024/1440, plus populated dashboard at 375/1440. Profile creation, exact-fact match summaries, stale-match suppression, refresh privacy, category filters and guidance navigation verified. Three screenshots inspected and saved in artifacts/dashboard/.
+- Problems/dependencies: The dashboard consumes the existing session and scheme contracts. Live service availability remains external. Saved-scheme/account synchronization and official application tracking are not implemented or represented as working features.
+- Problems encountered during verification: Existing Next dev server held this checkout's lock, so browser tests used an isolated temporary copy with Webpack and bundled Node. Production build needed permission to launch TypeScript subprocesses outside the sandbox. One refresh test timed out waiting for the development server's full load event; waiting for DOM content plus explicit UI assertions passed on rerun. No outstanding dashboard verification failures.
+- Commit reference: `7723ed5` — feat(web): add accessible guest user dashboard.
+- Next task: Dashboard complete. Live API/deployment verification remains separate.
+
+## DASH-02 — Resolve stale-header hydration mismatch
+
+- Status: COMPLETED
+- Files: e2e/hydration.spec.ts, README.md, PROGRESS.md.
+- Problem: A direct request to the running Turbopack server returned the old two-link header (Discover and How it works) while the source/client included Dashboard. This was stale development output, not a pathname or component-rendering defect. Fresh requests subsequently rebuilt the header; the existing server was also stopped, its generated development cache archived outside the repository, and a clean Turbopack server started on port 3000.
+- Tests executed: Five browser checks passed against the refreshed server: server-rendered links and active routes on both localhost addresses, dashboard direct load/reload/client navigation with no page or hydration errors on both addresses, and the existing mobile keyboard navigation regression. ESLint, strict TypeScript, targeted formatting and diff checks passed. The user's existing dashboard tab displayed the updated header with no error overlay. API availability was not part of this regression and is unchanged.
+- Commit reference: Commit containing this entry, resolved by `git log --oneline --grep="fix(web): recover stale dashboard hydration"`.
+- Next task: Hydration recovery complete; live API/deployment gate remains separate.
+
+## DASH-03 — Align dashboard with the pushed UI
+
+- Status: COMPLETED
+- Dependency order: imported main at `366452e`, adapted dashboard to its shell/providers/routes, connected bookmark controls and translations, verified all affected flows, then committed.
+- Scope: Same teal/warm-yellow theme across the existing UI and dashboard, shared navbar/mobile dock, current profile/account state, localized source-backed checks and browser-local bookmarks. Account facts restore through the existing providers; repeated same-user auth notifications no longer cancel the temporary-session restore.
+- Files: src/app/dashboard/{page.tsx,dashboard.css}; src/features/dashboard/{Dashboard.tsx,Previews.tsx}; shared Navbar/MobileBottomNav and navbar.css; saved-scheme store, SaveSchemeButton and list formatting; profile hooks and ProfileComposer/ProfileEditor return links; English/Hindi/Kannada messages; dashboard/hydration/keyboard/navigation browser tests; README.md; HANDOFF.md; three dashboard captures and this record. Upstream main files, including backend/AI changes, were merged unchanged outside apps/web.
+- Tests executed: ESLint, strict TypeScript, 35 unit/contract tests, targeted formatting/diff checks and production builds passed. All 45 distinct browser checks verified against an isolated mock production preview, including all existing core features, narrow/wide layouts, translated layouts, bookmark persistence/removal/storage errors, account restore/reload/sign-out privacy and hydration on both localhost addresses. The final full suite passed 44/45; its keyboard test was corrected to wait for saving controls to become enabled and passed on a targeted rerun. No remaining verification failures. Desktop and mobile screenshots inspected and refreshed in artifacts/dashboard/.
+- Problems resolved: stale generated types after upstream route renames; profile-test extraction/saving race; outdated auth/voice navigation selectors; Kannada navigation overflow at 1024px; development compilation timeouts; stable saved-store hydration snapshots; corrupt bookmark data; and repeated-auth-notification cancellation of account session restoration. Tests use explicit fixture data and an intercepted Supabase account, not real authentication or a live eligibility engine. Native-speaker review and live deployment/API verification remain separate.
+- Commit reference: Commit containing this entry, resolved by `git log --oneline --grep="feat(web): align dashboard with current teal UI"`.
+- Next task: Dashboard update complete; live integration/deployment gate remains separate.

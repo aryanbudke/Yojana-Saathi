@@ -183,13 +183,21 @@ export function ProfileConfirmation({
             <span>{t.confirmedNotice}</span>
           </div>
 
-          <Link
-            href="/recommendations"
-            className="inline-flex items-center gap-1.5 text-sm font-bold text-[#165541] hover:text-[#102A24] underline underline-offset-4"
-          >
-            <span>{t.seeRecommendations}</span>
-            <ArrowRight size={15} aria-hidden="true" />
-          </Link>
+          <div className="flex items-center gap-4 flex-wrap">
+            <Link
+              href="/dashboard"
+              className="inline-flex items-center gap-1.5 text-sm font-bold text-[#165541] hover:text-[#102A24] underline underline-offset-4"
+            >
+              <span>{m.dashboard.openDashboard}</span>
+            </Link>
+            <Link
+              href="/recommendations"
+              className="inline-flex items-center gap-1.5 text-sm font-bold text-[#165541] hover:text-[#102A24] underline underline-offset-4"
+            >
+              <span>{t.seeRecommendations}</span>
+              <ArrowRight size={15} aria-hidden="true" />
+            </Link>
+          </div>
         </div>
       )}
 
