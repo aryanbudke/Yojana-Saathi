@@ -267,6 +267,59 @@
         "title": "DocumentReadiness",
         "type": "string"
       },
+      "EligibilityDecisionResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "next_steps": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Next Steps",
+            "type": "array"
+          },
+          "notification_retry_token": {
+            "anyOf": [
+              {
+                "maxLength": 8192,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notification Retry Token"
+          },
+          "notification_status": {
+            "$ref": "#/components/schemas/NotificationStatus"
+          },
+          "reason": {
+            "title": "Reason",
+            "type": "string"
+          },
+          "scheme_id": {
+            "format": "uuid",
+            "title": "Scheme Id",
+            "type": "string"
+          },
+          "scheme_name": {
+            "title": "Scheme Name",
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/EligibilityStatus"
+          }
+        },
+        "required": [
+          "status",
+          "scheme_id",
+          "scheme_name",
+          "reason",
+          "next_steps",
+          "notification_status"
+        ],
+        "title": "EligibilityDecisionResponse",
+        "type": "object"
+      },
       "EligibilityRuleDetail": {
         "additionalProperties": false,
         "properties": {
@@ -296,6 +349,15 @@
         ],
         "title": "EligibilityRuleDetail",
         "type": "object"
+      },
+      "EligibilityStatus": {
+        "enum": [
+          "eligible",
+          "not_eligible",
+          "needs_review"
+        ],
+        "title": "EligibilityStatus",
+        "type": "string"
       },
       "GovernmentLevel": {
         "enum": [
@@ -608,6 +670,31 @@
         },
         "title": "NextQuestionResponse",
         "type": "object"
+      },
+      "NotificationRetryRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "notification_retry_token": {
+            "maxLength": 8192,
+            "minLength": 40,
+            "title": "Notification Retry Token",
+            "type": "string"
+          }
+        },
+        "required": [
+          "notification_retry_token"
+        ],
+        "title": "NotificationRetryRequest",
+        "type": "object"
+      },
+      "NotificationStatus": {
+        "enum": [
+          "sent",
+          "already_sent",
+          "failed_retryable"
+        ],
+        "title": "NotificationStatus",
+        "type": "string"
       },
       "ProfileAnswerRequest": {
         "additionalProperties": false,
@@ -1733,6 +1820,92 @@
         ],
         "title": "Verdict",
         "type": "string"
+      },
+      "VerificationConfirmRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "otp": {
+            "pattern": "^\\d{6}$",
+            "title": "Otp",
+            "type": "string"
+          },
+          "verification_token": {
+            "maxLength": 4096,
+            "minLength": 40,
+            "title": "Verification Token",
+            "type": "string"
+          }
+        },
+        "required": [
+          "verification_token",
+          "otp"
+        ],
+        "title": "VerificationConfirmRequest",
+        "type": "object"
+      },
+      "VerificationStartRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "email": {
+            "maxLength": 254,
+            "minLength": 3,
+            "title": "Email",
+            "type": "string"
+          },
+          "name": {
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          },
+          "scheme_id": {
+            "format": "uuid",
+            "title": "Scheme Id",
+            "type": "string"
+          },
+          "session_id": {
+            "format": "uuid",
+            "title": "Session Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "session_id",
+          "scheme_id",
+          "name",
+          "email"
+        ],
+        "title": "VerificationStartRequest",
+        "type": "object"
+      },
+      "VerificationStartResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "expires_at": {
+            "format": "date-time",
+            "title": "Expires At",
+            "type": "string"
+          },
+          "resend_after_seconds": {
+            "maximum": 300.0,
+            "minimum": 1.0,
+            "title": "Resend After Seconds",
+            "type": "integer"
+          },
+          "verification_token": {
+            "maxLength": 4096,
+            "minLength": 40,
+            "title": "Verification Token",
+            "type": "string"
+          }
+        },
+        "required": [
+          "verification_token",
+          "expires_at",
+          "resend_after_seconds"
+        ],
+        "title": "VerificationStartResponse",
+        "type": "object"
       }
     }
   },
@@ -2705,6 +2878,129 @@
         "summary": "Transcribe",
         "tags": [
           "speech"
+        ]
+      }
+    },
+    "/api/v1/verification/confirm": {
+      "post": {
+        "operationId": "confirm_api_v1_verification_confirm_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VerificationConfirmRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EligibilityDecisionResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Confirm",
+        "tags": [
+          "verification"
+        ]
+      }
+    },
+    "/api/v1/verification/notifications/retry": {
+      "post": {
+        "operationId": "retry_api_v1_verification_notifications_retry_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NotificationRetryRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EligibilityDecisionResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Retry",
+        "tags": [
+          "verification"
+        ]
+      }
+    },
+    "/api/v1/verification/start": {
+      "post": {
+        "operationId": "start_api_v1_verification_start_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VerificationStartRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VerificationStartResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Start",
+        "tags": [
+          "verification"
         ]
       }
     },

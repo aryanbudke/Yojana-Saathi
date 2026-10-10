@@ -4,6 +4,7 @@ import { en, type Messages } from "@/i18n/messages/en";
 import {
   answerSchema,
   detailSchema,
+  eligibilityDecisionSchema,
   extractSchema,
   guidanceSchema,
   matchesSchema,
@@ -11,6 +12,7 @@ import {
   questionSchema,
   schemeListSchema,
   sessionSchema,
+  verificationStartSchema,
   type ProfileFacts,
   type ProfileField,
 } from "./contracts";
@@ -243,6 +245,27 @@ export function createLiveApi(baseUrl: string, fetcher: typeof fetch = fetch) {
         `/guidance/${encodeURIComponent(id)}${session_id ? "?session_id=" + encodeURIComponent(session_id) : ""}`,
         guidanceSchema,
       ),
+    startVerification: (
+      session_id: string,
+      scheme_id: string,
+      name: string,
+      email: string,
+    ) =>
+      request("/verification/start", verificationStartSchema, {
+        session_id,
+        scheme_id,
+        name,
+        email,
+      }),
+    confirmVerification: (verification_token: string, otp: string) =>
+      request("/verification/confirm", eligibilityDecisionSchema, {
+        verification_token,
+        otp,
+      }),
+    retryVerificationNotification: (notification_retry_token: string) =>
+      request("/verification/notifications/retry", eligibilityDecisionSchema, {
+        notification_retry_token,
+      }),
   };
 }
 export type Api = ReturnType<typeof createLiveApi>;

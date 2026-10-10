@@ -143,5 +143,26 @@ export function createMockApi(delay = 350): Api {
       if (sessionId) session(sessionId);
       return guidanceSchema.parse(guidance);
     },
+    async startVerification() {
+      throw new ApiError(
+        "LIVE_API_REQUIRED",
+        "Email verification requires the live API connection.",
+        503,
+      );
+    },
+    async confirmVerification() {
+      throw new ApiError(
+        "LIVE_API_REQUIRED",
+        "Email verification requires the live API connection.",
+        503,
+      );
+    },
+    async retryVerificationNotification() {
+      throw new ApiError(
+        "LIVE_API_REQUIRED",
+        "Email verification requires the live API connection.",
+        503,
+      );
+    },
   };
 }

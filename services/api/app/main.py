@@ -14,6 +14,7 @@ from app.api.v1.guidance import router as guidance_router
 from app.api.v1.profiles import router as profiles_router
 from app.api.v1.saved import router as saved_router
 from app.api.v1.schemes import router as schemes_router
+from app.api.v1.verification import router as verification_router
 from app.core.config import Settings, get_settings
 from app.core.errors import install_error_handlers, install_request_id_middleware
 from app.db.session import create_database_engine, create_session_factory
@@ -65,6 +66,7 @@ def create_app(
     application.include_router(guidance_router)
     application.include_router(profiles_router)
     application.include_router(saved_router)
+    application.include_router(verification_router)
     application.include_router(ai_router)
     application.include_router(speech_router)
     return application

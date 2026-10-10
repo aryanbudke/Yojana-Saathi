@@ -206,6 +206,20 @@ export const guidanceSchema = z
       ),
     { message: "A guidance citation is not in the source list" },
   );
+export const verificationStartSchema = z.object({
+  verification_token: z.string().min(40),
+  expires_at: date,
+  resend_after_seconds: z.number().int().positive(),
+});
+export const eligibilityDecisionSchema = z.object({
+  status: z.enum(["eligible", "not_eligible", "needs_review"]),
+  scheme_id: uuid,
+  scheme_name: z.string(),
+  reason: z.string(),
+  next_steps: z.array(z.string()),
+  notification_status: z.enum(["sent", "already_sent", "failed_retryable"]),
+  notification_retry_token: z.string().nullable(),
+});
 export type SourceReference = z.infer<typeof sourceSchema>;
 export type SchemeSummary = z.infer<typeof schemeSchema>;
 export type SchemeDetail = z.infer<typeof detailSchema>;
@@ -215,3 +229,5 @@ export type MatchesResponse = z.infer<typeof matchesSchema>;
 export type NextQuestion = z.infer<typeof questionSchema>;
 export type Guidance = z.infer<typeof guidanceSchema>;
 export type ProfileSession = z.infer<typeof sessionSchema>;
+export type VerificationStart = z.infer<typeof verificationStartSchema>;
+export type EligibilityDecision = z.infer<typeof eligibilityDecisionSchema>;

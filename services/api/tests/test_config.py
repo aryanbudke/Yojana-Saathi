@@ -51,3 +51,15 @@ def test_blank_optional_admin_values_from_env_file_are_ignored(tmp_path: Path) -
     assert settings.admin_reviewer_id is None
     assert settings.admin_publish_token is None
     assert settings.admin_publisher_id is None
+
+
+def test_google_apps_script_settings_are_all_or_nothing() -> None:
+    with pytest.raises(ValidationError, match="configured together"):
+        Settings(_env_file=None, GAS_WEB_APP_URL="https://script.google.com/macros/s/x/exec")
+    with pytest.raises(ValidationError, match="HTTPS Apps Script /exec URL"):
+        Settings(
+            _env_file=None,
+            GAS_WEB_APP_URL="http://example.test/webhook",
+            GAS_SHARED_SECRET="g" * 32,
+            VERIFICATION_STATE_SECRET="v" * 32,
+        )

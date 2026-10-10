@@ -45,6 +45,13 @@ class Settings(BaseSettings):
         min_length=1,
         validation_alias="DATABASE_URL",
     )
+    gas_web_app_url: str | None = Field(default=None, validation_alias="GAS_WEB_APP_URL")
+    gas_shared_secret: SecretStr | None = Field(
+        default=None, min_length=32, validation_alias="GAS_SHARED_SECRET"
+    )
+    verification_state_secret: SecretStr | None = Field(
+        default=None, min_length=32, validation_alias="VERIFICATION_STATE_SECRET"
+    )
 
     @field_validator("allowed_origins_csv")
     @classmethod
@@ -77,6 +84,22 @@ class Settings(BaseSettings):
         for token, actor, role in pairs:
             if (token is None) != (actor is None):
                 raise ValueError(f"admin {role} token and actor ID must be configured together")
+        verification_values = (
+            self.gas_web_app_url,
+            self.gas_shared_secret,
+            self.verification_state_secret,
+        )
+        if any(value is not None for value in verification_values) and not all(
+            value is not None for value in verification_values
+        ):
+            raise ValueError(
+                "GAS_WEB_APP_URL, GAS_SHARED_SECRET, and VERIFICATION_STATE_SECRET "
+                "must be configured together"
+            )
+        if self.gas_web_app_url is not None:
+            parsed = urlparse(self.gas_web_app_url)
+            if parsed.scheme != "https" or not parsed.netloc or not parsed.path.endswith("/exec"):
+                raise ValueError("GAS_WEB_APP_URL must be an HTTPS Apps Script /exec URL")
         return self
 
 

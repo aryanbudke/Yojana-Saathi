@@ -17,6 +17,7 @@ import { useDisplayDate, useMessages } from "@/i18n/client";
 import { format } from "@/i18n/config";
 import { DocumentChecklist } from "./DocumentChecklist";
 import { ReadAloudButton } from "@/features/speech/SpeechControls";
+import { EligibilityVerificationPanel } from "./EligibilityVerificationPanel";
 export function GuidancePage({ id }: { id: string }) {
   const m = useMessages();
   const t = m.guidance;
@@ -151,6 +152,7 @@ export function GuidancePage({ id }: { id: string }) {
                   </section>
                 </div>
                 <aside className="stack">
+                  <EligibilityVerificationPanel schemeId={id} />
                   <section className="panel application-portal">
                     <p className="eyebrow">{t.readyEyebrow}</p>
                     <h2>{t.readyTitle}</h2>
