@@ -19,3 +19,10 @@ python3.12 -m venv .venv
 
 The health endpoint is available at `http://127.0.0.1:8000/health`.
 
+## Sarvam voice
+
+Set `SARVAM_API_KEY` in `services/api/.env` to enable speech-to-text,
+English/Hindi/Kannada profile extraction, and translated text-to-speech. The key
+stays on the API server. Browser recordings are sent to Sarvam for transcription
+and are not stored by Yojana Saathi. Add the same secret to Render for the
+deployed API.

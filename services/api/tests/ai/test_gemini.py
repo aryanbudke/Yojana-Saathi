@@ -18,6 +18,8 @@ from app.modules.ai.gemini import (
     get_extractor,
 )
 from app.modules.ai.settings import AISettings
+from app.modules.speech.schemas import SpeechLanguage
+from app.modules.speech.settings import SpeechSettings
 
 MESSAGE = "I'm a 24-year-old farmer from Maharashtra. My family cultivates 1.5 acres of land."
 FACTS = {"age": 24, "occupation": "farmer", "state_code": "MH", "land_area_acres": 1.5}
@@ -38,6 +40,17 @@ def envelope(output: str, finish: str = "STOP") -> bytes:
 def configured() -> GeminiExtractor:
     return GeminiExtractor(
         AISettings(_env_file=None, api_key=SecretStr("synthetic-test-key"), model="test-model")
+    )
+
+
+def configured_sarvam() -> GeminiExtractor:
+    return GeminiExtractor(
+        AISettings(_env_file=None, api_key=None, model=None),
+        SpeechSettings(
+            _env_file=None,
+            api_key=SecretStr("synthetic-sarvam-key"),
+            chat_model="test-sarvam-model",
+        ),
     )
 
 
@@ -63,6 +76,150 @@ def test_request_and_validated_tentative_extraction(monkeypatch: pytest.MonkeyPa
     assert result.facts.land_registration is None and result.facts.family_income_inr is None
     assert result.facts.social_category is None and result.needs_review
     assert "land_registration" in result.unknown_fields and len(calls) == 1
+
+
+def test_sarvam_fallback_returns_validated_tentative_extraction(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    calls: list[Request] = []
+
+    def transport(request: Request, *, timeout: int) -> BytesIO:
+        calls.append(request)
+        assert timeout == 20
+        assert request.full_url == "https://api.sarvam.ai/v1/chat/completions"
+        assert request.get_header("Api-subscription-key") == "synthetic-sarvam-key"
+        assert isinstance(request.data, bytes)
+        payload = json.loads(request.data)
+        assert payload["model"] == "test-sarvam-model"
+        assert payload["response_format"]["type"] == "json_schema"
+        assert json.loads(payload["messages"][1]["content"])["text"] == MESSAGE
+        return BytesIO(
+            json.dumps(
+                {
+                    "choices": [
+                        {
+                            "finish_reason": "stop",
+                            "message": {
+                                "content": json.dumps({"facts": FACTS, "evidence": EVIDENCE})
+                            },
+                        }
+                    ]
+                }
+            ).encode()
+        )
+
+    monkeypatch.setattr("app.modules.ai.gemini.urlopen", transport)
+    result = configured_sarvam().extract(MESSAGE, "en-IN")
+    assert result.facts.age == 24 and result.facts.state_code == "MH"
+    assert result.needs_review and len(calls) == 1
+
+
+def test_sarvam_fallback_retries_invalid_model_output(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    responses = iter(
+        [
+            BytesIO(
+                json.dumps(
+                    {
+                        "choices": [
+                            {
+                                "finish_reason": "stop",
+                                "message": {
+                                    "content": '{"facts":{"age":24},"evidence":{"age":"invented"}}'
+                                },
+                            }
+                        ]
+                    }
+                ).encode()
+            ),
+            BytesIO(
+                json.dumps(
+                    {
+                        "choices": [
+                            {
+                                "finish_reason": "stop",
+                                "message": {
+                                    "content": json.dumps({"facts": FACTS, "evidence": EVIDENCE})
+                                },
+                            }
+                        ]
+                    }
+                ).encode()
+            ),
+        ]
+    )
+    calls = 0
+
+    def transport(*args: Any, **kwargs: Any) -> BytesIO:
+        nonlocal calls
+        calls += 1
+        return next(responses)
+
+    monkeypatch.setattr("app.modules.ai.gemini.urlopen", transport)
+    assert configured_sarvam().extract(MESSAGE, "en-IN").facts.age == 24
+    assert calls == 2
+
+
+def test_sarvam_translates_indian_language_before_extraction(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    translated = "I am a 24-year-old farmer from Maharashtra."
+    calls: list[str] = []
+
+    def transport(request: Request, *, timeout: int) -> BytesIO:
+        calls.append(request.full_url)
+        if request.full_url.endswith("/translate"):
+            payload = json.loads(request.data or b"{}")
+            assert payload["source_language_code"] == "kn-IN"
+            assert payload["target_language_code"] == "en-IN"
+            return BytesIO(json.dumps({"translated_text": translated}).encode())
+        return BytesIO(
+            json.dumps(
+                {
+                    "choices": [
+                        {
+                            "finish_reason": "stop",
+                            "message": {
+                                "content": json.dumps(
+                                    {
+                                        "facts": {
+                                            "age": 24,
+                                            "occupation": "farmer",
+                                            "state_code": "MH",
+                                        },
+                                        "evidence": {
+                                            "age": "24-year-old",
+                                            "occupation": "farmer",
+                                            "state_code": "Maharashtra",
+                                        },
+                                    }
+                                )
+                            },
+                        }
+                    ]
+                }
+            ).encode()
+        )
+
+    monkeypatch.setattr("app.modules.ai.gemini.urlopen", transport)
+    result = configured_sarvam().extract("ನಾನು ರೈತ", "kn-IN")
+    assert result.facts.age == 24 and result.facts.state_code == "MH"
+    assert calls == [
+        "https://api.sarvam.ai/translate",
+        "https://api.sarvam.ai/v1/chat/completions",
+    ]
+
+
+@pytest.mark.parametrize("locale", ["en-IN", "hi-IN", "kn-IN"])
+def test_supported_profile_locales(locale: SpeechLanguage, monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(
+        "app.modules.ai.gemini.urlopen",
+        lambda *args, **kwargs: BytesIO(
+            envelope(json.dumps({"facts": FACTS, "evidence": EVIDENCE}))
+        ),
+    )
+    assert configured().extract(MESSAGE, locale).facts.age == 24
 
 
 @pytest.mark.parametrize(
@@ -132,7 +289,7 @@ def test_missing_key_and_unsupported_locale_do_not_call_network(
     client.app.dependency_overrides[get_extractor] = configured
     assert (
         client.post(
-            "/api/v1/profiles/extract", json={"text": MESSAGE, "locale": "hi-IN"}
+            "/api/v1/profiles/extract", json={"text": MESSAGE, "locale": "fr-FR"}
         ).status_code
         == 503
     )
@@ -167,6 +324,7 @@ def test_invalid_configuration_still_offers_manual_fallback(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     monkeypatch.setenv("GEMINI_MODEL", "../../invalid-model")
+    monkeypatch.setenv("SARVAM_API_KEY", "")
     get_extractor.cache_clear()
     try:
         response = client.post("/api/v1/profiles/extract", json={"text": MESSAGE})

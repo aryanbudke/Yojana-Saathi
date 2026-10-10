@@ -1,10 +1,16 @@
 "use client";
 
 import React, { useState } from "react";
-import { ArrowRight, Sparkles, SlidersHorizontal, ShieldCheck } from "lucide-react";
+import {
+  ArrowRight,
+  Sparkles,
+  SlidersHorizontal,
+  ShieldCheck,
+} from "lucide-react";
 import { GlassCard } from "@/components/ui/GlassCard";
 import { Button, TextArea, InlineAlert, Badge } from "@/components/ui";
 import { useProfile } from "@/features/profile/hooks";
+import { SpeechInputControls } from "@/features/speech/SpeechControls";
 import { isMock, errorMessage } from "@/lib/api";
 import { useMessages } from "@/i18n/client";
 import { format } from "@/i18n/config";
@@ -29,6 +35,11 @@ export function ProfileForm({ onSuccess }: ProfileFormProps) {
     try {
       await p.extract();
       if (onSuccess) onSuccess();
+      requestAnimationFrame(() =>
+        document
+          .getElementById("profile-review")
+          ?.scrollIntoView({ behavior: "smooth", block: "start" }),
+      );
     } catch (err) {
       setError(errorMessage(err, m.errors));
       p.setReviewing(true);
@@ -46,9 +57,7 @@ export function ProfileForm({ onSuccess }: ProfileFormProps) {
         <Badge tone="emerald">{t.badge}</Badge>
       </div>
 
-      <p className="text-sm text-slate-600 mb-6 leading-relaxed">
-        {t.lead}
-      </p>
+      <p className="text-sm text-slate-600 mb-6 leading-relaxed">{t.lead}</p>
 
       <form onSubmit={handleExtract} className="space-y-4">
         <label className="sr-only" htmlFor="profile-text">
@@ -63,6 +72,8 @@ export function ProfileForm({ onSuccess }: ProfileFormProps) {
           onChange={(e) => p.setText(e.target.value)}
           aria-describedby="profile-privacy profile-counter"
         />
+
+        <SpeechInputControls onTranscript={p.setText} />
 
         <div className="flex items-center justify-between gap-2 text-xs text-slate-500">
           <Button
@@ -112,8 +123,15 @@ export function ProfileForm({ onSuccess }: ProfileFormProps) {
           </p>
         )}
 
-        <div id="profile-privacy" className="flex items-center justify-center gap-1.5 text-xs text-slate-500 pt-2 border-t border-slate-200/60">
-          <ShieldCheck size={15} className="text-emerald-700 shrink-0" aria-hidden="true" />
+        <div
+          id="profile-privacy"
+          className="flex items-center justify-center gap-1.5 text-xs text-slate-500 pt-2 border-t border-slate-200/60"
+        >
+          <ShieldCheck
+            size={15}
+            className="text-emerald-700 shrink-0"
+            aria-hidden="true"
+          />
           <span>{t.privacy}</span>
         </div>
       </form>

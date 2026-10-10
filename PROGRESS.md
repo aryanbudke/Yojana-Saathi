@@ -556,3 +556,54 @@ only after its acceptance checks pass and its work is committed.
 - **Commit reference:** `HEAD` — `docs(report): add backend and provenance contribution`
 - **Next task:** Await user-curated schemes to unblock T2-05–T2-07, T2-09,
   T2-18, and T2-21.
+
+## SPEECH-01 — Sarvam multilingual voice integration
+
+- **Status:** COMPLETED
+- **Files created or modified:** Sarvam backend module and routes, backend/frontend
+  environment templates, speech UI/provider, profile extraction locale wiring,
+  read-aloud controls, tests, documentation, and this progress record.
+- **Tests executed:**
+  - Backend Ruff lint/format and strict mypy — passed
+  - Full backend suite — 288 passed, 2 skipped; 91% coverage; one upstream
+    Starlette TestClient deprecation warning
+  - Frontend ESLint, strict TypeScript, Prettier and 21 Vitest tests — passed
+  - Next.js production build — passed for all seven routes
+  - Live Sarvam round trip — TTS then STT succeeded for `en-IN`, `hi-IN`, and
+    `kn-IN`; local HTTP TTS returned 200 and CORS preflight returned 200
+  - Existing Playwright suite — not executed because its Chromium binary is not
+    installed; all 21 cases stopped before application code ran
+- **Problems encountered:** Playwright requires `npx playwright install chromium`
+  before browser E2E can run. The server-only key is present locally, but Render
+  still needs `SARVAM_API_KEY` configured before the deployed service can use
+  voice. No credential is committed or exposed to the browser.
+- **Commit reference:** Included in the multilingual voice/profile feature commit.
+- **Next task:** Add `SARVAM_API_KEY` to Render, deploy these uncommitted changes
+  only when authorized, then run a deployed microphone/read-aloud smoke test.
+
+## SPEECH-02 — One-tap voice profile creation
+
+- **Status:** COMPLETED
+- **Files created or modified:** Profile-form speech controls, automatic silence
+  detection, draft profile persistence, Sarvam structured profile extraction
+  fallback, multilingual translation-before-extraction, environment templates,
+  tests, documentation, and this progress record.
+- **Tests executed:**
+  - Backend Ruff lint/format and strict mypy — passed
+  - Full backend pytest suite — passed with two expected skips and one upstream
+    Starlette TestClient deprecation warning
+  - Frontend ESLint, strict TypeScript, Prettier and 23 Vitest tests — passed
+  - Next.js production build — passed for all 12 application routes
+  - Live Sarvam extraction — HTTP 200 for English, Hindi, and Kannada inputs
+  - Local frontend `/profile` and backend `/health` — HTTP 200
+- **Problems encountered:** The redesigned profile route used a different form
+  from the original speech integration. Gemini extraction was unconfigured, so
+  Sarvam 105B Conversations is now the server-side fallback. Kannada evidence
+  transliteration was rejected by strict validation; translating to English
+  before structured extraction preserves validation and produces a reviewable
+  profile draft. Browser automation remains blocked by the saved localhost
+  permission, so microphone permission and physical audio capture require the
+  user's manual browser check.
+- **Commit reference:** Included in the multilingual voice/profile feature commit.
+- **Next task:** Configure `SARVAM_API_KEY` on Render before deploying these
+  local changes, then smoke-test the deployed profile flow.

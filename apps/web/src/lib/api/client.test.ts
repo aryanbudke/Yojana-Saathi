@@ -99,6 +99,45 @@ describe("contract boundary", () => {
     expect(sent).toContain("/api/v1/profiles/answers");
     expect(sent).toContain('"field":"age","value":24');
   });
+  it("sends speech audio and locale to the server-only Sarvam proxy", async () => {
+    let sentUrl = "";
+    let sentType = "";
+    const api = createLiveApi("https://api.test", async (input, init) => {
+      sentUrl = String(input);
+      sentType = new Headers(init?.headers).get("Content-Type") ?? "";
+      return new Response(
+        JSON.stringify({
+          transcript: "ನಾನು ರೈತ",
+          language_code: "kn-IN",
+          needs_review: true,
+        }),
+        { headers: { "Content-Type": "application/json" } },
+      );
+    });
+    const result = await api.transcribe(
+      new Blob(["audio"], { type: "audio/webm" }),
+      "kn-IN",
+    );
+    expect(sentUrl).toContain("/api/v1/speech/transcribe?language_code=kn-IN");
+    expect(sentType).toBe("audio/webm");
+    expect(result.transcript).toBe("ನಾನು ರೈತ");
+  });
+  it("requests translated speech and returns playable audio", async () => {
+    let body = "";
+    const api = createLiveApi("https://api.test", async (_input, init) => {
+      body = String(init?.body);
+      return new Response(new Blob(["wave"], { type: "audio/wav" }), {
+        headers: { "Content-Type": "audio/wav" },
+      });
+    });
+    const audio = await api.synthesize("Scheme information", "hi-IN", "en-IN");
+    expect(JSON.parse(body)).toEqual({
+      text: "Scheme information",
+      source_language_code: "en-IN",
+      target_language_code: "hi-IN",
+    });
+    expect(audio.size).toBeGreaterThan(0);
+  });
   it("plays mock responses and preserves unknown on not sure, without repeated questions", async () => {
     const api = createMockApi(0);
     const s = await api.createSession();

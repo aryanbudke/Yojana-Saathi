@@ -53,7 +53,13 @@ Current desktop/mobile screenshots and overflow/CTA measurements are in `artifac
 
 ## Deploy to Vercel
 
-Import the repository's `feat/web-redesign` branch into Vercel. Set **Root Directory** to `apps/web`, framework to Next.js, install command to `npm ci`, and build command to `npm run build`. Keep the default Next.js output directory. Set the live public environment variables above and configure backend CORS for the production origin before testing the live journey. No secret, database or Gemini key belongs in the frontend.
+Import the repository's `main` branch into Vercel. Set **Root Directory** to `apps/web`, framework to Next.js, install command to `npm ci`, and build command to `npm run build`. Keep the default Next.js output directory. Set the live public environment variables above and configure backend CORS for the production origin before testing the live journey. No secret, database, Gemini key, or Sarvam key belongs in the frontend.
+
+Sarvam voice input and read-aloud use the backend origin above. Configure
+`SARVAM_API_KEY` only in `services/api/.env` locally and in the Render service
+environment when deployed. Users can select English, Hindi, or Kannada beside
+the profile microphone and read-aloud controls. Hindi/Kannada scheme audio is
+AI-translated and the original source text remains visible for verification.
 
 ```bash
 npm run build

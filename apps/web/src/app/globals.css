@@ -106,9 +106,8 @@ body {
   color: var(--ink);
   /* Inter has no Indic glyphs; these system faces render Hindi and Kannada. */
   font-family:
-    "Inter Variable", "Noto Sans Devanagari", "Noto Sans Kannada",
-    "Nirmala UI", "Kohinoor Devanagari", "Kannada Sangam MN", system-ui,
-    sans-serif;
+    "Inter Variable", "Noto Sans Devanagari", "Noto Sans Kannada", "Nirmala UI",
+    "Kohinoor Devanagari", "Kannada Sangam MN", system-ui, sans-serif;
   font-size: 15px;
   line-height: 1.65;
 }
@@ -508,12 +507,11 @@ footer .disclaimer,
     padding-left: 16px;
     padding-right: 16px;
   }
-  
+
   .brand {
     font-size: 20px;
   }
-  
-  
+
   .hero {
     padding-top: 40px;
   }
@@ -536,7 +534,6 @@ footer .disclaimer,
   }
 }
 @media (max-width: 360px) {
-  
   .hero h1 {
     font-size: 34px;
   }
@@ -1455,10 +1452,10 @@ footer .disclaimer,
 }
 @media print {
   .footer,
-.mode-notice,
-.skip-link,
-.back-link,
-button {
+  .mode-notice,
+  .skip-link,
+  .back-link,
+  button {
     display: none !important;
   }
   .container {
@@ -1619,15 +1616,11 @@ section[id] {
   .container {
     padding-inline: 20px;
   }
-  
+
   .brand {
     font-size: 19px;
   }
-  
-  
-  
-  
-  
+
   .panel,
   .glass {
     padding: 20px;
@@ -1637,7 +1630,6 @@ section[id] {
   .container {
     padding-inline: 16px;
   }
-  
 }
 
 /* Compact discovery workspace */
@@ -2496,12 +2488,75 @@ section[id] {
 }
 @supports not (backdrop-filter: blur(16px)) {
   .glass,
-.profile-snapshot {
+  .profile-snapshot {
     background: var(--surface);
   }
 }
 
 /* Header text remains AA-readable over content beneath the glass surface. */
+.speech-controls {
+  display: grid;
+  grid-template-columns: minmax(150px, 1fr) auto;
+  align-items: end;
+  gap: 10px 12px;
+  padding: 12px;
+  margin: 10px 0 4px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: rgb(230 241 232 / 48%);
+}
+.speech-language {
+  display: grid;
+  gap: 5px;
+  color: var(--deep);
+  font-size: 12px;
+  font-weight: 600;
+}
+.speech-language .input {
+  min-height: 44px;
+  padding: 8px 36px 8px 12px;
+}
+.speech-controls > .small {
+  grid-column: 1 / -1;
+}
+.speech-controls .alert {
+  grid-column: 1 / -1;
+  margin: 0;
+}
+.read-aloud {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 12px 0;
+}
+.read-aloud .button {
+  min-height: 44px;
+}
+.speech-language.compact {
+  min-width: 130px;
+}
+.read-aloud .alert {
+  flex-basis: 100%;
+  margin: 0;
+}
+@media (max-width: 479px) {
+  .speech-controls {
+    grid-template-columns: 1fr;
+  }
+  .speech-controls > .small,
+  .speech-controls .alert {
+    grid-column: 1;
+  }
+  .speech-controls .button {
+    width: 100%;
+  }
+}
+
+.header nav a,
+.header-language {
+  color: var(--deep);
+}
 
 /* Compact reading rhythm for the functional how-it-works route. */
 .reading-page {

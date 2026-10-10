@@ -7,6 +7,7 @@ import {
   type ReactNode,
 } from "react";
 import { api, ApiError } from "@/lib/api";
+import { useSpeech } from "@/features/speech/SpeechProvider";
 import {
   blankFacts,
   profileSchema,
@@ -17,6 +18,7 @@ import {
 import { fieldsToConfirm, mergeExtraction } from "./model";
 import type { ProfileDraft } from "./types";
 function useProfileState() {
+  const { language } = useSpeech();
   const [draft, setDraft] = useState<ProfileDraft>({
     facts: { ...blankFacts },
     origins: {},
@@ -26,29 +28,13 @@ function useProfileState() {
   const [confirmed, setConfirmed] = useState(false);
   const [session, setSession] = useState<ProfileSession | null>(null);
   const revision = useRef(0);
-  async function extract() {
-    const current = revision.current;
-    const response = await api.extract(text);
-    if (revision.current !== current) return;
-    setDraft((prev) => mergeExtraction(prev, response.facts));
-    setReviewing(true);
-    setConfirmed(false);
-  }
-  function edit(field: ProfileField, value: ProfileFacts[ProfileField]) {
-    setDraft((prev) => ({
-      facts: { ...prev.facts, [field]: value },
-      origins: { ...prev.origins, [field]: "user" },
-    }));
-    setConfirmed(false);
-  }
-  async function confirm() {
-    const facts = profileSchema.parse(draft.facts);
+
+  async function saveFacts(facts: ProfileFacts) {
     let active =
       session && Date.parse(session.expires_at) > Date.now()
         ? session
         : await api.createSession();
     setSession(active);
-    // Save reviewed facts using the existing one-field endpoint; model values are now citizen-confirmed.
     try {
       for (const field of fieldsToConfirm(facts, active.facts)) {
         const response = await api.answer(
@@ -71,6 +57,29 @@ function useProfileState() {
       }
       throw error;
     }
+    return active;
+  }
+
+  async function extract() {
+    const current = revision.current;
+    const response = await api.extract(text, language);
+    if (revision.current !== current) return;
+    const extractedDraft = mergeExtraction(draft, response.facts);
+    setDraft(extractedDraft);
+    setReviewing(true);
+    setConfirmed(false);
+    await saveFacts(profileSchema.parse(extractedDraft.facts));
+  }
+  function edit(field: ProfileField, value: ProfileFacts[ProfileField]) {
+    setDraft((prev) => ({
+      facts: { ...prev.facts, [field]: value },
+      origins: { ...prev.origins, [field]: "user" },
+    }));
+    setConfirmed(false);
+  }
+  async function confirm() {
+    const facts = profileSchema.parse(draft.facts);
+    const active = await saveFacts(facts);
     setDraft({
       facts,
       origins: Object.fromEntries(Object.keys(facts).map((k) => [k, "user"])),

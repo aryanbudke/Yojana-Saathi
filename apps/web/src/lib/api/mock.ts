@@ -40,6 +40,20 @@ export function createMockApi(delay = 350): Api {
       await wait();
       return extractSchema.parse(structuredClone(extraction));
     },
+    async transcribe() {
+      throw new ApiError(
+        "LIVE_API_REQUIRED",
+        "Voice input requires the live API connection.",
+        503,
+      );
+    },
+    async synthesize() {
+      throw new ApiError(
+        "LIVE_API_REQUIRED",
+        "Read aloud requires the live API connection.",
+        503,
+      );
+    },
     async createSession() {
       await wait();
       const session_id = crypto.randomUUID();

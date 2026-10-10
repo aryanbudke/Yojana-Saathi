@@ -16,6 +16,7 @@ import { useProfile } from "@/features/profile/hooks";
 import { useDisplayDate, useMessages } from "@/i18n/client";
 import { format } from "@/i18n/config";
 import { DocumentChecklist } from "./DocumentChecklist";
+import { ReadAloudButton } from "@/features/speech/SpeechControls";
 export function GuidancePage({ id }: { id: string }) {
   const m = useMessages();
   const t = m.guidance;
@@ -52,9 +53,7 @@ export function GuidancePage({ id }: { id: string }) {
         </div>
       ) : r.error || !r.data ? (
         <>
-          <InlineAlert error>
-            {r.error || t.unavailable}
-          </InlineAlert>
+          <InlineAlert error>{r.error || t.unavailable}</InlineAlert>
           <Button onClick={r.retry}>{t.retry}</Button>
         </>
       ) : (
@@ -81,11 +80,16 @@ export function GuidancePage({ id }: { id: string }) {
                   {t.print}
                 </Button>
               </div>
-              {!sameVersion && (
-                <InlineAlert>
-                  {t.versionChanged}
-                </InlineAlert>
-              )}
+              <ReadAloudButton
+                text={[
+                  guidance.scheme_name,
+                  ...guidance.unresolved_preconditions,
+                  ...guidance.documents.map((document) => document.name),
+                  ...guidance.steps.map((step) => step.instruction),
+                  guidance.disclaimer,
+                ].join(". ")}
+              />
+              {!sameVersion && <InlineAlert>{t.versionChanged}</InlineAlert>}
               {guidance.unresolved_preconditions.length > 0 && (
                 <section className="alert">
                   <div>
@@ -142,9 +146,7 @@ export function GuidancePage({ id }: { id: string }) {
                           })}
                       </ol>
                     ) : (
-                      <InlineAlert>
-                        {t.noSteps}
-                      </InlineAlert>
+                      <InlineAlert>{t.noSteps}</InlineAlert>
                     )}
                   </section>
                 </div>
@@ -162,7 +164,9 @@ export function GuidancePage({ id }: { id: string }) {
                       >
                         {t.apply}
                         <ExternalLink size={16} />
-                        <span className="sr-only">{m.common.opensInNewTab}</span>
+                        <span className="sr-only">
+                          {m.common.opensInNewTab}
+                        </span>
                       </a>
                     ) : (
                       <InlineAlert>

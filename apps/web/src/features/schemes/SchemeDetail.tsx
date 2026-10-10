@@ -25,6 +25,7 @@ import { useMatching } from "@/features/matching/hooks";
 import { useProfile } from "@/features/profile/hooks";
 import { RuleChecklist } from "@/features/matching/RuleChecklist";
 import { EligibilityBadge } from "@/features/matching/EligibilityBadge";
+import { ReadAloudButton } from "@/features/speech/SpeechControls";
 export function SchemeDetail({ id }: { id: string }) {
   const m = useMessages();
   const t = m.scheme;
@@ -102,6 +103,9 @@ export function SchemeDetail({ id }: { id: string }) {
         </div>
         <h1>{scheme.name}</h1>
         <p className="muted">{scheme.summary}</p>
+        <ReadAloudButton
+          text={`${scheme.name}. ${scheme.summary} Benefits: ${scheme.benefit_text}`}
+        />
         <p className="verification">
           <ShieldCheck size={15} />
           {format(m.common.lastVerifiedOn, {
@@ -129,9 +133,7 @@ export function SchemeDetail({ id }: { id: string }) {
               <h2>{t.eligibility}</h2>
             </summary>
             <div>
-              <p className="small muted">
-                {t.eligibilityNote}
-              </p>
+              <p className="small muted">{t.eligibilityNote}</p>
               {required.map((rule) => (
                 <article key={rule.rule_key} className="criteria-detail">
                   <Badge
@@ -165,9 +167,7 @@ export function SchemeDetail({ id }: { id: string }) {
                   ))}
                 </>
               ) : (
-                <p className="small muted">
-                  {t.noExclusions}
-                </p>
+                <p className="small muted">{t.noExclusions}</p>
               )}
               {match ? (
                 <RuleChecklist
@@ -202,9 +202,7 @@ export function SchemeDetail({ id }: { id: string }) {
                     <li key={i}>
                       <strong>{doc.name}</strong>
                       {doc.when_required && (
-                        <p className="small muted">
-                          {t.conditional}
-                        </p>
+                        <p className="small muted">{t.conditional}</p>
                       )}
                       <SourceLink url={doc.source.official_url}>
                         {doc.source.title}
@@ -213,9 +211,7 @@ export function SchemeDetail({ id }: { id: string }) {
                   ))}
                 </ul>
               ) : (
-                <InlineAlert>
-                  {t.noDocuments}
-                </InlineAlert>
+                <InlineAlert>{t.noDocuments}</InlineAlert>
               )}
             </div>
           </details>
@@ -247,13 +243,9 @@ export function SchemeDetail({ id }: { id: string }) {
                     ))}
                 </ol>
               ) : (
-                <InlineAlert>
-                  {t.noSteps}
-                </InlineAlert>
+                <InlineAlert>{t.noSteps}</InlineAlert>
               )}
-              <p className="small muted">
-                {t.portalNote}
-              </p>
+              <p className="small muted">{t.portalNote}</p>
             </div>
           </details>
         </div>
@@ -267,7 +259,9 @@ export function SchemeDetail({ id }: { id: string }) {
                 <h3>{source.title}</h3>
                 <p>{source.excerpt_locator}</p>
                 <p>
-                  {format(m.common.checkedOn, { date: date(source.checked_at) })}
+                  {format(m.common.checkedOn, {
+                    date: date(source.checked_at),
+                  })}
                 </p>
                 {source.document_date && (
                   <p>
