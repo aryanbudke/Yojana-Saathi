@@ -191,5 +191,15 @@ are preparation, not evidence that those commands ran.
 - Files modified: this progress document only. Inspected backend `.env.example`, shared Settings/AISettings, admin auth, migration environment and versions0004/0005, backend README/handoff, Render Blueprint, existing importer/index CLI and PostgreSQL fixtures.
 - Verification: `alembic heads` reports `20261009_0005`; this is repository history, not a live database revision. Migration0005 enables `vector`, creates `staging_schemes` with `vector(768)` and enables RLS. Existing retrieval is exact cosine search; no HNSW/IVFFlat index migration is needed for this dataset.
 - Problems: local URL in the template is a placeholder/default, not a configured live target. Production migration must accompany deployment of this revision; do not advance an older deployed backend to an unknown migration revision.
-- Commit: task commit `docs(ai): audit live backend configuration and migrations` (resolve by title).
+- Commit: `7a363de` — `docs(ai): audit live backend configuration and migrations`.
 - Next task: LIVE-02 document exact environment names and setup using existing commands.
+
+### LIVE-02 — Exact environment/setup contract
+
+- Status: COMPLETED
+- Files: `docs/rag/LIVE_SETUP.md`, this progress document. No runtime code or frontend modifications.
+- Scope: derive environment names from existing configuration/fixtures, distinguish reviewer from publication credentials, supply connection/migration/test setup and reuse the existing data workflow. No invented project/credential/model values.
+- Verification: both inline Python command blocks parse; variable aliases match Settings/AISettings, installed dotenv loader confirmed, existing PostgreSQL fixture process-variable behavior and exact test selectors checked. Diff whitespace check passed. These checks did not execute migrations or connect to a database.
+- Problems: credentials and authorized target absent; runbook commands must not be reported as executed live.
+- Commit: task commit `docs(ai): document exact live RAG setup` (resolve by title).
+- Next task: LIVE-03 verify connected project availability; stop dependent live tasks if unavailable.
