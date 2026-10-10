@@ -68,12 +68,13 @@ def database(tmp_path: Path) -> Generator[Engine]:
 
 
 @pytest.fixture
-def indexer() -> ModuleType:
+def indexer(monkeypatch: pytest.MonkeyPatch) -> ModuleType:
     script = Path(__file__).parents[2] / "scripts/index_notebook_staging.py"
     spec = importlib.util.spec_from_file_location("index_notebook_staging_test", script)
     assert spec is not None and spec.loader is not None
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
+    monkeypatch.setattr(module, "validate_document_lengths", lambda *a: None)
     return module
 
 
@@ -193,6 +194,27 @@ def test_cli_failure_preserves_existing_snapshot_and_redacts_errors(
         assert touched == []
     elif failure == "embedding":
         assert touched == ["embedding"]
+
+
+def test_token_preflight_failure_prevents_embedding_and_database_writes(
+    database: Engine,
+    export: Path,
+    indexer: ModuleType,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    preflight = Mock(side_effect=EmbeddingUnavailable("SYNTHETIC document exceeds token limit"))
+    embedding, engine = Mock(), Mock(return_value=database)
+    monkeypatch.setattr(sys, "argv", ["index_notebook_staging.py", str(export)])
+    monkeypatch.setattr(indexer, "validate_document_lengths", preflight)
+    monkeypatch.setattr(indexer, "embed", embedding)
+    monkeypatch.setattr(indexer, "create_database_engine", engine)
+    with pytest.raises(SystemExit) as result:
+        indexer.main()
+    assert result.value.code == 2
+    preflight.assert_called_once()
+    embedding.assert_not_called()
+    engine.assert_not_called()
+    assert slugs(database) == ["synthetic-existing"]
 
 
 def test_provider_input_rejection_keeps_snapshot_without_opening_database(

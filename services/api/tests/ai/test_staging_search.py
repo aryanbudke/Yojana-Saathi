@@ -261,12 +261,94 @@ def test_embed_batches_requests_with_task_and_dimensions(
     assert len(vectors) == 250
     assert [len(call["requests"]) for call in calls] == [100, 100, 50]
     first = calls[0]["requests"][0]
-    assert first["embedContentConfig"] == {
-        "taskType": task,
-        "outputDimensionality": DIMENSIONS,
-        "autoTruncate": False,
-    }
+    assert first["taskType"] == task
+    assert first["outputDimensionality"] == DIMENSIONS
+    assert first["embedContentConfig"] == {"autoTruncate": False}
     assert first["model"] == "models/test-embedding"
+
+
+def test_document_token_preflight_checks_longest_first(monkeypatch: pytest.MonkeyPatch) -> None:
+    calls: list[Request] = []
+    responses = iter([{"inputTokenLimit": 10}, {"totalTokens": 10}, {"totalTokens": 1}])
+
+    def transport(request: Request, *, timeout: int) -> BytesIO:
+        calls.append(request)
+        return BytesIO(json.dumps(next(responses)).encode())
+
+    monkeypatch.setattr(staging_search, "urlopen", transport)
+    staging_search.validate_document_lengths(configured(), ["S", "SYNTHETIC"])
+    assert calls[0].full_url.endswith("/models/test-embedding")
+    assert calls[1].full_url.endswith(":countTokens")
+    payload = calls[1].data
+    assert isinstance(payload, bytes)
+    assert json.loads(payload)["contents"][0]["parts"][0]["text"] == "SYNTHETIC"
+
+
+@pytest.mark.parametrize(
+    "responses",
+    [
+        [{"inputTokenLimit": 10}, {"totalTokens": 11}],
+        [{"inputTokenLimit": True}],
+        [{"inputTokenLimit": 0}],
+        [{"inputTokenLimit": "10"}],
+        [{"inputTokenLimit": 10}, {"totalTokens": True}],
+        [{"inputTokenLimit": 10}, {"totalTokens": -1}],
+        [{"inputTokenLimit": 10}, {"totalTokens": "1"}],
+        [{}],
+        [{"inputTokenLimit": 10}, {}],
+    ],
+)
+def test_document_token_preflight_rejects_oversized_or_invalid_counts(
+    monkeypatch: pytest.MonkeyPatch, responses: list[dict[str, Any]]
+) -> None:
+    pending = iter(responses)
+    monkeypatch.setattr(
+        staging_search, "urlopen", lambda *a, **k: BytesIO(json.dumps(next(pending)).encode())
+    )
+    with pytest.raises(staging_search.EmbeddingUnavailable):
+        staging_search.validate_document_lengths(configured(), ["SYNTHETIC"])
+
+
+@pytest.mark.parametrize("missing", ["key", "blank-key", "model"])
+def test_document_token_preflight_requires_config_before_transport(
+    monkeypatch: pytest.MonkeyPatch, missing: str
+) -> None:
+    settings = configured().model_copy(
+        update={"embedding_model": None}
+        if missing == "model"
+        else {"api_key": None if missing == "key" else SecretStr(" ")}
+    )
+    transport = Mock()
+    monkeypatch.setattr(staging_search, "urlopen", transport)
+    with pytest.raises(staging_search.EmbeddingUnavailable):
+        staging_search.validate_document_lengths(settings, ["SYNTHETIC"])
+    transport.assert_not_called()
+
+
+@pytest.mark.parametrize(
+    "responses",
+    [
+        [b" " * 64001],
+        [b'{"inputTokenLimit": 10}', b" " * 64001],
+        [b"invalid JSON"],
+        [OSError("SYNTHETIC unavailable")],
+        [b'{"inputTokenLimit": 10}', OSError("SYNTHETIC unavailable")],
+    ],
+)
+def test_document_token_preflight_fails_closed_on_transport_and_response_errors(
+    monkeypatch: pytest.MonkeyPatch, responses: list[bytes | OSError]
+) -> None:
+    pending = iter(responses)
+
+    def transport(*args: Any, **kwargs: Any) -> BytesIO:
+        response = next(pending)
+        if isinstance(response, OSError):
+            raise response
+        return BytesIO(response)
+
+    monkeypatch.setattr(staging_search, "urlopen", transport)
+    with pytest.raises(staging_search.EmbeddingUnavailable):
+        staging_search.validate_document_lengths(configured(), ["SYNTHETIC"])
 
 
 def test_embed_rejects_wrong_shape(monkeypatch: pytest.MonkeyPatch) -> None:

@@ -42,7 +42,7 @@ Reviewers can semantically search the unverified notebook records to decide whic
 
 1. Run migrations (`20261009_0005` enables the `vector` extension, creates `staging_schemes` and turns on row-level security for it, matching `0004`). Supabase supports `vector`; other hosts must provide it.
 2. Set `GEMINI_API_KEY` and `GEMINI_EMBEDDING_MODEL` (configured for 768 dimensions). Live provider compatibility still requires verification.
-3. From `services/api`, index the export. Each run validates the entire nonempty export and all embeddings before replacing the whole staging table in one transaction. Embedding/configuration failures never open a database write; database/commit failures roll back the replacement. This is a full snapshot replacement, not an append operation:
+3. From `services/api`, index the export. Each run validates the entire nonempty export, the model's native token count for every document, and all embeddings before replacing the whole staging table in one transaction. Oversized records, token preflight and embedding/configuration failures never open a database write; database/commit failures roll back the replacement. This is a full snapshot replacement, not an append operation:
 
    ```bash
    .venv/bin/python scripts/index_notebook_staging.py /absolute/path/sarkarseva_processed/schemes_clean.json
@@ -88,7 +88,7 @@ Use a fresh environment installed from this checkout for actual CLI execution. T
 
 The adapter tests use explicitly synthetic temporary records. They verify that raw text is preserved, false verification claims cannot publish, missing eligibility remains visible, invalid/duplicate inputs fail, CLI import works and failures do not overwrite existing output.
 
-The actual export is now available and offline review import has passed. The supplied SQL connection, migration0005, pgvector and staging vector(768)/RLS checks have passed. The two PostgreSQL tests pass with synthetic records and mocked provider responses. Actual-data indexing and answers remain blocked by missing Gemini/reviewer settings. The last recorded Render health was reachable, but curator search returned503 because its administrative role was unconfigured; this is not a successful RAG verification. Phase C also requires independent profile labels, real guidance review and frontend/live evidence. This connection does not establish official source authenticity, matching accuracy or a completed live integration.
+The actual export is now available and offline review import has passed. The supplied SQL connection, migration0005, pgvector and staging vector(768)/RLS checks have passed. The two PostgreSQL tests pass with synthetic records and mocked provider responses. The supplied Gemini key now verifies768-dimensional query output after request compatibility was corrected. The actual index command refuses a4825-token record against the model's2048-token limit before bulk embedding or database writes. Long-record handling and reviewer settings still block actual indexing/answers; generation-model access is unverified. The last recorded Render health was reachable, but curator search returned503 because its administrative role was unconfigured; this is not a successful RAG verification. Phase C also requires independent profile labels, real guidance review and frontend/live evidence. This connection does not establish official source authenticity, matching accuracy or a completed live integration.
 
 ## Canonical dataset handoff
 

@@ -57,6 +57,43 @@ def document_text(record: dict[str, str | None]) -> str:
     return "\n".join(f"{field}: {record.get(field) or ''}" for field in _DOCUMENT_FIELDS)
 
 
+def validate_document_lengths(settings: AISettings, texts: Sequence[str]) -> None:
+    """Count every document before embedding; provider truncation flags are insufficient."""
+
+    key, model = settings.api_key, settings.embedding_model
+    if key is None or not key.get_secret_value().strip() or model is None:
+        raise EmbeddingUnavailable("GEMINI_API_KEY and GEMINI_EMBEDDING_MODEL are required")
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}"
+    headers = {"Content-Type": "application/json", "x-goog-api-key": key.get_secret_value()}
+    try:
+        with urlopen(Request(url, headers=headers), timeout=30) as response:
+            raw = response.read(64001)
+        if len(raw) > 64000:
+            raise ValueError("Oversized model metadata")
+        limit = json.loads(raw)["inputTokenLimit"]
+        if isinstance(limit, bool) or not isinstance(limit, int) or limit < 1:
+            raise ValueError("Invalid input token limit")
+        for text in sorted(texts, key=len, reverse=True):
+            payload = {"contents": [{"parts": [{"text": text}]}]}
+            request = Request(
+                url + ":countTokens", data=json.dumps(payload).encode(), headers=headers
+            )
+            with urlopen(request, timeout=30) as response:
+                raw = response.read(64001)
+            if len(raw) > 64000:
+                raise ValueError("Oversized token count")
+            count = json.loads(raw)["totalTokens"]
+            if isinstance(count, bool) or not isinstance(count, int) or count < 0:
+                raise ValueError("Invalid token count")
+            if count > limit:
+                raise EmbeddingUnavailable(
+                    f"A staging record has {count} tokens; model limit is {limit}. "
+                    "Review long-record handling before indexing."
+                )
+    except (OSError, HTTPException, ValueError, TypeError, KeyError, RecursionError):
+        raise EmbeddingUnavailable("Gemini document token preflight failed") from None
+
+
 def embed(
     settings: AISettings, texts: Sequence[str], task: TaskType, *, retries: int = 0
 ) -> list[list[float]]:
@@ -72,11 +109,9 @@ def embed(
                 {
                     "model": f"models/{model}",
                     "content": {"parts": [{"text": text}]},
-                    "embedContentConfig": {
-                        "taskType": task,
-                        "outputDimensionality": STAGING_EMBEDDING_DIMENSIONS,
-                        "autoTruncate": False,
-                    },
+                    "taskType": task,
+                    "outputDimensionality": STAGING_EMBEDDING_DIMENSIONS,
+                    "embedContentConfig": {"autoTruncate": False},
                 }
                 for text in batch
             ]

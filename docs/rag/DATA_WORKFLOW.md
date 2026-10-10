@@ -4,7 +4,9 @@ Current state: actual CSV/exports were found at the workspace root. The cleaned
 JSON passed the existing importer with3,397 records and a local review artifact;
 [measured results](dataset-validation.json) include counts, hashes and missing
 fields. This is offline validation only; PostgreSQL/Gemini indexing and retrieval
-remain blocked by Gemini/reviewer configuration. The supplied PostgreSQL
+remain blocked by long-record handling and reviewer configuration. Gemini query
+preflight now verifies768-dimensional output; the actual index command safely
+refuses a4825-token record against the model's2048-token limit. The supplied PostgreSQL
 connection now passes with migration0005 and `vector(768)` staging storage;
 see `PROGRESS.md` for current verification outcomes. Keep records unverified. Run these
 steps sequentially;
@@ -68,16 +70,25 @@ and query them with the **same `GEMINI_EMBEDDING_MODEL`** and dimension setting.
 The Blueprint currently names `gemini-embedding-001`; that name is configuration,
 not proof that a particular account can call it. The existing embedding client
 rejects wrong-size, zero, nonfinite, boolean/string and float32-overflow vectors.
-The request uses the documented
-[`embedContentConfig`](https://ai.google.dev/api/embeddings) with
-`autoTruncate=false` for both documents and queries. Provider rejection stops
-indexing before a database write; do not enable truncation to force an import.
+The request uses top-level `taskType` and `outputDimensionality` from the
+[REST contract](https://ai.google.dev/api/embeddings). Live Gemini001 ignored
+these fields when nested in `embedContentConfig`, returning3072 values; the
+corrected top-level request is verified to return768. `autoTruncate=false` is
+still sent in `embedContentConfig`, but the live API accepted an over-limit
+document, so this flag does not establish full input coverage.
 Google documents an input limit of2,048 tokens for
 [`gemini-embedding-001`](https://ai.google.dev/gemini-api/docs/models/gemini-embedding-001).
 Character counts do not establish token counts. The actual export includes
 documents up to20,581 characters; provider acceptance and token coverage still
-require live checks. If rejected, stop and coordinate a reviewed chunking or
-model/dimension migration before retrying; no automatic model switch is provided.
+require live checks. The largest actual document counts4825 tokens. The existing
+index CLI now reads the model's input limit and counts every document with its
+`countTokens` endpoint before generating bulk embeddings. It checks longest text
+first for early refusal, rejects malformed/oversized count responses, and stops
+before database access on any failure. Count requests add provider traffic and
+must also fit the account's quota; errors fail closed. Review chunking or an
+account-enabled higher-capacity model with coordinated query configuration
+before retrying; no automatic model switch is provided. See
+[sanitized live preflight evidence](gemini-preflight.json).
 
 The staging model does not store embedding-model identity. Keep an external run
 record containing the input SHA-256, actual row count, model identifier,768

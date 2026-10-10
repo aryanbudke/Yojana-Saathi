@@ -2,8 +2,11 @@
 
 The RAG implementation is complete locally. This runbook configures and verifies
 it; it does not rebuild it. The supplied SQL connection now passes and the target
-already has migration0005, pgvector and `vector(768)` staging storage. Gemini and
-reviewer configuration remains absent. The connector's visible project is still
+already has migration0005, pgvector and `vector(768)` staging storage. The supplied
+Gemini key now passes768-dimensional query preflight with the existing Blueprint
+models configured privately. Full-data indexing is blocked by the model's input
+limit (4825 tokens measured versus2048 allowed), and reviewer settings are absent.
+The connector's visible project is still
 unrelated/inactive; direct SQL access uses the user's supplied target instead.
 Do not use the unrelated project, example localhost URL or frontend environment files.
 
@@ -130,5 +133,8 @@ Record passing, failed and blocked checks separately in `PROGRESS.md`.
 All records remain unverified drafts. Provider token-limit rejection must halt
 indexing; do not enable truncation, mix MiniLM384 vectors or silently switch
 models to force success. Actual-data indexing and answer
-verification remain blocked until Gemini/reviewer configuration is supplied.
+verification remain blocked until long-record handling is resolved and reviewer
+configuration is supplied. The index CLI refuses oversized records before bulk
+embedding or database writes; a successful small query embedding is not full-data
+coverage. Generation-model access remains unverified.
 Connection and migration checks have passed; see `PROGRESS.md` for test outcomes.

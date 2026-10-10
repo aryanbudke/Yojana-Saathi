@@ -1,0 +1,12 @@
+{
+  "passed": 349,
+  "failed": 0,
+  "skipped": 0,
+  "exit_code": 0,
+  "shared_staging_rows_before": 0,
+  "shared_staging_rows_after": 0,
+  "temporary_schemas_cleaned": true,
+  "app_coverage_percent": 93.92,
+  "coverage_gate_percent": 80,
+  "document_token_guard_statement_coverage_percent": 100
+}

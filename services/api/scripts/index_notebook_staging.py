@@ -18,6 +18,7 @@ from app.modules.ai.staging_search import (
     document_text,
     embed,
     replace_snapshot,
+    validate_document_lengths,
 )
 
 
@@ -31,11 +32,14 @@ def main() -> None:
         parser.error(str(exc))
     records = staged["records"]
     assert isinstance(records, list)
-    print(f"Validated {len(records)} records; embedding with Gemini...")
+    print(f"Validated {len(records)} records; checking Gemini input limits...")
     try:
+        settings = AISettings()
+        texts = [document_text(item["record"]) for item in records]
+        validate_document_lengths(settings, texts)
         vectors = embed(
-            AISettings(),
-            [document_text(item["record"]) for item in records],
+            settings,
+            texts,
             "RETRIEVAL_DOCUMENT",
             retries=6,
         )

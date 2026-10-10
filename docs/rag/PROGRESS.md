@@ -243,7 +243,7 @@ deployment, production migration, paid embedding calls or live success claims.
 - Failure reproduced: the two PostgreSQL tests both errored at setup with DuplicateTable. Supabase's pooler did not apply the startup search_path, so unqualified DDL hit the existing shared staging table and failed; no existing rows/table were deleted. Each temporary schema was cleaned up.
 - Fix: use SQLAlchemy's existing engine-level schema_translate_map to qualify all ORM/DDL into the unique test schema. No runtime database model/schema changes or new dependencies. Focused retry2 passed/0 failed/0 skipped. Full regression330 passed/0 failed/0 skipped,92.67% app coverage in the redacted runner. Existing non-PostgreSQL fixtures used SQLite; only the two isolated-schema tests received the authorized SQL URL. Shared staging rows0 before and after; temporary schema inventory unchanged after cleanup. Ruff lint/format108 files and mypy97 files passed. Initial setup errors are resolved; no current failed tests.
 - Remaining configuration: GEMINI_API_KEY, GEMINI_EMBEDDING_MODEL, GEMINI_MODEL, ADMIN_REVIEW_TOKEN and ADMIN_REVIEWER_ID absent. Actual3397-record export/review artifact revalidated and equal; publication_allowed=false. Real import needs actual compatible embeddings, never fabricated vectors.
-- Commit: task commit `fix(ai): isolate pgvector tests on Supabase poolers` (resolve by title).
+- Commit: `6f5839d` — `fix(ai): isolate pgvector tests on Supabase poolers`.
 - Next task: LIVE-05 real-data staging import/indexing when authorized Gemini configuration is supplied; authenticated answers also require reviewer settings.
 
 ### LIVE-05 — Actual-data staging import/indexing and answers
@@ -257,3 +257,27 @@ deployment, production migration, paid embedding calls or live success claims.
 - Credential handling: advise rotation of the database password and Sarvam key because they were pasted into chat; replacements belong only in private server configuration. No secret values included in reports, command arguments or Git.
 - Commit: blocker/evidence recorded with LIVE-04; no completed real-data indexing commit claimed.
 - Next task: use an authorized configuration path with missing Gemini/reviewer values, perform provider/vector preflight, then existing transactional index/count/hash/retrieval workflow. Do not ask for secret values in chat.
+
+## Supplied Gemini key continuation — 2026-10-10
+
+### LIVE-05-A — Correct live embedding contract and enforce document input limits
+
+- Status: COMPLETED
+- Scope/files: existing `staging_search.py`, `scripts/index_notebook_staging.py`, their owned tests, `docs/rag/gemini-preflight.json`, `docs/rag/token-preflight-regression.json`, setup/workflow/notebook/progress documentation. No frontend, database schema/model or RAG rebuild. Private ignored.env updated with supplied key and the existing Blueprint model IDs, preserving other entries and mode0600; secrets omitted from output/reports/Git.
+- Live finding: nested task/dimension fields in embedContentConfig produced3072 values and a66889-byte response, rejected by the existing strict client. Top-level taskType/outputDimensionality returned768. Corrected client query preflight now passes with the supplied Gemini key; generation-model access remains unverified.
+- Coverage finding: model metadata reports inputTokenLimit2048; model-native countTokens reports4825 for the20581-character longest actual document. API accepted that document even with autoTruncate=false, so the earlier locally tested flag alone does not prove full source coverage. Do not infer token safety from a200 response or from character count.
+- Fix: preserve the existing model/vector contract, restore working top-level task/dimension fields, retain the optional truncation flag, and add native token validation before the existing bulk embedding step. Read model limit once, count every document longest-first, validate bounded JSON/count types and fail closed on oversized input/config/transport errors. No embeddings or database connection before all document checks pass.
+- Tests:12 focused TDD failures before implementation; focused89 passed/2 PostgreSQL skipped without explicit test URL. Additional token configuration/transport/size/count regressions and CLI refusal/preservation coverage added. Live corrected query returns768 values. Actual index CLI exits2 after only model metadata/countTokens requests with the4825/2048 mismatch; no bulk embeddings or database writes.
+- Problems: one test typing failure fixed before completion. Initial full redacted regression349 passed/0 failed/0 skipped, but coverage instrumentation imported AI modules before tracing, yielding78.58%; corrected runner traces collection-time imports and passes the explicit80% gate at93.92% app coverage. No live provider requests allowed during regressions; PostgreSQL tests remain real and isolated.
+- Final verification:349 passed/0 failed/0 skipped including both PostgreSQL tests; document token guard100% statement coverage. Ruff lint/format108 files, mypy97 files, diff whitespace, secret-exclusion and private.env0600 checks passed. Shared staging rows0 before/after; temporary schemas cleaned. No frontend differences against base. Sanitized JSON evidence distinguishes initial3072 mismatch from corrected768 output and the controlled oversized-record refusal.
+- Commit: task commit `fix(ai): validate live embedding dimensions and document limits` (resolve by title).
+- Next task: resolve long-record handling before actual3397-record indexing; reviewer token and actual actor ID also remain required for authenticated answers. Never silently switch embedding models or load truncated/fabricated vectors.
+
+### LIVE-05-B — Full-record indexing and authenticated answers
+
+- Status: BLOCKED
+- Files: progress/evidence/setup docs only for this remaining gate. Key and existing model IDs are configured privately; the earlier missing-Gemini-key notes are historical. Key access and query768 output are verified, generation-model access is not.
+- Dependencies: reviewed long-record handling consistent with the existing retrieval/database contract; the actual document is4825 tokens against the configured model's2048 limit. Existing single-vector-per-record schema cannot represent independent chunk retrieval without coordinated design. No automatic model switch, schema change, raw-record truncation, partial dataset import or fabricated vectors performed. Protected API also needs ADMIN_REVIEW_TOKEN and an actual ADMIN_REVIEWER_ID in private backend configuration.
+- Passing: provider query/model metadata/countTokens checks and349 regressions including real PostgreSQL tests. Failed tests:0 remaining; initial request-contract and local TDD failures resolved. Blocked: full actual-data embedding/indexing, deployed reviewer API readiness, real query quality/support and actual generation/citation verification.
+- Commit: evidence recorded with LIVE-05-A; no completed full-data indexing commit claimed.
+- Next task: coordinate chunk handling or an explicitly chosen account-enabled model with a larger native input limit and matching query-server configuration, then rerun guarded indexing/count/hash/retrieval checks. Reviewer credentials remain server-only. Rotate the Gemini key pasted into chat; replacement must not be sent in chat.
