@@ -1,9 +1,11 @@
 # Live RAG setup using the existing backend
 
 The RAG implementation is complete locally. This runbook configures and verifies
-it; it does not rebuild it. No authorized Yojana Saathi database is currently
-visible through the connected account. Its only project is unrelated/inactive.
-Do not use that project, the example localhost URL or frontend environment files.
+it; it does not rebuild it. The supplied SQL connection now passes and the target
+already has migration0005, pgvector and `vector(768)` staging storage. Gemini and
+reviewer configuration remains absent. The connector's visible project is still
+unrelated/inactive; direct SQL access uses the user's supplied target instead.
+Do not use the unrelated project, example localhost URL or frontend environment files.
 
 ## 1. Supply authorized server configuration
 
@@ -32,7 +34,7 @@ precedence. Never print settings objects, connection URLs or tokens.
 | `GEMINI_MODEL` | Account-enabled short generation model ID supporting the existing structured JSON request |
 | `ADMIN_REVIEW_TOKEN` | Private reviewer secret of at least32 characters, generated/stored in your secret manager |
 | `ADMIN_REVIEWER_ID` | Actual non-sensitive reviewer identity; must accompany the review token |
-| `STAGING_SEARCH_PG_URL` | Authorized disposable PostgreSQL test connection with `vector` installed and schema-create/drop permissions; use a direct session-compatible connection for the fixture's `search_path` options |
+| `STAGING_SEARCH_PG_URL` | Authorized PostgreSQL test connection with `vector` installed and schema-create/drop permissions; fixtures use unique explicitly qualified temporary schemas |
 | `RAG_VERIFY_BASE_URL` | Actual authorized running backend origin; used by the verification client, not backend Settings |
 | `RAG_VERIFY_QUERY` | Actual dataset-supported question without citizen information; verification-client process variable |
 
@@ -127,5 +129,6 @@ Record passing, failed and blocked checks separately in `PROGRESS.md`.
 
 All records remain unverified drafts. Provider token-limit rejection must halt
 indexing; do not enable truncation, mix MiniLM384 vectors or silently switch
-models to force success. Schema creation, migrations, real indexing and answer
-verification remain blocked until the correct configuration is supplied.
+models to force success. Actual-data indexing and answer
+verification remain blocked until Gemini/reviewer configuration is supplied.
+Connection and migration checks have passed; see `PROGRESS.md` for test outcomes.

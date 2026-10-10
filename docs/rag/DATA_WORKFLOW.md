@@ -4,7 +4,9 @@ Current state: actual CSV/exports were found at the workspace root. The cleaned
 JSON passed the existing importer with3,397 records and a local review artifact;
 [measured results](dataset-validation.json) include counts, hashes and missing
 fields. This is offline validation only; PostgreSQL/Gemini indexing and retrieval
-remain blocked by authorized configuration. Keep records unverified. Run these
+remain blocked by Gemini/reviewer configuration. The supplied PostgreSQL
+connection now passes with migration0005 and `vector(768)` staging storage;
+see `PROGRESS.md` for current verification outcomes. Keep records unverified. Run these
 steps sequentially;
 stop on any failure. Use a fresh backend environment installed from this checkout.
 
@@ -184,7 +186,8 @@ Run the existing two PostgreSQL integration tests first with
 .venv/bin/python -m pytest tests/ai/test_staging_search.py -v
 ```
 
-A skipped test is not a pass. Tests create unique schemas and drop only their own
+A skipped test is not a pass. Tests explicitly qualify ORM/DDL with unique
+schemas rather than relying on pooler startup `search_path`, and drop only their own
 schemas; `vector` must already be installed. Their records/provider responses are
 synthetic, so passing them still does not verify the real export or Gemini answers.
 

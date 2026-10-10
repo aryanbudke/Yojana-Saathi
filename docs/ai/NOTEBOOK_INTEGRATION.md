@@ -71,7 +71,7 @@ Every result carries `review_status: draft`, its `missing_fields` and the raw re
 
 `tests/ai/test_staging_index.py` uses synthetic exports and the existing model on SQLite to verify provenance, successful full replacement, invalid input rejection before deletion, and rollback after an insert fails following deletion. It also checks sanitized configuration/database failures and cleanup. SQLite is used for transaction verification only.
 
-The two pgvector integration tests run only when `STAGING_SEARCH_PG_URL` points at an authorized disposable PostgreSQL test database with `vector` already provisioned. Each run creates a unique temporary schema, creates only the staging table, and drops only its own schema in cleanup. Tests never install extensions or drop a fixed/shared schema. These tests remain skipped locally until that database is available.
+The two pgvector integration tests run only when `STAGING_SEARCH_PG_URL` points at an authorized PostgreSQL target with `vector` already provisioned. Each run creates a unique temporary schema, explicitly qualifies its ORM queries and table creation to that schema, and drops only its own schema in cleanup. Tests never install extensions or drop a fixed/shared schema. Both tests now pass against the supplied Supabase connection using synthetic records/provider responses; actual Gemini/data retrieval is still unverified.
 
 Run local checks from `services/api`:
 
@@ -88,7 +88,7 @@ Use a fresh environment installed from this checkout for actual CLI execution. T
 
 The adapter tests use explicitly synthetic temporary records. They verify that raw text is preserved, false verification claims cannot publish, missing eligibility remains visible, invalid/duplicate inputs fail, CLI import works and failures do not overwrite existing output.
 
-The actual export is now available and offline review import has passed. The last recorded Render health was reachable, but curator search returned503 because its administrative role was unconfigured; this is not a successful RAG verification. Phase C also requires independent profile labels, real guidance review and frontend/live evidence. This connection does not establish official source authenticity, matching accuracy or a completed live integration.
+The actual export is now available and offline review import has passed. The supplied SQL connection, migration0005, pgvector and staging vector(768)/RLS checks have passed. The two PostgreSQL tests pass with synthetic records and mocked provider responses. Actual-data indexing and answers remain blocked by missing Gemini/reviewer settings. The last recorded Render health was reachable, but curator search returned503 because its administrative role was unconfigured; this is not a successful RAG verification. Phase C also requires independent profile labels, real guidance review and frontend/live evidence. This connection does not establish official source authenticity, matching accuracy or a completed live integration.
 
 ## Canonical dataset handoff
 

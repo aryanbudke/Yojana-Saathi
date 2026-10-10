@@ -212,7 +212,7 @@ are preparation, not evidence that those commands ran.
 - Passing verification: existing importer revalidated the original export, canonical copy and existing review artifact for equality/hash;3397 draft/unverified rows, publication_allowed=false. Existing regression suite328 passed,94% app coverage; Ruff lint and mypy97 files passed. No runtime code rebuilt.
 - Failed tests: none. No live connection failure fabricated; absent configuration prevented an attempt.
 - Blocked tests: both PostgreSQL tests were explicitly invoked and skipped with `STAGING_SEARCH_PG_URL not set`. This is not PostgreSQL verification. Existing Starlette test-client deprecation warning only.
-- Commit: task commit `docs(ai): record live integration blockers and regression results` (resolve by title).
+- Commit: `22058ad` — `docs(ai): record live integration blockers and regression results`.
 - Next task: LIVE-04 connection/migrations only after a correct authorized configuration/account is supplied, following `LIVE_SETUP.md` and the existing data workflow.
 
 ### Remaining requested live tasks
@@ -232,3 +232,28 @@ Required next input is an authorized server configuration **path**, or connectio
 to the Supabase account/project holding Yojana Saathi; no credentials in chat.
 Setup names/commands are in `docs/rag/LIVE_SETUP.md`. No frontend changes,
 deployment, production migration, paid embedding calls or live success claims.
+
+## Supplied SQL configuration continuation — 2026-10-10
+
+### LIVE-04 — Database connection, migration and vector-schema verification
+
+- Status: COMPLETED
+- Files: ignored private `services/api/.env` (mode0600, never committed), owned `services/api/tests/ai/test_staging_search.py` fixture, `docs/rag/live-database-validation.json`, `docs/rag/LIVE_SETUP.md`, `docs/rag/DATA_WORKFLOW.md`, `docs/ai/NOTEBOOK_INTEGRATION.md`, this progress document. No frontend or RAG runtime changes. Supplied database credentials were sent through non-echoing input and saved only in the ignored private configuration; Sarvam key is not used/stored by this Gemini client.
+- Passing checks: SQL SELECT1; migration revision20261009_0005; existing vector extension; staging embedding column vector(768); staging RLS enabled. `alembic upgrade head` completed with no pending migration. Existing shared staging row count0; no source dataset rows inserted. Database metadata only, no credentials or citizen/record text printed.
+- Failure reproduced: the two PostgreSQL tests both errored at setup with DuplicateTable. Supabase's pooler did not apply the startup search_path, so unqualified DDL hit the existing shared staging table and failed; no existing rows/table were deleted. Each temporary schema was cleaned up.
+- Fix: use SQLAlchemy's existing engine-level schema_translate_map to qualify all ORM/DDL into the unique test schema. No runtime database model/schema changes or new dependencies. Focused retry2 passed/0 failed/0 skipped. Full regression330 passed/0 failed/0 skipped,92.67% app coverage in the redacted runner. Existing non-PostgreSQL fixtures used SQLite; only the two isolated-schema tests received the authorized SQL URL. Shared staging rows0 before and after; temporary schema inventory unchanged after cleanup. Ruff lint/format108 files and mypy97 files passed. Initial setup errors are resolved; no current failed tests.
+- Remaining configuration: GEMINI_API_KEY, GEMINI_EMBEDDING_MODEL, GEMINI_MODEL, ADMIN_REVIEW_TOKEN and ADMIN_REVIEWER_ID absent. Actual3397-record export/review artifact revalidated and equal; publication_allowed=false. Real import needs actual compatible embeddings, never fabricated vectors.
+- Commit: task commit `fix(ai): isolate pgvector tests on Supabase poolers` (resolve by title).
+- Next task: LIVE-05 real-data staging import/indexing when authorized Gemini configuration is supplied; authenticated answers also require reviewer settings.
+
+### LIVE-05 — Actual-data staging import/indexing and answers
+
+- Status: BLOCKED
+- Files modified: progress/setup/evidence documentation only; existing importer/indexer/RAG modules reused unchanged.
+- Dataset:3397 records offline-validated, canonical input and existing review artifact agree; all are unverified drafts. No original export overwritten, no MiniLM384 vectors imported, no fabricated768 vectors used. Shared staging contains0 actual records.
+- Dependencies: Gemini API key and account-enabled embedding/generation models in backend configuration. Reviewer token (32+ characters) and actual reviewer ID needed for protected answers. These five existing variables are missing. Sarvam credentials are not accepted by the existing Gemini REST client; no provider replacement attempted.
+- Passing: database migration/schema/vector checks, both previously skipped PostgreSQL tests,330 regression tests. Failed:0 after the fixture fix (initial2 setup errors resolved). Blocked: real provider dimension confirmation,3397-record embedding/indexing, actual query relevance/support and authenticated live answers.
+- Integration evidence: PostgreSQL test data/provider responses are synthetic even though the database is real. Their citation checks do not verify actual Gemini citations, policy accuracy or official eligibility. Unverified data remains unpublished; no publication operation or frontend change.
+- Credential handling: advise rotation of the database password and Sarvam key because they were pasted into chat; replacements belong only in private server configuration. No secret values included in reports, command arguments or Git.
+- Commit: blocker/evidence recorded with LIVE-04; no completed real-data indexing commit claimed.
+- Next task: use an authorized configuration path with missing Gemini/reviewer values, perform provider/vector preflight, then existing transactional index/count/hash/retrieval workflow. Do not ask for secret values in chat.

@@ -1,0 +1,29 @@
+{
+  "connection_verified": true,
+  "migration_revision": "20261009_0005",
+  "upgrade_head_result": "No pending migration",
+  "vector_extension_installed": true,
+  "staging_embedding_column": "vector(768)",
+  "staging_row_level_security_enabled": true,
+  "postgres_integration_tests": {
+    "passed": 2,
+    "failed_after_fix": 0,
+    "skipped": 0,
+    "initial_setup_errors": 2,
+    "resolved_issue": "Pooler startup search_path did not isolate test DDL; explicit schema translation now isolates ORM and DDL",
+    "records_and_provider_responses": "Synthetic"
+  },
+  "regression_tests": {
+    "passed": 330,
+    "failed": 0,
+    "skipped": 0,
+    "app_coverage_percent": 92.67
+  },
+  "shared_staging_rows_before": 0,
+  "shared_staging_rows_after": 0,
+  "temporary_schemas_cleaned": true,
+  "actual_dataset_offline_validated_records": 3397,
+  "actual_dataset_indexed": false,
+  "live_gemini_verified": false,
+  "official_source_authenticity_verified": false
+}

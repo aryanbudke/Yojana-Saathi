@@ -597,7 +597,8 @@ def pgvector_engine() -> Generator[Engine]:
             connection.execute(text(f"CREATE SCHEMA {schema}"))
         engine = None
         try:
-            engine = create_engine(url, connect_args={"options": f"-csearch_path={schema},public"})
+            # Poolers may ignore startup search_path; schema-qualify ORM queries and DDL.
+            engine = create_engine(url, execution_options={"schema_translate_map": {None: schema}})
             assert isinstance(StagingScheme.__table__, Table)
             StagingScheme.__table__.create(engine)
             yield engine
