@@ -333,7 +333,7 @@ override, frontend change, publication or remote deployment is authorized here.
 | AUTH-03 Grounded generation | COMPLETED | AUTH-02 committed; configured model and actual retrieved records |
 | AUTH-04 Citation/source review | COMPLETED | AUTH-03 committed; membership, raw-record equality and claim-support review |
 | AUTH-05 PostgreSQL integration tests | COMPLETED | Two existing isolated-schema tests; provider mocks explicitly distinguished |
-| AUTH-06 Full3397 indexing | PENDING | Verified quota headroom/pacing, native token guards and full transaction |
+| AUTH-06 Full3397 indexing | BLOCKED | Verified quota headroom/pacing, native token guards and full transaction |
 | AUTH-07 Publication boundary | PENDING | No unverified draft enters published/public matching tables |
 | AUTH-08 Regression checks | PENDING | All tests, relevant lint/types and secret/frontend preservation |
 | AUTH-09 Final evidence/progress | PENDING | Completed, failed and blocked outcomes clearly separated |
@@ -390,3 +390,35 @@ override, frontend change, publication or remote deployment is authorized here.
 - Files: postgresql-integration-verification.json and this progress file.
 - Problems: none. Commit: `test(ai): run both authorized pgvector integration checks` (resolve by title).
 - Next task: AUTH-06 quota-safe full3397 indexing after this commit.
+
+### AUTH-06 — Full actual-data staging indexing
+
+- Status: IN PROGRESS
+- Dependency: AUTH-05 verified/committed as `6ed4e4b`.
+- Scope: existing CLI/model/vector/schema contract, all3397 actual records; no frontend/publication changes.
+- Fix: batch20 leaves headroom below the observed100-input-per-minute quota; existing bounded429 retries preserved. Both task-type batching assertions failed before the fix. Final109 focused tests passed,2 database tests previously passed AUTH-05; Ruff lint/format/mypy pass.
+- Live preflight:20 actual documents pass native token checks, real embeddings768 and normalized pooled vectors; no database writes. Full CLI now running using real HTTPS with TLS validation and connection reuse, preserving all production parsing/limits/token guards. No fake provider responses, oldFAISS vectors or DB/auth bypass.
+- Files: owned batching constant/test, small-batch-verification.json, full-index-continuation.json and this progress file. Full transaction/count/hash/source/vector checks pending. Shared staging remains unchanged until every embedding succeeds.
+- Commit: pending full verification. Next task: AUTH-07 after this task is verified/committed; real-data failures must remain explicit.
+
+- First full retry stopped during native token preflight (last saved checkpoint1300 checks) before embedding or database writes. Exact preflight failure reason was not captured. A separate authorized connection confirms shared staging0. The instrumentation runner's stale final read-only socket then failed; it has exited. Retrying with bounded read-only connection timeouts, fresh diagnostic DB connections and at most two retries of transient HTTPS I/O errors in the temporary real-transport harness. Runtime token guards unchanged; no cached/fabricated responses. Initial attempt retained in full-index-retry-initial.json; full-index-continuation.json tracks the fresh run.
+
+### User-requested stop — 2026-10-10
+
+- Live tests stopped at the user's explicit request. AUTH-06 remains BLOCKED, not completed. The fresh native preflight passed3437 checks, producing3417 chunks (maximum2044 tokens); only120 actual chunk embeddings succeeded before the user-requested stop, with Gemini429 quota responses between batches. No complete snapshot or database transaction occurred; full3397 retrieval/grounding is unverified. Report records the final observed counts and provider errors.
+- Passing completed checks: private config, normal authenticated eight-record retrieval16/16, actual draft generation/citation support, and both real PostgreSQL tests. Initial generation400 was fixed and verified. Focused batching tests109 passed/2 DB tests previously passed separately; full regression after this change was not run.
+- Remaining AUTH-07/08/09 work is paused by the user's stop instruction; no further tests or indexing scheduled. All unverified records remain draft evidence; no publication writes made. Frontend untouched. Local batching fix remains uncommitted because the full-index task did not pass verification.
+
+## Local website testing — new user scope
+
+The user authorized localhost website integration after stopping bulk indexing. Work remains sequential: WEB-01 isolated eight-record API demo; WEB-02 matching website test page; WEB-03 browser verification and handoff. The latest frontend is preserved in a separate worktree/branch feat/local-rag-demo; no edits to the other developer's checkout.
+
+### WEB-01 — Reviewer-authenticated local sample API
+
+- Status: COMPLETED
+- Files: scripts/serve_local_rag_demo.py, tests/ai/test_local_rag_demo.py, verified20-input batching fix/test, local-demo-verification.json and this progress file.
+- Implementation: reuses import, native-token chunking, actual Gemini768 embeddings, pooling, existing models/application/routes and reviewer auth.8 actual records go into a unique disposable schema; other local tables are empty, with no published schemes. No public staging replacement or publication writes. Bind127.0.0.1:8000 only; reject non-development or missing reviewer configuration. Normal shutdown removes only the owned schema.
+- Verification:5 new synthetic control-flow tests pass (normal auth factory, safe create/drop, preparation failures prevent DB writes, server failure cleanup);114 related tests pass/2 previously verified PostgreSQL tests skipped in this local run. Ruff/format/mypy pass after two import/type and two line-length issues were fixed. Real HTTP health200, absent/wrong token403, authenticated actual Atal search200 with apy first, publication_allowed=false; empty public catalogue200. Server remains running for manual testing.
+- Full3397 index remains incomplete; no bulk run resumed. Secrets remain private; no frontend edits in the upstream checkout.
+- Commit: `feat(ai): serve an isolated authenticated local RAG sample` (resolve by title).
+- Next task: WEB-02 frontend test page in the isolated latest-UI worktree after this commit.

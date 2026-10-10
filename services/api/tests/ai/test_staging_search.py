@@ -259,7 +259,7 @@ def test_embed_batches_requests_with_task_and_dimensions(
     vectors = staging_search.embed(configured(), ["text"] * 250, task)
 
     assert len(vectors) == 250
-    assert [len(call["requests"]) for call in calls] == [100, 100, 50]
+    assert [len(call["requests"]) for call in calls] == [20] * 12 + [10]
     first = calls[0]["requests"][0]
     assert first["taskType"] == task
     assert first["outputDimensionality"] == DIMENSIONS

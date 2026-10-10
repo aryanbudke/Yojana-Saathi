@@ -21,7 +21,8 @@ from app.db.models import STAGING_EMBEDDING_DIMENSIONS, StagingScheme
 from app.modules.ai.prompts import STAGING_ANSWER_PROMPT
 from app.modules.ai.settings import AISettings
 
-_BATCH_SIZE = 100
+# Leave headroom below the observed100 per-minute input quota; bounded429 retries pace bulk work.
+_BATCH_SIZE = 20
 _RATE_LIMIT_WAIT_SECONDS = 30
 _CONTEXT_CHARS_PER_RECORD = 32000
 _DOCUMENT_FIELDS = (

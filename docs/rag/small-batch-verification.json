@@ -1,0 +1,10 @@
+{
+  "scope": "20 actual scheme document embeddings; no database writes",
+  "batch_size": 20,
+  "model": "gemini-embedding-001",
+  "status": "passed",
+  "vectors": 20,
+  "dimensions": 768,
+  "native_token_checked": true,
+  "exact_source_coverage": true
+}
