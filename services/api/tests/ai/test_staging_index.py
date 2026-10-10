@@ -74,7 +74,9 @@ def indexer(monkeypatch: pytest.MonkeyPatch) -> ModuleType:
     assert spec is not None and spec.loader is not None
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
-    monkeypatch.setattr(module, "validate_document_lengths", lambda *a: None)
+    monkeypatch.setattr(
+        module, "prepare_document_chunks", lambda settings, texts: [[(text, 1)] for text in texts]
+    )
     return module
 
 
@@ -205,7 +207,7 @@ def test_token_preflight_failure_prevents_embedding_and_database_writes(
     preflight = Mock(side_effect=EmbeddingUnavailable("SYNTHETIC document exceeds token limit"))
     embedding, engine = Mock(), Mock(return_value=database)
     monkeypatch.setattr(sys, "argv", ["index_notebook_staging.py", str(export)])
-    monkeypatch.setattr(indexer, "validate_document_lengths", preflight)
+    monkeypatch.setattr(indexer, "prepare_document_chunks", preflight)
     monkeypatch.setattr(indexer, "embed", embedding)
     monkeypatch.setattr(indexer, "create_database_engine", engine)
     with pytest.raises(SystemExit) as result:
@@ -213,6 +215,39 @@ def test_token_preflight_failure_prevents_embedding_and_database_writes(
     assert result.value.code == 2
     preflight.assert_called_once()
     embedding.assert_not_called()
+    engine.assert_not_called()
+    assert slugs(database) == ["synthetic-existing"]
+
+
+def test_cli_pools_all_chunks_and_keeps_original_record(
+    database: Engine, export: Path, indexer: ModuleType, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    chunks = [[("SYNTHETIC first", 1), ("SYNTHETIC last", 3)]]
+    embedding = Mock(return_value=[VECTOR, [0.0, 1.0] + [0.0] * (DIMENSIONS - 2)])
+    monkeypatch.setattr(sys, "argv", ["index_notebook_staging.py", str(export)])
+    monkeypatch.setattr(indexer, "prepare_document_chunks", lambda *a: chunks)
+    monkeypatch.setattr(indexer, "embed", embedding)
+    monkeypatch.setattr(indexer, "create_database_engine", lambda: database)
+    indexer.main()
+    assert embedding.call_args.args[1] == ["SYNTHETIC first", "SYNTHETIC last"]
+    with Session(database) as session:
+        row = session.scalars(select(StagingScheme)).one()
+        assert row.record == stage_notebook_export(export)["records"][0]["record"]  # type: ignore[index]
+        assert row.embedding[1] / row.embedding[0] == pytest.approx(3)
+
+
+def test_cli_invalid_pooled_vector_preserves_snapshot(
+    database: Engine, export: Path, indexer: ModuleType, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    chunks = [[("SYNTHETIC first", 1), ("SYNTHETIC last", 1)]]
+    monkeypatch.setattr(sys, "argv", ["index_notebook_staging.py", str(export)])
+    monkeypatch.setattr(indexer, "prepare_document_chunks", lambda *a: chunks)
+    monkeypatch.setattr(indexer, "embed", Mock(return_value=[VECTOR, [-value for value in VECTOR]]))
+    engine = Mock(return_value=database)
+    monkeypatch.setattr(indexer, "create_database_engine", engine)
+    with pytest.raises(SystemExit) as result:
+        indexer.main()
+    assert result.value.code == 2
     engine.assert_not_called()
     assert slugs(database) == ["synthetic-existing"]
 

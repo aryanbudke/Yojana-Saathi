@@ -57,8 +57,10 @@ def document_text(record: dict[str, str | None]) -> str:
     return "\n".join(f"{field}: {record.get(field) or ''}" for field in _DOCUMENT_FIELDS)
 
 
-def validate_document_lengths(settings: AISettings, texts: Sequence[str]) -> None:
-    """Count every document before embedding; provider truncation flags are insufficient."""
+def prepare_document_chunks(
+    settings: AISettings, texts: Sequence[str]
+) -> list[list[tuple[str, int]]]:
+    """Preserve full text; count every final chunk before generating any embeddings."""
 
     key, model = settings.api_key, settings.embedding_model
     if key is None or not key.get_secret_value().strip() or model is None:
@@ -73,7 +75,8 @@ def validate_document_lengths(settings: AISettings, texts: Sequence[str]) -> Non
         limit = json.loads(raw)["inputTokenLimit"]
         if isinstance(limit, bool) or not isinstance(limit, int) or limit < 1:
             raise ValueError("Invalid input token limit")
-        for text in sorted(texts, key=len, reverse=True):
+
+        def split(text: str) -> list[tuple[str, int]]:
             payload = {"contents": [{"parts": [{"text": text}]}]}
             request = Request(
                 url + ":countTokens", data=json.dumps(payload).encode(), headers=headers
@@ -83,15 +86,62 @@ def validate_document_lengths(settings: AISettings, texts: Sequence[str]) -> Non
             if len(raw) > 64000:
                 raise ValueError("Oversized token count")
             count = json.loads(raw)["totalTokens"]
-            if isinstance(count, bool) or not isinstance(count, int) or count < 0:
+            if isinstance(count, bool) or not isinstance(count, int) or count < 1:
                 raise ValueError("Invalid token count")
-            if count > limit:
+            if count <= limit:
+                return [(text, count)]
+            if len(text) < 2:
                 raise EmbeddingUnavailable(
-                    f"A staging record has {count} tokens; model limit is {limit}. "
-                    "Review long-record handling before indexing."
+                    "Gemini token limit cannot accommodate a complete character"
                 )
+            boundary = text.rfind("\n", len(text) // 4, 3 * len(text) // 4)
+            midpoint = boundary + 1 if boundary >= 0 else len(text) // 2
+            return split(text[:midpoint]) + split(text[midpoint:])
+
+        groups: list[list[tuple[str, int]]] = [[] for _ in texts]
+        for index, text in sorted(enumerate(texts), key=lambda item: len(item[1]), reverse=True):
+            groups[index] = split(text)
+        return groups
     except (OSError, HTTPException, ValueError, TypeError, KeyError, RecursionError):
         raise EmbeddingUnavailable("Gemini document token preflight failed") from None
+
+
+def pool_document_vectors(
+    chunks: Sequence[Sequence[tuple[str, int]]], vectors: Sequence[Sequence[float]]
+) -> list[list[float]]:
+    """Token-weight normalized chunks into the existing one-vector-per-scheme contract."""
+
+    try:
+        _validate_vectors(vectors, sum(len(group) for group in chunks))
+        result = []
+        offset = 0
+        for group in chunks:
+            if not group or any(
+                isinstance(count, bool) or not isinstance(count, int) or count < 1
+                for _, count in group
+            ):
+                raise ValueError("Invalid chunk weights")
+            total = sum(count for _, count in group)
+            normalized = []
+            for vector in vectors[offset : offset + len(group)]:
+                norm = math.hypot(*vector)
+                normalized.append([value / norm for value in vector])
+            # shortcut: pooling dilutes narrow clauses; use passage storage if recall fails review.
+            pooled = [
+                math.fsum(
+                    vector[axis] * (count / total)
+                    for (_, count), vector in zip(group, normalized, strict=True)
+                )
+                for axis in range(STAGING_EMBEDDING_DIMENSIONS)
+            ]
+            norm = math.hypot(*pooled)
+            if norm <= 1e-12:
+                raise ValueError("Degenerate pooled embedding")
+            result.append([value / norm for value in pooled])
+            offset += len(group)
+        return result
+    except (ValueError, TypeError, OverflowError):
+        raise EmbeddingUnavailable("Invalid document chunk embeddings or weights") from None
 
 
 def embed(

@@ -1,0 +1,232 @@
+{
+  "timestamp": "2026-10-10T03:20:30.794410+00:00",
+  "purpose": "bounded actual-data chunk smoke, not full-dataset quality verification",
+  "actual_snapshot_indexed": false,
+  "published": false,
+  "generation_tested": false,
+  "status": "passed",
+  "input_sha256": "7a37ee1dd159521ea86e5fb21c86dceb5220b42bb43657d43d797d1d5a65392a",
+  "embedding_model": "gemini-embedding-001",
+  "dimensions": 768,
+  "records": 8,
+  "chunks": 14,
+  "chunk_counts_by_record": {
+    "ky-smsp": 4,
+    "facapabgist": 3,
+    "financial-assistance-scheme": 2,
+    "cm-sky": 1,
+    "apy": 1,
+    "pmjdy": 1,
+    "nhdpccwms": 1,
+    "pmsfbcs": 1
+  },
+  "maximum_leaf_tokens": 1896,
+  "exact_text_coverage": true,
+  "unit_normalized_scheme_vectors": true,
+  "postgresql_actual_subset_retrieval": true,
+  "results": [
+    {
+      "query_type": "title",
+      "query": "Krishonnati Yojana - Sub Mission On Seed And Planting Material (SMSP)",
+      "expected_slug": "ky-smsp",
+      "top3": [
+        "ky-smsp",
+        "cm-sky",
+        "financial-assistance-scheme"
+      ],
+      "top1_correct": true,
+      "top3_contains_expected": true
+    },
+    {
+      "query_type": "title",
+      "query": "Financial Assistance For Cultural Activities In Performing Arts For Building Grants Including Studio Theatres",
+      "expected_slug": "facapabgist",
+      "top3": [
+        "facapabgist",
+        "financial-assistance-scheme",
+        "ky-smsp"
+      ],
+      "top1_correct": true,
+      "top3_contains_expected": true
+    },
+    {
+      "query_type": "title",
+      "query": "Agriculture And Processed Foods Export Promotion Scheme Of APEDA For The 15th Finance Commission Cycle (2021-22 To 2025-26)",
+      "expected_slug": "financial-assistance-scheme",
+      "top3": [
+        "financial-assistance-scheme",
+        "ky-smsp",
+        "facapabgist"
+      ],
+      "top1_correct": true,
+      "top3_contains_expected": true
+    },
+    {
+      "query_type": "title",
+      "query": "Chief Minister\u2019s Shasakt Kisan Yojana",
+      "expected_slug": "cm-sky",
+      "top3": [
+        "cm-sky",
+        "ky-smsp",
+        "financial-assistance-scheme"
+      ],
+      "top1_correct": true,
+      "top3_contains_expected": true
+    },
+    {
+      "query_type": "title",
+      "query": "Atal Pension Yojana",
+      "expected_slug": "apy",
+      "top3": [
+        "apy",
+        "pmjdy",
+        "ky-smsp"
+      ],
+      "top1_correct": true,
+      "top3_contains_expected": true
+    },
+    {
+      "query_type": "title",
+      "query": "Pradhan Mantri Jan Dhan Yojana",
+      "expected_slug": "pmjdy",
+      "top3": [
+        "pmjdy",
+        "apy",
+        "nhdpccwms"
+      ],
+      "top1_correct": true,
+      "top3_contains_expected": true
+    },
+    {
+      "query_type": "title",
+      "query": "National Handloom Development Programme: Concessional Credit/Weaver MUDRA Scheme",
+      "expected_slug": "nhdpccwms",
+      "top3": [
+        "nhdpccwms",
+        "facapabgist",
+        "financial-assistance-scheme"
+      ],
+      "top1_correct": true,
+      "top3_contains_expected": true
+    },
+    {
+      "query_type": "title",
+      "query": "Pre-Matric Scholarship for Backward Class Students",
+      "expected_slug": "pmsfbcs",
+      "top3": [
+        "pmsfbcs",
+        "pmjdy",
+        "facapabgist"
+      ],
+      "top1_correct": true,
+      "top3_contains_expected": true
+    },
+    {
+      "query_type": "topic",
+      "query": "seed testing laboratories certification and seed planting material subsidy",
+      "expected_slug": "ky-smsp",
+      "top3": [
+        "ky-smsp",
+        "financial-assistance-scheme",
+        "cm-sky"
+      ],
+      "top1_correct": true,
+      "top3_contains_expected": true
+    },
+    {
+      "query_type": "topic",
+      "query": "building grants for studio theatres and performing arts cultural activities",
+      "expected_slug": "facapabgist",
+      "top3": [
+        "facapabgist",
+        "ky-smsp",
+        "financial-assistance-scheme"
+      ],
+      "top1_correct": true,
+      "top3_contains_expected": true
+    },
+    {
+      "query_type": "topic",
+      "query": "APEDA assistance for refrigerated containers and food export infrastructure",
+      "expected_slug": "financial-assistance-scheme",
+      "top3": [
+        "financial-assistance-scheme",
+        "ky-smsp",
+        "facapabgist"
+      ],
+      "top1_correct": true,
+      "top3_contains_expected": true
+    },
+    {
+      "query_type": "topic",
+      "query": "tea and rubber plantation cash assistance",
+      "expected_slug": "cm-sky",
+      "top3": [
+        "cm-sky",
+        "ky-smsp",
+        "financial-assistance-scheme"
+      ],
+      "top1_correct": true,
+      "top3_contains_expected": true
+    },
+    {
+      "query_type": "topic",
+      "query": "pension on attaining sixty years for subscribers",
+      "expected_slug": "apy",
+      "top3": [
+        "apy",
+        "pmjdy",
+        "facapabgist"
+      ],
+      "top1_correct": true,
+      "top3_contains_expected": true
+    },
+    {
+      "query_type": "topic",
+      "query": "zero balance basic savings bank account",
+      "expected_slug": "pmjdy",
+      "top3": [
+        "pmjdy",
+        "apy",
+        "nhdpccwms"
+      ],
+      "top1_correct": true,
+      "top3_contains_expected": true
+    },
+    {
+      "query_type": "topic",
+      "query": "handloom weaver loans with margin money assistance",
+      "expected_slug": "nhdpccwms",
+      "top3": [
+        "nhdpccwms",
+        "facapabgist",
+        "pmjdy"
+      ],
+      "top1_correct": true,
+      "top3_contains_expected": true
+    },
+    {
+      "query_type": "topic",
+      "query": "pre matric scholarship for backward class school students",
+      "expected_slug": "pmsfbcs",
+      "top3": [
+        "pmsfbcs",
+        "pmjdy",
+        "ky-smsp"
+      ],
+      "top1_correct": true,
+      "top3_contains_expected": true
+    }
+  ],
+  "top1_hits": 16,
+  "top3_hits": 16,
+  "queries": 16,
+  "provider_requests": {
+    "model_metadata": 1,
+    "count_tokens": 20,
+    "embedding_batches": 2
+  },
+  "shared_staging_rows_before": 0,
+  "shared_staging_rows_after": 0,
+  "temporary_schema_cleaned": true
+}

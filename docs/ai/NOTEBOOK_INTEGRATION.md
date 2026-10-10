@@ -1,6 +1,6 @@
 # SarkarSeva notebook connection
 
-The actual cleaned notebook export has now passed the existing offline importer with3,397 unverified records. All lack official URLs and verification dates;13 lack documents and4 lack application text. It cannot enter public matching directly. The validated local review artifact and [measured report](../rag/dataset-validation.json) preserve source hashes and draft status; no PostgreSQL/Gemini indexing or real retrieval has been verified.
+The actual cleaned notebook export has now passed the existing offline importer with3,397 unverified records. All lack official URLs and verification dates;13 lack documents and4 lack application text. It cannot enter public matching directly. The validated local review artifact and [measured report](../rag/dataset-validation.json) preserve source hashes and draft status; full-snapshot indexing and generated citations remain unverified. A bounded eight-record smoke check now passes16/16 actual title/topic queries with Gemini vectors and PostgreSQL in a disposable schema; the shared staging snapshot is still empty.
 
 ## Export and import
 
@@ -42,7 +42,7 @@ Reviewers can semantically search the unverified notebook records to decide whic
 
 1. Run migrations (`20261009_0005` enables the `vector` extension, creates `staging_schemes` and turns on row-level security for it, matching `0004`). Supabase supports `vector`; other hosts must provide it.
 2. Set `GEMINI_API_KEY` and `GEMINI_EMBEDDING_MODEL` (configured for 768 dimensions). Live provider compatibility still requires verification.
-3. From `services/api`, index the export. Each run validates the entire nonempty export, the model's native token count for every document, and all embeddings before replacing the whole staging table in one transaction. Oversized records, token preflight and embedding/configuration failures never open a database write; database/commit failures roll back the replacement. This is a full snapshot replacement, not an append operation:
+3. From `services/api`, index the export. Each run validates the entire nonempty export, the model's native token count for every final chunk, and all embeddings before replacing the whole staging table in one transaction. Oversized texts are split without dropping characters, and normalized chunk vectors are token-weighted into the existing scheme vector. Token preflight and embedding/configuration failures never open a database write; database/commit failures roll back the replacement. This is a full snapshot replacement, not an append operation:
 
    ```bash
    .venv/bin/python scripts/index_notebook_staging.py /absolute/path/sarkarseva_processed/schemes_clean.json
@@ -71,7 +71,7 @@ Every result carries `review_status: draft`, its `missing_fields` and the raw re
 
 `tests/ai/test_staging_index.py` uses synthetic exports and the existing model on SQLite to verify provenance, successful full replacement, invalid input rejection before deletion, and rollback after an insert fails following deletion. It also checks sanitized configuration/database failures and cleanup. SQLite is used for transaction verification only.
 
-The two pgvector integration tests run only when `STAGING_SEARCH_PG_URL` points at an authorized PostgreSQL target with `vector` already provisioned. Each run creates a unique temporary schema, explicitly qualifies its ORM queries and table creation to that schema, and drops only its own schema in cleanup. Tests never install extensions or drop a fixed/shared schema. Both tests now pass against the supplied Supabase connection using synthetic records/provider responses; actual Gemini/data retrieval is still unverified.
+The two pgvector integration tests run only when `STAGING_SEARCH_PG_URL` points at an authorized PostgreSQL target with `vector` already provisioned. Each run creates a unique temporary schema, explicitly qualifies its ORM queries and table creation to that schema, and drops only its own schema in cleanup. Tests never install extensions or drop a fixed/shared schema. Both tests now pass against the supplied Supabase connection using synthetic records/provider responses; full-dataset Gemini retrieval and actual generated citations remain unverified. The separate eight-record smoke check uses actual provider vectors and PostgreSQL, preserves full embedded text and cleans up its disposable schema. Pooling can dilute narrow clauses; it is not independent passage retrieval.
 
 Run local checks from `services/api`:
 

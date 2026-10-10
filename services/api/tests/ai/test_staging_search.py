@@ -276,7 +276,8 @@ def test_document_token_preflight_checks_longest_first(monkeypatch: pytest.Monke
         return BytesIO(json.dumps(next(responses)).encode())
 
     monkeypatch.setattr(staging_search, "urlopen", transport)
-    staging_search.validate_document_lengths(configured(), ["S", "SYNTHETIC"])
+    groups = staging_search.prepare_document_chunks(configured(), ["S", "SYNTHETIC"])
+    assert groups == [[("S", 1)], [("SYNTHETIC", 10)]]
     assert calls[0].full_url.endswith("/models/test-embedding")
     assert calls[1].full_url.endswith(":countTokens")
     payload = calls[1].data
@@ -293,6 +294,7 @@ def test_document_token_preflight_checks_longest_first(monkeypatch: pytest.Monke
         [{"inputTokenLimit": "10"}],
         [{"inputTokenLimit": 10}, {"totalTokens": True}],
         [{"inputTokenLimit": 10}, {"totalTokens": -1}],
+        [{"inputTokenLimit": 10}, {"totalTokens": 0}],
         [{"inputTokenLimit": 10}, {"totalTokens": "1"}],
         [{}],
         [{"inputTokenLimit": 10}, {}],
@@ -306,7 +308,7 @@ def test_document_token_preflight_rejects_oversized_or_invalid_counts(
         staging_search, "urlopen", lambda *a, **k: BytesIO(json.dumps(next(pending)).encode())
     )
     with pytest.raises(staging_search.EmbeddingUnavailable):
-        staging_search.validate_document_lengths(configured(), ["SYNTHETIC"])
+        staging_search.prepare_document_chunks(configured(), ["S"])
 
 
 @pytest.mark.parametrize("missing", ["key", "blank-key", "model"])
@@ -321,7 +323,7 @@ def test_document_token_preflight_requires_config_before_transport(
     transport = Mock()
     monkeypatch.setattr(staging_search, "urlopen", transport)
     with pytest.raises(staging_search.EmbeddingUnavailable):
-        staging_search.validate_document_lengths(settings, ["SYNTHETIC"])
+        staging_search.prepare_document_chunks(settings, ["SYNTHETIC"])
     transport.assert_not_called()
 
 
@@ -348,7 +350,7 @@ def test_document_token_preflight_fails_closed_on_transport_and_response_errors(
 
     monkeypatch.setattr(staging_search, "urlopen", transport)
     with pytest.raises(staging_search.EmbeddingUnavailable):
-        staging_search.validate_document_lengths(configured(), ["SYNTHETIC"])
+        staging_search.prepare_document_chunks(configured(), ["SYNTHETIC"])
 
 
 def test_embed_rejects_wrong_shape(monkeypatch: pytest.MonkeyPatch) -> None:

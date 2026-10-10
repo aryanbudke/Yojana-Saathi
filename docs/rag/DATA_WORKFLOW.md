@@ -1,16 +1,18 @@
 # Notebook data → curator staging → retrieval verification
 
-Current state: actual CSV/exports were found at the workspace root. The cleaned
-JSON passed the existing importer with3,397 records and a local review artifact;
-[measured results](dataset-validation.json) include counts, hashes and missing
-fields. This is offline validation only; PostgreSQL/Gemini indexing and retrieval
-remain blocked by long-record handling and reviewer configuration. Gemini query
-preflight now verifies768-dimensional output; the actual index command safely
-refuses a4825-token record against the model's2048-token limit. The supplied PostgreSQL
-connection now passes with migration0005 and `vector(768)` staging storage;
-see `PROGRESS.md` for current verification outcomes. Keep records unverified. Run these
-steps sequentially;
-stop on any failure. Use a fresh backend environment installed from this checkout.
+Current state: the actual cleaned JSON passes the existing importer with3,397
+unverified records. The supplied PostgreSQL target has migration0005, pgvector
+and `vector(768)` staging storage; Gemini768-dimensional output is confirmed.
+Token-checked chunking now preserves oversized text and pools chunk embeddings
+into the existing one-vector-per-scheme contract. A bounded smoke test using the
+three longest records and five other actual records passes16/16 title/topic
+queries against PostgreSQL in a disposable schema. This is an eight-record
+smoke check, not full-dataset relevance or citation verification. The shared
+staging snapshot is still empty; full indexing and authenticated answers are
+subsequent gates. Reviewer configuration remains absent. See
+[chunk smoke evidence](chunk-smoke-verification.json) and `PROGRESS.md`.
+Keep records unverified. Run these steps sequentially and stop on any failure.
+Use a backend environment installed from this checkout.
 
 ## 1. Offline import and quality review
 
@@ -81,14 +83,28 @@ Google documents an input limit of2,048 tokens for
 Character counts do not establish token counts. The actual export includes
 documents up to20,581 characters; provider acceptance and token coverage still
 require live checks. The largest actual document counts4825 tokens. The existing
-index CLI now reads the model's input limit and counts every document with its
-`countTokens` endpoint before generating bulk embeddings. It checks longest text
-first for early refusal, rejects malformed/oversized count responses, and stops
-before database access on any failure. Count requests add provider traffic and
-must also fit the account's quota; errors fail closed. Review chunking or an
-account-enabled higher-capacity model with coordinated query configuration
-before retrying; no automatic model switch is provided. See
-[sanitized live preflight evidence](gemini-preflight.json).
+index CLI reads the model's native input limit and counts documents longest-first
+before generating any embeddings. Oversized texts are recursively split near
+central newline boundaries, with a character midpoint fallback. Every final
+chunk is independently counted and must fit the native limit. Joining those
+chunks reconstructs the exact original embedded text, including whitespace;
+no clauses or characters are dropped. Malformed/oversized metadata/count
+responses and provider errors stop before bulk embedding and database access.
+Count requests add provider traffic and must fit the account's quota.
+
+Gemini document chunks use the configured model, retrieval-document task and768
+dimensions. Normalize each chunk vector, take its token-weighted mean within the
+scheme, then normalize the result. This is a deliberate scheme-discovery
+approximation that preserves the current single-vector storage/API contract;
+it does not provide independently searchable passages. Specific clauses can be
+diluted by pooling, so query review remains required. If broader recall review
+fails, coordinate passage storage with the backend owner rather than claiming
+accuracy. Short records use their existing unsplit text. Query embeddings and
+cosine ranking remain unchanged, and answers still use the complete raw record.
+See Google's [normalization guidance](https://ai.google.dev/gemini-api/docs/embeddings)
+and [bounded smoke evidence](chunk-smoke-verification.json). The historical
+[preflight report](gemini-preflight.json) records the original oversized-input
+refusal, before chunking was implemented. No automatic model switch is provided.
 
 The staging model does not store embedding-model identity. Keep an external run
 record containing the input SHA-256, actual row count, model identifier,768
@@ -149,8 +165,8 @@ Complete offline review and preflight before running it:
 .venv/bin/python scripts/index_notebook_staging.py ../../data/schemes/schemes_clean.json
 ```
 
-The existing pipeline embeds all records before database replacement, validates
-vectors, and commits deletion/insertion together. Validation/provider failures
+The existing pipeline token-checks all chunks and embeds/pools all records before
+database replacement, validates vectors, and commits deletion/insertion together. Validation/provider failures
 leave staging untouched; database/commit failures roll back the replacement.
 Do not use `staging-review.json` as the input; it is a different review contract.
 

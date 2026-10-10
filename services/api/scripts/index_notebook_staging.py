@@ -17,8 +17,9 @@ from app.modules.ai.staging_search import (
     EmbeddingUnavailable,
     document_text,
     embed,
+    pool_document_vectors,
+    prepare_document_chunks,
     replace_snapshot,
-    validate_document_lengths,
 )
 
 
@@ -36,13 +37,15 @@ def main() -> None:
     try:
         settings = AISettings()
         texts = [document_text(item["record"]) for item in records]
-        validate_document_lengths(settings, texts)
-        vectors = embed(
+        chunks = prepare_document_chunks(settings, texts)
+        print(f"Token-checked {sum(map(len, chunks))} chunks; generating scheme embeddings...")
+        chunk_vectors = embed(
             settings,
-            texts,
+            [text for group in chunks for text, _ in group],
             "RETRIEVAL_DOCUMENT",
             retries=6,
         )
+        vectors = pool_document_vectors(chunks, chunk_vectors)
     except ValidationError:
         parser.error("Invalid Gemini configuration; check server environment settings")
     except EmbeddingUnavailable as exc:

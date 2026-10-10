@@ -4,8 +4,10 @@ The RAG implementation is complete locally. This runbook configures and verifies
 it; it does not rebuild it. The supplied SQL connection now passes and the target
 already has migration0005, pgvector and `vector(768)` staging storage. The supplied
 Gemini key now passes768-dimensional query preflight with the existing Blueprint
-models configured privately. Full-data indexing is blocked by the model's input
-limit (4825 tokens measured versus2048 allowed), and reviewer settings are absent.
+models configured privately. Oversized text now uses native-token-checked chunks
+and pooled scheme vectors; eight actual records pass a16-query PostgreSQL smoke
+check. Full-snapshot indexing/quality and authenticated answers remain unverified;
+reviewer settings are absent.
 The connector's visible project is still
 unrelated/inactive; direct SQL access uses the user's supplied target instead.
 Do not use the unrelated project, example localhost URL or frontend environment files.
