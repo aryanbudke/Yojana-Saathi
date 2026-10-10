@@ -7,7 +7,7 @@ tests and acceptance checks pass.
 |---|---|---|
 | DM-01 | Inspect dataset and matching/RAG dependency boundary | COMPLETED |
 | DM-02 | Add structured support-needs profile input | COMPLETED |
-| DM-03 | Normalize safe rules and query dataset directly with SQL | PENDING |
+| DM-03 | Normalize safe rules and query dataset directly with SQL | COMPLETED |
 | DM-04 | Filter mandatory failures and rank deterministic matches | PENDING |
 | DM-05 | Explain matches, missing facts, and preliminary status | PENDING |
 | DM-06 | Separate citizen matching routes from RAG/admin routes | PENDING |
@@ -51,3 +51,22 @@ tests and acceptance checks pass.
 - **Commit reference:** This checkpoint's `feat(profile)` commit.
 - **Next task:** DM-03 — Normalize safe rules and query the dataset directly
   with SQL.
+
+## DM-03 — Conservative normalization and direct SQL dataset query
+
+- **Status:** COMPLETED
+- **Files created or modified:**
+  `services/api/app/modules/matching/preliminary.py`,
+  `services/api/app/repositories/preliminary_schemes.py`, and
+  `services/api/tests/matching/test_preliminary.py`.
+- **Tests executed:** Ruff and focused mypy passed; preliminary repository,
+  normalizer, and draft-import tests passed (8 tests).
+- **Problems encountered:** The initial sentence boundary split an income
+  condition after the abbreviation `Rs.` and a fixture accidentally assigned
+  the same student eligibility text to every category. Both were corrected and
+  the full focused test set was rerun successfully.
+- **Safety result:** Proposed age, income, occupation, and residence rules are
+  always marked unverified. Unrecognized text is retained as an uncertain
+  fragment and no proposed rule is evaluated as citizen eligibility.
+- **Commit reference:** This checkpoint's `feat(matching)` commit.
+- **Next task:** DM-04 — Exclude mandatory failures and rank direct matches.
