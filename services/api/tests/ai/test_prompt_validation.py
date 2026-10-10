@@ -41,6 +41,19 @@ def test_extraction_preserves_unknowns_and_demands_original_evidence() -> None:
     assert facts.family_income_inr is None
 
 
+def test_extraction_accepts_only_explicit_normalized_support_needs() -> None:
+    raw = json.dumps(
+        {
+            "facts": {"support_needs": ["Education", "education", "Housing"]},
+            "evidence": {"support_needs": "education and housing support"},
+        }
+    )
+
+    facts = validate_extraction(raw, "I need education and housing support")
+
+    assert facts.support_needs == ["education", "housing"]
+
+
 @pytest.mark.parametrize(
     "payload",
     [
@@ -94,3 +107,10 @@ def test_identifiers_cannot_be_hidden_in_free_text_profile_fields() -> None:
 def test_common_identifiers_are_not_free_text_facts(value: str) -> None:
     with pytest.raises(ValueError):
         ConfirmedFacts(occupation=value)
+
+
+def test_support_needs_reject_identifiers_and_excessive_values() -> None:
+    with pytest.raises(ValidationError):
+        ConfirmedFacts(support_needs=["education", "alice@example.test"])
+    with pytest.raises(ValidationError):
+        ConfirmedFacts(support_needs=[f"need-{index}" for index in range(11)])

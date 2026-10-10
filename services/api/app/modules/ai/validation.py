@@ -12,7 +12,7 @@ class Draft(BaseModel):
     model_config = ConfigDict(extra="forbid", strict=True)
     facts: ConfirmedFacts
     evidence: dict[str, Annotated[StrictStr, Field(min_length=1, max_length=1000)]] = Field(
-        max_length=11
+        max_length=12
     )
 
 

@@ -607,3 +607,23 @@ only after its acceptance checks pass and its work is committed.
 - **Commit reference:** Included in the multilingual voice/profile feature commit.
 - **Next task:** Configure `SARVAM_API_KEY` on Render before deploying these
   local changes, then smoke-test the deployed profile flow.
+
+## UI-01 — Concise recommendation cards
+
+- **Status:** COMPLETED
+- **Files created or modified:** `apps/web/src/lib/concise-text.ts`,
+  `apps/web/src/lib/concise-text.test.ts`, both recommendation match-card
+  components, and this progress record.
+- **Tests executed:**
+  - Frontend Vitest — 42 passed, 5 skipped
+  - Frontend ESLint — passed with zero warnings
+  - Frontend TypeScript check — passed
+  - Next.js production build — passed for all routes
+  - `git diff --check` — passed
+- **Problems encountered:** The initial type-check command overlapped with the
+  production build updating generated `.next/types` files. It passed when rerun
+  after the build completed; this was a verification-command race, not a source
+  error.
+- **Commit reference:** This task's `ui(recommendations): shorten scheme card details`
+  commit.
+- **Next task:** User review of the concise recommendation-card presentation.

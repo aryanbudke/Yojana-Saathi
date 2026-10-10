@@ -88,6 +88,27 @@ def test_user_can_create_session_and_confirm_fact(
     assert fact.origin == FactOrigin.USER
 
 
+def test_user_can_confirm_structured_support_needs(
+    profile_context: tuple[TestClient, Session],
+) -> None:
+    client, inspection_session = profile_context
+    session_id = _create_session(client)
+
+    response = client.post(
+        "/api/v1/profiles/answers",
+        json={
+            "session_id": str(session_id),
+            "field": "support_needs",
+            "value": ["Education", "housing", "education"],
+        },
+    )
+
+    assert response.status_code == 200
+    assert response.json()["facts"]["support_needs"] == ["education", "housing"]
+    fact = inspection_session.get(ProfileFact, (session_id, "support_needs"))
+    assert fact is not None and fact.value_json == ["education", "housing"]
+
+
 def test_invalid_or_expired_updates_are_rejected(
     profile_context: tuple[TestClient, Session],
 ) -> None:

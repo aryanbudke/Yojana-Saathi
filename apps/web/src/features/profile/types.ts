@@ -47,7 +47,7 @@ export const states = [
 /** Labels live in messages `fields`, keyed by `key`. */
 export const fields: {
   key: ProfileField;
-  kind: "number" | "text" | "state" | "choice" | "boolean";
+  kind: "number" | "text" | "list" | "state" | "choice" | "boolean";
   max?: number;
 }[] = [
   { key: "age", kind: "number", max: 120 },
@@ -78,4 +78,5 @@ export const fields: {
     key: "has_disability",
     kind: "boolean",
   },
+  { key: "support_needs", kind: "list" },
 ];

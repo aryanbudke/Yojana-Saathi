@@ -171,13 +171,19 @@ export function ProfileEditor({ onConfirmed }: ProfileEditorProps) {
                       maxLength={
                         f.key === "occupation"
                           ? 120
-                          : f.key === "gender"
-                            ? 40
-                            : 80
+                          : f.key === "support_needs"
+                            ? 400
+                            : f.key === "gender"
+                              ? 40
+                              : 80
                       }
                       step={f.key === "land_area_acres" ? "any" : 1}
                       value={v === null ? "" : String(v)}
-                      placeholder={m.common.unknown}
+                      placeholder={
+                        f.key === "support_needs"
+                          ? t.supportNeedsPlaceholder
+                          : m.common.unknown
+                      }
                       onChange={(e) =>
                         p.edit(f.key, fieldValue(f.kind, e.target.value))
                       }

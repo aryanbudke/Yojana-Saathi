@@ -24,10 +24,19 @@ export function mergeExtraction(
 export function fieldValue(
   kind: string,
   value: string,
-): string | number | boolean | null {
+): string | number | boolean | string[] | null {
   if (value === "") return null;
   if (kind === "number") return Number(value);
   if (kind === "boolean") return value === "yes";
+  if (kind === "list")
+    return Array.from(
+      new Set(
+        value
+          .split(",")
+          .map((item) => item.trim().toLocaleLowerCase())
+          .filter(Boolean),
+      ),
+    );
   return value;
 }
 /** A profile value as the reader sees it: state names, yes/no and "Unknown" in their language. */
@@ -38,6 +47,7 @@ export function factLabel(
 ): string {
   if (value === null) return m.common.unknown;
   if (typeof value === "boolean") return value ? m.common.yes : m.common.no;
+  if (Array.isArray(value)) return value.join(", ");
   if (field === "state_code") return m.states[value] ?? String(value);
   if (field === "land_registration") return m.answers[value] ?? String(value);
   return String(value);

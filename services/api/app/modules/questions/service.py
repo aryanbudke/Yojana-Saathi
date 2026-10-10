@@ -1,5 +1,6 @@
 """Reviewed, unanswered questions that can change a current deterministic verdict."""
 
+from collections import Counter
 from typing import Any
 from uuid import UUID
 
@@ -12,9 +13,12 @@ from app.db.enums import Verdict
 from app.db.models import MatchResult, MatchRun
 from app.modules.matching.evaluator import evaluate_candidate
 from app.modules.matching.facts import STATE_CODES, ConfirmedFacts, contains_sensitive_identifier
+from app.modules.matching.preliminary import normalize_eligibility_text
+from app.modules.matching.ranking import preliminary_relevance, profile_terms
 from app.modules.matching.rules import All, Atom, Expression, Manual, Not, parse_rule
 from app.modules.matching.service import confirmed_profile, profile_hash, relevance
 from app.repositories.matching import CandidateScheme, MatchingRepository, MatchRunNotFoundError
+from app.repositories.preliminary_schemes import PreliminarySchemeRepository
 from app.schemas.question import NextQuestionResponse
 from app.services.profiles import require_active_session
 
@@ -103,7 +107,7 @@ def next_question(session: Session, session_id: UUID, run_id: UUID) -> NextQuest
                 previous[1] if previous else rule.question_template,
             )
     if not available:
-        return NextQuestionResponse()
+        return _preliminary_question(session, facts, answered)
     field = min(available, key=lambda key: (-available[key][0], key))
     question = available[field][1]
     if field in {"land_registration", "has_disability", "is_student"}:
@@ -127,4 +131,50 @@ def next_question(session: Session, session_id: UUID, run_id: UUID) -> NextQuest
         answer_type="number" if numeric else "text",
         options=["not_sure"],
         reason=f"Answer with {label}. This reviewed condition can change your results.",
+    )
+
+
+def _preliminary_question(
+    session: Session, facts: ConfirmedFacts, answered: set[str]
+) -> NextQuestionResponse:
+    """Ask only bounded profile questions derived from unverified draft proposals."""
+
+    terms = profile_terms(facts)
+    if not terms:
+        return NextQuestionResponse()
+    candidates = PreliminarySchemeRepository(session).list_candidates(search_terms=terms, limit=500)
+    ranked = sorted(
+        candidates,
+        key=lambda candidate: (-preliminary_relevance(candidate, facts), candidate.slug),
+    )[:10]
+    counts: Counter[str] = Counter()
+    for candidate in ranked:
+        if preliminary_relevance(candidate, facts) <= 0:
+            continue
+        normalized = normalize_eligibility_text(candidate.eligibility_text)
+        counts.update(
+            rule.field
+            for rule in normalized.proposed_rules
+            if getattr(facts, rule.field) is None and rule.field not in answered
+        )
+    supported = {"age", "family_income_inr", "occupation", "state_code"}
+    fields = [field for field in counts if field in supported]
+    if not fields:
+        return NextQuestionResponse()
+    field = min(fields, key=lambda value: (-counts[value], value))
+    question = {
+        "age": "What is your age in completed years?",
+        "family_income_inr": "What is your annual family income in rupees?",
+        "occupation": "What is your occupation?",
+        "state_code": "Which state or union territory do you live in? Enter its two-letter code.",
+    }[field]
+    return NextQuestionResponse(
+        field=field,
+        question=question,
+        answer_type="number" if field in {"age", "family_income_inr"} else "text",
+        options=["not_sure"],
+        reason=(
+            "An unverified draft condition mentions this detail. Your answer only refines "
+            "preliminary matching; verify the condition with an official source."
+        ),
     )

@@ -79,3 +79,10 @@ class ConfirmedFacts(ProfileFacts):
         if value is not None and contains_sensitive_identifier(value):
             raise ValueError("Direct identity and banking information is not a profile fact")
         return value
+
+    @field_validator("support_needs")
+    @classmethod
+    def safe_support_needs(cls, value: list[str] | None) -> list[str] | None:
+        if value is not None and any(contains_sensitive_identifier(item) for item in value):
+            raise ValueError("Direct identity and banking information is not a profile fact")
+        return value

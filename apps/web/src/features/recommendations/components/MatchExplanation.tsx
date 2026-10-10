@@ -21,14 +21,42 @@ export function MatchExplanation({ match }: MatchExplanationProps) {
       </summary>
       <div className="mt-3 space-y-2 leading-relaxed">
         <p>
-          {m.match.whyText}
+          {match.verification_status === "preliminary"
+            ? m.match.preliminaryText
+            : m.match.whyText}
         </p>
-        <p className="text-slate-500">
-          {format(m.match.verifiedVersion, {
-            date: date(match.last_verified_at),
-            version: match.scheme_version_id,
-          })}
-        </p>
+        {match.matching_reasons.length > 0 && (
+          <div>
+            <strong>{m.match.matchingReasons}</strong>
+            <ul className="list-disc pl-5 mt-1">
+              {match.matching_reasons.map((reason) => (
+                <li key={reason}>{reason}</li>
+              ))}
+            </ul>
+          </div>
+        )}
+        {match.missing_information.length > 0 && (
+          <div>
+            <strong>{m.match.missingInformation}</strong>
+            <ul className="list-disc pl-5 mt-1">
+              {match.missing_information.map((item) => (
+                <li key={item}>{item.replaceAll("_", " ")}</li>
+              ))}
+            </ul>
+          </div>
+        )}
+        {match.last_verified_at ? (
+          <p className="text-slate-500">
+            {format(m.match.verifiedVersion, {
+              date: date(match.last_verified_at),
+              version: match.scheme_version_id,
+            })}
+          </p>
+        ) : (
+          <p className="text-amber-800 font-semibold">
+            {m.match.noOfficialSource}
+          </p>
+        )}
         <div className="flex flex-wrap gap-2 pt-1">
           {match.official_source_urls.map((url) => (
             <SourceLink key={url} url={url} />
