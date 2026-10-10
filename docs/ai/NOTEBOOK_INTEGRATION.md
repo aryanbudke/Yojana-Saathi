@@ -1,6 +1,6 @@
 # SarkarSeva notebook connection
 
-The cleaned notebook dataset can enter Yojana Saathi as a local staging artifact for curation. It cannot enter public matching directly: the notebook's saved output has 3,397 unverified records with no official URLs. These saved counts have not been independently reproduced because the CSV and exported artifacts are absent from this workspace.
+The actual cleaned notebook export has now passed the existing offline importer with3,397 unverified records. All lack official URLs and verification dates;13 lack documents and4 lack application text. It cannot enter public matching directly. The validated local review artifact and [measured report](../rag/dataset-validation.json) preserve source hashes and draft status; no PostgreSQL/Gemini indexing or real retrieval has been verified.
 
 ## Export and import
 
@@ -88,12 +88,12 @@ Use a fresh environment installed from this checkout for actual CLI execution. T
 
 The adapter tests use explicitly synthetic temporary records. They verify that raw text is preserved, false verification claims cannot publish, missing eligibility remains visible, invalid/duplicate inputs fail, CLI import works and failures do not overwrite existing output.
 
-The real export is still needed to run the actual import. The recorded Render backend health is reachable, but curator search currently returns503 because its administrative role is unconfigured; this is not a successful RAG verification. Phase C also requires independent profile labels, real guidance review and frontend/live evidence. This connection does not establish official source authenticity, matching accuracy or a completed live integration.
+The actual export is now available and offline review import has passed. The last recorded Render health was reachable, but curator search returned503 because its administrative role was unconfigured; this is not a successful RAG verification. Phase C also requires independent profile labels, real guidance review and frontend/live evidence. This connection does not establish official source authenticity, matching accuracy or a completed live integration.
 
 ## Canonical dataset handoff
 
-The expected input is now repository-root `data/schemes/schemes_clean.json`; no
-actual dataset is present. Follow [the sequential data workflow](../rag/DATA_WORKFLOW.md)
+The canonical input is repository-root `data/schemes/schemes_clean.json`; it now
+contains a byte-identical local copy of the supplied root export, excluded from Git. Follow [the sequential data workflow](../rag/DATA_WORKFLOW.md)
 for offline schema/count/quality review, read-only database/provider compatibility
 preflight, indexing and protected retrieval checks. The notebook's384-dimensional
 MiniLM/FAISS artifacts are incompatible with this768-dimensional Gemini index:

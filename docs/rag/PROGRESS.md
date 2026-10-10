@@ -100,7 +100,7 @@ These local prerequisites are authorized by the dataset follow-up. Complete A be
 - Workflow: offline validation/quality summary, read-only pgvector schema and environment preflight, transactional indexing, count/hash validation and protected retrieval/citation checks. No live command will run against absent data/credentials.
 - Tests: added synthetic384-dimension regression; existing replacement validator rejected it before deletion and preserved the old snapshot. Focused indexing/retrieval65 passed,2 PostgreSQL skips; full backend323 passed,2 skips,94% app coverage. Ruff lint/format and strict mypy97 files passed. All4 documented Python blocks parse/compile; offline quality-summary block executed with a labeled synthetic export and correctly counted missing eligibility/official_url. No live database/provider/API assertions in the new workflow were executed. Diff/unchanged-frontend checks passed.
 - Problems: database/model identity metadata is not stored in existing staging table. Keep document/query configuration identical; model changes require full re-embedding and coordinated backend configuration/restart, even if dimensions match. No schema ownership changes authorized.
-- Commit: task commit `test(ai): verify notebook vector incompatibility and data workflow` (reference by title in branch history).
+- Commit: `fe2657e` — `test(ai): verify notebook vector incompatibility and data workflow`.
 - Next task: RAG-04-C real-data/database gate, blocked until inputs exist.
 
 ### RAG-04-C — Actual dataset/database verification
@@ -110,3 +110,31 @@ These local prerequisites are authorized by the dataset follow-up. Complete A be
 - Required resources remain absent: actual cleaned JSON or CSV and authorized pgvector/server configuration. The previous Render health/read-only observations remain historical evidence, not new real-data verification. Two actual PostgreSQL tests skipped; no source authenticity, real count3,397, semantic retrieval quality or real Gemini answer support claimed.
 - Ready command expects repository-root `data/schemes/schemes_clean.json`; supply the actual file there and configure secrets server-side to resume the documented workflow. No further credentials requested in chat.
 - Next task: execute real preflight/index/retrieval gates once resources are available; record actual results and denominators before completion.
+
+## Dataset arrival — sequential real-data prerequisites
+
+The repeated dataset request triggered a new search including ignored files. The actual root CSV/exports are now present; earlier missing-file observations are historical and superseded by this section.
+
+| Task | Status | Dependency |
+| --- | --- | --- |
+| RAG-04-C1 Actual export validation and local review import | COMPLETED | Strict existing importer; measured record/schema/quality and vector metadata; original files preserved; no publication |
+| RAG-04-C2 PostgreSQL/provider indexing and retrieval | BLOCKED | C1 committed; authorized server/test database and Gemini/reviewer configuration still required |
+
+### RAG-04-C1 — Actual export validation and local review import
+
+- Status: COMPLETED (offline structural/data-quality validation only)
+- Files: `docs/rag/dataset-validation.json`, dataset README/workflow references, this progress file; locally ignored canonical dataset/review artifact under `data/schemes`. No frontend files or public scheme tables changed.
+- Discovery: actual input `/Users/srujanmirji/yojana-saathi/schemes_clean.json`; original CSV and other exports are sibling files at workspace root. Search includes ignored files but excludes dependencies/build/Git. No authorized PostgreSQL test config found: backend files are `.env.example` templates; frontend `.env.local` belongs to another developer and is not used/read for backend secrets. Required backend environment variables are not set in this process (presence booleans checked only).
+- Validation: existing `stage_notebook_export` accepted3397 unique/nonblank identities and strict text/null fields; cleaned CSV3397 is text-equivalent to JSON, original CSV3400, both document exports3397 and indexed slug order matches. All3397 raw statuses are unverified; official_url/last_verified missing3397, documents missing13, application missing4. Nonempty eligibility text does not imply correct or reviewed policy.
+- Embeddings: existing NPY parsed with stdlib (NumPy not installed here; no dependency added); shape3397x384, float32, all finite/nonzero, max unit-norm deviation1.3230193540714197e-7. No FAISS deserialization or conversion attempted. Gemini768 re-embedding remains mandatory.
+- Limitations:1189/3397 raw answer contexts exceed the existing4000-character cap; maximum context25021 characters, maximum embedding document20581 characters. Some source text is truncated for answers; whole-record/full-policy coverage cannot be claimed. Actual provider input limits and retrieval usefulness require live checks. These are measured structural/coverage limits, not fabricated scheme guidance.
+- Verification: existing import CLI created the real3397-record local review artifact; hash equals original/canonical input (`7a37ee1dd159521ea86e5fb21c86dceb5220b42bb43657d43d797d1d5a65392a`), all review rows are draft/publication_allowed=false. Actual CSV/document/NPY/provenance assertions passed and measured JSON report written. Full backend323 passed,2 PostgreSQL skipped; Ruff lint/format and strict mypy97 files passed. No database/provider indexing calls or new dependencies. Dataset/review files are ignored; original files are untouched.
+- Commit: task commit `docs(ai): record actual dataset validation and review import` (resolve by title in branch history).
+- Next task: C2 when authorized resources become available.
+
+### RAG-04-C2 — Remaining live gate
+
+- Status: BLOCKED
+- Dataset is available and offline-validated; earlier missing-dataset notes above are historical. Remaining missing resources are authorized PostgreSQL/pgvector test configuration and authorized Gemini/query/reviewer server environment. No backend `.env` or configured test URL found; `.env.example` is a template, not authorization or credentials.
+- Prepared workflow checks actual vector column/model compatibility before indexing; no saved MiniLM/FAISS vectors are used. Live indexing and retrieval, actual database schema/dimensions, model compatibility and semantic answer support remain unverified. No production data or frontend modified.
+- Next task: use authorized configuration to run PostgreSQL tests and the existing preflight/index/retrieval workflow, recording real outcomes before completing RAG-04.

@@ -1,0 +1,97 @@
+{
+  "schema_version": "notebook-validation-1.0",
+  "input_path": "/Users/srujanmirji/yojana-saathi/schemes_clean.json",
+  "canonical_input_path": "/Users/srujanmirji/yojana-saathi/workspaces/rag-workbench/data/schemes/schemes_clean.json",
+  "review_artifact_path": "/Users/srujanmirji/yojana-saathi/workspaces/rag-workbench/data/schemes/staging-review.json",
+  "input_sha256": "7a37ee1dd159521ea86e5fb21c86dceb5220b42bb43657d43d797d1d5a65392a",
+  "record_count": 3397,
+  "original_csv_record_count": 3400,
+  "structural_validation_passed": true,
+  "publication_allowed": false,
+  "real_data_indexing_verified": false,
+  "official_source_verification": "not performed; all records unverified",
+  "fields": [
+    "application",
+    "benefits",
+    "details",
+    "documents",
+    "eligibility",
+    "last_verified",
+    "level",
+    "official_url",
+    "schemeCategory",
+    "scheme_name",
+    "slug",
+    "tags",
+    "verification_status"
+  ],
+  "missing_field_counts": {
+    "official_url": 3397,
+    "last_verified": 3397,
+    "documents": 13,
+    "application": 4
+  },
+  "raw_verification_status_counts": {
+    "unverified": 3397
+  },
+  "clean_csv_matches_json": true,
+  "indexed_slug_order_matches_json": true,
+  "document_export_record_count": 3397,
+  "notebook_embedding_model": "all-MiniLM-L6-v2 (notebook configuration; no model rerun)",
+  "saved_embedding_shape": [
+    3397,
+    384
+  ],
+  "saved_embedding_dtype": "<f4",
+  "all_saved_vectors_finite": true,
+  "zero_saved_vectors": 0,
+  "max_unit_norm_deviation": 1.3230193540714197e-07,
+  "backend_embedding_dimensions": 768,
+  "saved_vectors_compatible_with_backend": false,
+  "faiss_index_loaded_or_converted": false,
+  "answer_context_character_cap": 4000,
+  "records_exceeding_answer_context_cap": 1189,
+  "largest_answer_context_characters": 25021,
+  "largest_embedding_document_characters": 20581,
+  "live_blockers": [
+    "No authorized PostgreSQL/pgvector test configuration supplied",
+    "Gemini/query-model/reviewer server configuration unavailable locally"
+  ],
+  "artifacts": [
+    {
+      "path": "/Users/srujanmirji/yojana-saathi/updated_data.csv",
+      "bytes": 12855490,
+      "sha256": "9a6c67185e1455e107630d40a8bcb34c394547adb042a7e580dab2e854734511"
+    },
+    {
+      "path": "/Users/srujanmirji/yojana-saathi/schemes_clean.json",
+      "bytes": 13800888,
+      "sha256": "7a37ee1dd159521ea86e5fb21c86dceb5220b42bb43657d43d797d1d5a65392a"
+    },
+    {
+      "path": "/Users/srujanmirji/yojana-saathi/schemes_clean.csv",
+      "bytes": 12842178,
+      "sha256": "111b9e5e790f1f8af19ea0475f366a345158a60bac8fb6e264d8a4d0f324c484"
+    },
+    {
+      "path": "/Users/srujanmirji/yojana-saathi/scheme_documents.json",
+      "bytes": 14273623,
+      "sha256": "24657a2033ede46ce6b29e219b2c4288fbbe65aadb9197175bc83f800cb2851c"
+    },
+    {
+      "path": "/Users/srujanmirji/yojana-saathi/indexed_documents.json",
+      "bytes": 14273623,
+      "sha256": "24657a2033ede46ce6b29e219b2c4288fbbe65aadb9197175bc83f800cb2851c"
+    },
+    {
+      "path": "/Users/srujanmirji/yojana-saathi/scheme_embeddings.npy",
+      "bytes": 5217920,
+      "sha256": "0ae9b4f1f057a6f0269b63bcfb4bd77421dfbfc7a8ae3af6f09ac29989eab484"
+    },
+    {
+      "path": "/Users/srujanmirji/yojana-saathi/schemes.index",
+      "bytes": 5217837,
+      "sha256": "ac15e890e866e3fa7fdb6e1a327993d2ca8115d6efcded4c48010f9eec6fdad5"
+    }
+  ]
+}

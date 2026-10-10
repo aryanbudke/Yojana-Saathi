@@ -1,14 +1,19 @@
 # Unverified notebook dataset handoff
 
-The actual dataset is missing. Place the notebook's **cleaned JSON records** at
-`data/schemes/schemes_clean.json` in this repository. Do not create records from
-notebook preview output or use synthetic fixtures as government data.
+The actual export was found at `/Users/srujanmirji/yojana-saathi/schemes_clean.json`.
+A byte-identical local copy is now at `data/schemes/schemes_clean.json`, with a
+validated review artifact at `data/schemes/staging-review.json`. Both large data
+files are locally ignored, not published or committed. The originals are untouched.
+See [the measured validation report](../../docs/rag/dataset-validation.json).
 
 The notebook expects `updated_data.csv` and exports under `sarkarseva_processed/`.
 If only the CSV is supplied, rerun its preprocessing/export cells to produce
 `schemes_clean.json`; rebuilding FAISS or generating notebook answers is unnecessary.
-The earlier 3,397-record count is historical, not a required or verified count.
+The actual cleaned JSON/CSV now independently validate to3,397 records; all remain
+unverified. This count is measured for this file/hash, not hardcoded into import.
 
+The following existing command created the current review artifact. For a future
+run choose a new output filename; it intentionally refuses to overwrite this one.
 From the repository root, with the existing backend dependencies installed:
 
 ```bash

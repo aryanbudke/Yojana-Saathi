@@ -1,9 +1,11 @@
 # Notebook data → curator staging → retrieval verification
 
-Current state: the CSV and all exports are missing. This is a runnable handoff
-workflow, not evidence that real data has been imported. The historical count
-3,397 and notebook previews are not a replacement dataset. Keep the records
-unverified even if raw metadata claims otherwise. Run these steps sequentially;
+Current state: actual CSV/exports were found at the workspace root. The cleaned
+JSON passed the existing importer with3,397 records and a local review artifact;
+[measured results](dataset-validation.json) include counts, hashes and missing
+fields. This is offline validation only; PostgreSQL/Gemini indexing and retrieval
+remain blocked by authorized configuration. Keep records unverified. Run these
+steps sequentially;
 stop on any failure. Use a fresh backend environment installed from this checkout.
 
 ## 1. Offline import and quality review
