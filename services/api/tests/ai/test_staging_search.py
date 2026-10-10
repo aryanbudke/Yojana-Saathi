@@ -242,7 +242,10 @@ def test_answer_rejects_incomplete_or_malformed_output(
         staging_search.answer(configured(), "question", [hit("farm-aid")])
 
 
-def test_embed_batches_requests_with_task_and_dimensions(monkeypatch: pytest.MonkeyPatch) -> None:
+@pytest.mark.parametrize("task", ["RETRIEVAL_DOCUMENT", "RETRIEVAL_QUERY"])
+def test_embed_batches_requests_with_task_and_dimensions(
+    monkeypatch: pytest.MonkeyPatch, task: staging_search.TaskType
+) -> None:
     calls: list[dict[str, Any]] = []
 
     def transport(request: Request, *, timeout: int) -> BytesIO:
@@ -253,13 +256,16 @@ def test_embed_batches_requests_with_task_and_dimensions(monkeypatch: pytest.Mon
 
     monkeypatch.setattr(staging_search, "urlopen", transport)
 
-    vectors = staging_search.embed(configured(), ["text"] * 250, "RETRIEVAL_DOCUMENT")
+    vectors = staging_search.embed(configured(), ["text"] * 250, task)
 
     assert len(vectors) == 250
     assert [len(call["requests"]) for call in calls] == [100, 100, 50]
     first = calls[0]["requests"][0]
-    assert first["taskType"] == "RETRIEVAL_DOCUMENT"
-    assert first["outputDimensionality"] == DIMENSIONS
+    assert first["embedContentConfig"] == {
+        "taskType": task,
+        "outputDimensionality": DIMENSIONS,
+        "autoTruncate": False,
+    }
     assert first["model"] == "models/test-embedding"
 
 
@@ -320,7 +326,7 @@ def test_embed_rejects_malformed_count_and_oversized_output(
         staging_search.embed(configured(), ["synthetic text"], "RETRIEVAL_QUERY")
 
 
-@pytest.mark.parametrize("code,retries,expected_calls", [(429, 2, 3), (500, 2, 1)])
+@pytest.mark.parametrize("code,retries,expected_calls", [(429, 2, 3), (500, 2, 1), (400, 2, 1)])
 def test_embed_retries_only_rate_limits_with_a_finite_budget(
     monkeypatch: pytest.MonkeyPatch, code: int, retries: int, expected_calls: int
 ) -> None:

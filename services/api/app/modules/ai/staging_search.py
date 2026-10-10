@@ -72,8 +72,11 @@ def embed(
                 {
                     "model": f"models/{model}",
                     "content": {"parts": [{"text": text}]},
-                    "taskType": task,
-                    "outputDimensionality": STAGING_EMBEDDING_DIMENSIONS,
+                    "embedContentConfig": {
+                        "taskType": task,
+                        "outputDimensionality": STAGING_EMBEDDING_DIMENSIONS,
+                        "autoTruncate": False,
+                    },
                 }
                 for text in batch
             ]

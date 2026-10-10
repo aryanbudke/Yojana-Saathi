@@ -146,6 +146,7 @@ User authorized the next live-verification steps. Work remains backend-only and 
 | Task | Status | Acceptance / dependency |
 | --- | --- | --- |
 | RAG-05 Preserve complete bounded answer evidence | COMPLETED | Full-record request construction verified for all3397 records; oversized records rejected before transport; local checks passed |
+| RAG-06-A Reject silently truncated embeddings | COMPLETED | Document/query requests disable truncation; provider rejection preserves snapshot; local checks passed |
 | RAG-06 Authorized PostgreSQL/provider live verification | BLOCKED | Correct server/test configuration and project/account required; no production schema/data changes or credentials in chat |
 
 ### RAG-05 — Preserve complete bounded answer evidence
@@ -156,5 +157,24 @@ User authorized the next live-verification steps. Work remains backend-only and 
 - Configuration audit: repository including ignored files still has no backend.env or supplied PostgreSQL test URL; configured key presence false. Supabase connector discovery returned only one inactive unrelated project, `tanvo`; no authorization/project correspondence to Yojana Saathi found, so no queries, restoration, branch creation or writes against that project. Requested actual configuration path/account name while proceeding locally.
 - Tests: two regression tests failed before the fix and passed afterward; focused52 passed/2 PostgreSQL skipped; full backend325 passed/2 PostgreSQL skipped,94% app coverage. Ruff lint/format108 files and strict mypy97 files passed. Offline intercepted requests inspected all3397 actual records with exact full-text equality; maximum25021 characters, zero truncations/rejections, zero provider/database calls. Existing Starlette test-client deprecation warning only.
 - Problems: live resources remain unavailable. The historical4000-character results in `dataset-validation.json` describe the previous implementation; `answer-context-validation.json` records the verified fix. Semantic relevance, provider acceptance and actual answers remain unverified.
-- Commit: task commit `fix(ai): preserve complete staging answer evidence` (resolve by title in branch history).
-- Next task: RAG-06 only when authorized configuration is available; record remaining embedding/provider compatibility limits.
+- Commit: `df08112` — `fix(ai): preserve complete staging answer evidence`.
+- Next task: RAG-06-A embedding truncation safeguard, then RAG-06 live verification when authorized configuration is available.
+
+### RAG-06-A — Reject silently truncated embeddings
+
+- Status: COMPLETED
+- Scope: existing embedding request configuration, document/query contract tests and workflow/progress documentation. Reuse existing provider error handling and embed-before-write pipeline; no model switch, chunking store, database or frontend changes.
+- Dependency: RAG-05 verified and committed. Google REST documentation exposes `embedContentConfig.autoTruncate`; set false while retaining retrieval task and768-dimensional output. Actual provider behavior/token coverage remains blocked by configuration.
+- Files: `services/api/app/modules/ai/staging_search.py`, `services/api/tests/ai/test_staging_search.py`, `services/api/tests/ai/test_staging_index.py`, `docs/rag/DATA_WORKFLOW.md`, `docs/rag/PROGRESS.md`.
+- Tests: document/query contract regressions failed before the fix; focused70 passed/2 PostgreSQL skipped. Simulated HTTP400 input rejection reached the real embedding client through the index CLI, made one request with no retry, never opened the database, and preserved the existing synthetic snapshot. Full backend328 passed/2 PostgreSQL skipped,94% app coverage; Ruff lint/format108 files, mypy97 files and diff whitespace check passed. No frontend differences against base commit.
+- Problems: one test formatting failure fixed before completion. Documentation describes Gemini001's2048-token limit; actual token counts, API/model acceptance and rejection semantics remain unverified without provider configuration. A rejected long record must halt the import until a coordinated chunking/model migration is reviewed; truncation is not a workaround.
+- Commit: task commit `fix(ai): reject truncated staging embedding inputs` (resolve by title in branch history).
+- Next task: RAG-06 live verification only with authorized configuration.
+
+### RAG-06 — Live verification remains blocked
+
+- Status: BLOCKED
+- Dependencies: authorized PostgreSQL/pgvector disposable test URL, correct staging database and Gemini/reviewer environment. No backend configuration file supplied; connected Supabase project remains unrelated/inactive and was not queried or changed.
+- Tests: two PostgreSQL integration tests skipped; actual provider preflight, re-embedding/indexing and authenticated retrieval/answer checks not run. No official source authenticity or eligibility approval inferred from3397 unverified records.
+- Commit: documentation recorded with RAG-06-A; no live verification commit claimed.
+- Next task: use a supplied authorized configuration path/account to perform the existing workflow sequentially; stop on incompatible schema, model or oversized provider inputs.

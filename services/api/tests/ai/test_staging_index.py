@@ -6,17 +6,23 @@ import json
 import runpy
 import sys
 from collections.abc import Generator
+from email.message import Message
 from pathlib import Path
 from types import ModuleType
 from typing import Any
+from unittest.mock import Mock
+from urllib.error import HTTPError
 
 import pytest
+from pydantic import SecretStr
 from sqlalchemy import Engine, Table, create_engine, event, select
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
 from app.db.models import StagingScheme
+from app.modules.ai import staging_search
 from app.modules.ai.notebook_import import stage_notebook_export
+from app.modules.ai.settings import AISettings
 from app.modules.ai.staging_search import EmbeddingUnavailable, replace_snapshot
 
 DIMENSIONS = 768
@@ -187,6 +193,31 @@ def test_cli_failure_preserves_existing_snapshot_and_redacts_errors(
         assert touched == []
     elif failure == "embedding":
         assert touched == ["embedding"]
+
+
+def test_provider_input_rejection_keeps_snapshot_without_opening_database(
+    database: Engine,
+    export: Path,
+    indexer: ModuleType,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    config = AISettings(
+        _env_file=None, api_key=SecretStr("synthetic-key"), embedding_model="test-embedding"
+    )
+    transport = Mock(
+        side_effect=HTTPError("https://test.invalid", 400, "input limit", Message(), None)
+    )
+    engine = Mock(return_value=database)
+    monkeypatch.setattr(sys, "argv", ["index_notebook_staging.py", str(export)])
+    monkeypatch.setattr(indexer, "AISettings", lambda: config)
+    monkeypatch.setattr(staging_search, "urlopen", transport)
+    monkeypatch.setattr(indexer, "create_database_engine", engine)
+    with pytest.raises(SystemExit) as result:
+        indexer.main()
+    assert result.value.code == 2
+    transport.assert_called_once()
+    engine.assert_not_called()
+    assert slugs(database) == ["synthetic-existing"]
 
 
 def test_cli_entrypoint_rejects_missing_file_without_external_calls(

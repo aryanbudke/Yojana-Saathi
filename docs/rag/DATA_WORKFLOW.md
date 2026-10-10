@@ -66,6 +66,16 @@ and query them with the **same `GEMINI_EMBEDDING_MODEL`** and dimension setting.
 The Blueprint currently names `gemini-embedding-001`; that name is configuration,
 not proof that a particular account can call it. The existing embedding client
 rejects wrong-size, zero, nonfinite, boolean/string and float32-overflow vectors.
+The request uses the documented
+[`embedContentConfig`](https://ai.google.dev/api/embeddings) with
+`autoTruncate=false` for both documents and queries. Provider rejection stops
+indexing before a database write; do not enable truncation to force an import.
+Google documents an input limit of2,048 tokens for
+[`gemini-embedding-001`](https://ai.google.dev/gemini-api/docs/models/gemini-embedding-001).
+Character counts do not establish token counts. The actual export includes
+documents up to20,581 characters; provider acceptance and token coverage still
+require live checks. If rejected, stop and coordinate a reviewed chunking or
+model/dimension migration before retrying; no automatic model switch is provided.
 
 The staging model does not store embedding-model identity. Keep an external run
 record containing the input SHA-256, actual row count, model identifier,768
