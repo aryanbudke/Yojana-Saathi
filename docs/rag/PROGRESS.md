@@ -168,7 +168,7 @@ User authorized the next live-verification steps. Work remains backend-only and 
 - Files: `services/api/app/modules/ai/staging_search.py`, `services/api/tests/ai/test_staging_search.py`, `services/api/tests/ai/test_staging_index.py`, `docs/rag/DATA_WORKFLOW.md`, `docs/rag/PROGRESS.md`.
 - Tests: document/query contract regressions failed before the fix; focused70 passed/2 PostgreSQL skipped. Simulated HTTP400 input rejection reached the real embedding client through the index CLI, made one request with no retry, never opened the database, and preserved the existing synthetic snapshot. Full backend328 passed/2 PostgreSQL skipped,94% app coverage; Ruff lint/format108 files, mypy97 files and diff whitespace check passed. No frontend differences against base commit.
 - Problems: one test formatting failure fixed before completion. Documentation describes Gemini001's2048-token limit; actual token counts, API/model acceptance and rejection semantics remain unverified without provider configuration. A rejected long record must halt the import until a coordinated chunking/model migration is reviewed; truncation is not a workaround.
-- Commit: task commit `fix(ai): reject truncated staging embedding inputs` (resolve by title in branch history).
+- Commit: `6bd2e1b` — `fix(ai): reject truncated staging embedding inputs`.
 - Next task: RAG-06 live verification only with authorized configuration.
 
 ### RAG-06 — Live verification remains blocked
@@ -178,3 +178,18 @@ User authorized the next live-verification steps. Work remains backend-only and 
 - Tests: two PostgreSQL integration tests skipped; actual provider preflight, re-embedding/indexing and authenticated retrieval/answer checks not run. No official source authenticity or eligibility approval inferred from3397 unverified records.
 - Commit: documentation recorded with RAG-06-A; no live verification commit claimed.
 - Next task: use a supplied authorized configuration path/account to perform the existing workflow sequentially; stop on incompatible schema, model or oversized provider inputs.
+
+## Live-only integration request — 2026-10-10
+
+The user requested live integration only, preserving the completed RAG implementation.
+Downstream live tasks must wait for an authorized configuration; setup instructions
+are preparation, not evidence that those commands ran.
+
+### LIVE-01 — Inspect existing backend configuration and migrations
+
+- Status: COMPLETED
+- Files modified: this progress document only. Inspected backend `.env.example`, shared Settings/AISettings, admin auth, migration environment and versions0004/0005, backend README/handoff, Render Blueprint, existing importer/index CLI and PostgreSQL fixtures.
+- Verification: `alembic heads` reports `20261009_0005`; this is repository history, not a live database revision. Migration0005 enables `vector`, creates `staging_schemes` with `vector(768)` and enables RLS. Existing retrieval is exact cosine search; no HNSW/IVFFlat index migration is needed for this dataset.
+- Problems: local URL in the template is a placeholder/default, not a configured live target. Production migration must accompany deployment of this revision; do not advance an older deployed backend to an unknown migration revision.
+- Commit: task commit `docs(ai): audit live backend configuration and migrations` (resolve by title).
+- Next task: LIVE-02 document exact environment names and setup using existing commands.
