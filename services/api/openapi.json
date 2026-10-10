@@ -1617,6 +1617,73 @@
         "title": "StagingSearchResult",
         "type": "object"
       },
+      "SynthesisRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "source_language_code": {
+            "default": "en-IN",
+            "enum": [
+              "en-IN",
+              "hi-IN",
+              "kn-IN"
+            ],
+            "title": "Source Language Code",
+            "type": "string"
+          },
+          "target_language_code": {
+            "enum": [
+              "en-IN",
+              "hi-IN",
+              "kn-IN"
+            ],
+            "title": "Target Language Code",
+            "type": "string"
+          },
+          "text": {
+            "maxLength": 2000,
+            "minLength": 1,
+            "title": "Text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "text",
+          "target_language_code"
+        ],
+        "title": "SynthesisRequest",
+        "type": "object"
+      },
+      "TranscriptionResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "language_code": {
+            "enum": [
+              "en-IN",
+              "hi-IN",
+              "kn-IN"
+            ],
+            "title": "Language Code",
+            "type": "string"
+          },
+          "needs_review": {
+            "default": true,
+            "title": "Needs Review",
+            "type": "boolean"
+          },
+          "transcript": {
+            "maxLength": 4000,
+            "minLength": 1,
+            "title": "Transcript",
+            "type": "string"
+          }
+        },
+        "required": [
+          "transcript",
+          "language_code"
+        ],
+        "title": "TranscriptionResponse",
+        "type": "object"
+      },
       "ValidationError": {
         "properties": {
           "ctx": {
@@ -2535,6 +2602,109 @@
         "summary": "Scheme Detail",
         "tags": [
           "schemes"
+        ]
+      }
+    },
+    "/api/v1/speech/synthesize": {
+      "post": {
+        "operationId": "synthesize_api_v1_speech_synthesize_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SynthesisRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Synthesize",
+        "tags": [
+          "speech"
+        ]
+      }
+    },
+    "/api/v1/speech/transcribe": {
+      "post": {
+        "operationId": "transcribe_api_v1_speech_transcribe_post",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "language_code",
+            "required": true,
+            "schema": {
+              "enum": [
+                "en-IN",
+                "hi-IN",
+                "kn-IN"
+              ],
+              "title": "Language Code",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Content-Type",
+            "required": true,
+            "schema": {
+              "title": "Content-Type",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "contentMediaType": "application/octet-stream",
+                "maxLength": 8388608,
+                "title": "Audio",
+                "type": "string"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TranscriptionResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Transcribe",
+        "tags": [
+          "speech"
         ]
       }
     },

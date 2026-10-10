@@ -54,11 +54,16 @@ export function ProfileEditor({ onConfirmed }: ProfileEditorProps) {
     }
   }
 
-  const providedCount = fields.filter((f) => p.draft.facts[f.key] !== null).length;
-  const unknownCount = fields.filter((f) => p.draft.facts[f.key] === null).length;
+  const providedCount = fields.filter(
+    (f) => p.draft.facts[f.key] !== null,
+  ).length;
+  const unknownCount = fields.filter(
+    (f) => p.draft.facts[f.key] === null,
+  ).length;
 
   return (
     <GlassCard
+      id="profile-review"
       variant="elevated"
       glow="emerald"
       className="profile-review p-6 sm:p-8 space-y-6"
@@ -83,14 +88,19 @@ export function ProfileEditor({ onConfirmed }: ProfileEditorProps) {
         </Badge>
       </div>
 
-      <p className="text-sm text-slate-600 leading-relaxed">
-        {t.reviewLead}
-      </p>
+      <p className="text-sm text-slate-600 leading-relaxed">{t.reviewLead}</p>
 
-      <div className="flex items-center gap-4 text-xs font-semibold text-slate-600 py-2 px-3.5 rounded-xl bg-slate-100/70 w-fit" aria-live="polite">
-        <span className="text-emerald-800">{format(t.provided, { count: providedCount })}</span>
+      <div
+        className="flex items-center gap-4 text-xs font-semibold text-slate-600 py-2 px-3.5 rounded-xl bg-slate-100/70 w-fit"
+        aria-live="polite"
+      >
+        <span className="text-emerald-800">
+          {format(t.provided, { count: providedCount })}
+        </span>
         <span>•</span>
-        <span className="text-amber-800">{format(t.stillUnknown, { count: unknownCount })}</span>
+        <span className="text-amber-800">
+          {format(t.stillUnknown, { count: unknownCount })}
+        </span>
       </div>
 
       <form onSubmit={handleConfirm} className="space-y-6">
@@ -108,11 +118,16 @@ export function ProfileEditor({ onConfirmed }: ProfileEditorProps) {
 
               return (
                 <div key={f.key} className="space-y-1.5 field">
-                  <label htmlFor={id} className="block text-xs font-bold text-slate-700">
+                  <label
+                    htmlFor={id}
+                    className="block text-xs font-bold text-slate-700"
+                  >
                     {m.fields[f.key]}
                   </label>
 
-                  {f.kind === "state" || f.kind === "choice" || f.kind === "boolean" ? (
+                  {f.kind === "state" ||
+                  f.kind === "choice" ||
+                  f.kind === "boolean" ? (
                     <Select
                       id={id}
                       aria-describedby={`${id}-origin`}
@@ -120,7 +135,9 @@ export function ProfileEditor({ onConfirmed }: ProfileEditorProps) {
                         v === null
                           ? ""
                           : typeof v === "boolean"
-                            ? v ? "yes" : "no"
+                            ? v
+                              ? "yes"
+                              : "no"
                             : String(v)
                       }
                       onChange={(e) =>
@@ -138,7 +155,9 @@ export function ProfileEditor({ onConfirmed }: ProfileEditorProps) {
                         <>
                           <option value="yes">{m.common.yes}</option>
                           <option value="no">{m.common.no}</option>
-                          {f.kind === "choice" && <option value="not_sure">{m.common.notSure}</option>}
+                          {f.kind === "choice" && (
+                            <option value="not_sure">{m.common.notSure}</option>
+                          )}
                         </>
                       )}
                     </Select>
@@ -165,7 +184,10 @@ export function ProfileEditor({ onConfirmed }: ProfileEditorProps) {
                     />
                   )}
 
-                  <span id={`${id}-origin`} className="field-origin block text-[11px] text-slate-500">
+                  <span
+                    id={`${id}-origin`}
+                    className="field-origin block text-[11px] text-slate-500"
+                  >
                     {isUserOrigin
                       ? t.originUser
                       : v === null

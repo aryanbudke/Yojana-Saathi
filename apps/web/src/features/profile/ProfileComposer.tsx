@@ -22,6 +22,7 @@ import { fieldValue } from "./model";
 import { useMessages } from "@/i18n/client";
 import { format } from "@/i18n/config";
 import Link from "next/link";
+import { SpeechInputControls } from "@/features/speech/SpeechControls";
 
 export function ModeNotice() {
   const m = useMessages();
@@ -66,9 +67,7 @@ export function ProfileComposer() {
           <h2>{t.title}</h2>
           <Badge>{t.badge}</Badge>
         </div>
-        <p className="muted composer-description">
-          {t.lead}
-        </p>
+        <p className="muted composer-description">{t.lead}</p>
         <form
           onSubmit={(e) => {
             e.preventDefault();
@@ -85,6 +84,13 @@ export function ProfileComposer() {
             value={p.text}
             onChange={(e) => p.setText(e.target.value)}
             aria-describedby="profile-privacy profile-counter"
+          />
+          <SpeechInputControls
+            onTranscript={(transcript) =>
+              p.setText(
+                p.text.trim() ? `${p.text.trim()} ${transcript}` : transcript,
+              )
+            }
           />
           <div className="composer-meta">
             <Button
@@ -122,9 +128,7 @@ export function ProfileComposer() {
             <SlidersHorizontal size={15} />
           </Button>
           {isMock && (
-            <p className="small muted mock-extract-note">
-              {t.mockNote}
-            </p>
+            <p className="small muted mock-extract-note">{t.mockNote}</p>
           )}
           <p id="profile-privacy" className="privacy-note">
             <ShieldCheck size={15} aria-hidden="true" />
@@ -149,9 +153,7 @@ export function ProfileComposer() {
               {p.confirmed ? m.common.confirmedByYou : t.needsReview}
             </Badge>
           </div>
-          <p className="muted">
-            {t.reviewLead}
-          </p>
+          <p className="muted">{t.reviewLead}</p>
           <div className="review-summary" aria-live="polite">
             <span>
               {format(t.provided, {

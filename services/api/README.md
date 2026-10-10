@@ -138,8 +138,14 @@ repository files:
 - separate `ADMIN_REVIEW_TOKEN`/`ADMIN_REVIEWER_ID` and
   `ADMIN_PUBLISH_TOKEN`/`ADMIN_PUBLISHER_ID` pairs if admin APIs are enabled
 - `GEMINI_API_KEY` for profile extraction and curator search/answers. The
-  Blueprint sets `GEMINI_MODEL` and `GEMINI_EMBEDDING_MODEL`; without a key,
-  extraction falls back to manual entry and the curator endpoints return 503.
+  Blueprint sets `GEMINI_MODEL` and `GEMINI_EMBEDDING_MODEL`; without this key,
+  profile extraction uses the configured Sarvam key while the curator endpoints
+  return 503.
+- `SARVAM_API_KEY` for speech-to-text, multilingual profile extraction,
+  translated read-aloud, and text-to-speech. The Blueprint selects Saaras v4,
+  Bulbul v4 Flash, Sarvam Translate v1, and Sarvam 105B Conversations.
+  Recordings and transcripts are proxied in memory and are not persisted by
+  Yojana Saathi. Never expose this key as a `NEXT_PUBLIC_` variable.
 
 The Blueprint deploys from `main`. Because the start command migrates first, a
 deploy is what advances Supabase (currently to `20261009_0005`), so code and
