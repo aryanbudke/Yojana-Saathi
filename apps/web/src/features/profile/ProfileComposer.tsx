@@ -18,11 +18,9 @@ import { errorMessage, isMock } from "@/lib/api";
 import { useProfile } from "./hooks";
 import { useMatching } from "@/features/matching/hooks";
 import { fields, states } from "./types";
-import { fieldValue } from "./model";
+import { example, fieldValue } from "./model";
 import Link from "next/link";
 
-export const example =
-  "I’m a 24-year-old farmer from Maharashtra helping my family farm 1.5 acres.";
 export function ModeNotice() {
   return isMock ? (
     <div className="mode-notice">
@@ -67,8 +65,7 @@ export function ProfileComposer() {
           <Badge>Your profile</Badge>
         </div>
         <p className="muted composer-description">
-          You don’t need to know a scheme’s name. Just share a few details about
-          yourself.
+          You don’t need to know a scheme’s name. Just share a few details about yourself.
         </p>
         <form
           onSubmit={(e) => {

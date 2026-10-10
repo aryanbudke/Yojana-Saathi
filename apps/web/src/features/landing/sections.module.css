@@ -1,0 +1,337 @@
+/* Shared rhythm for landing sections below the hero. */
+
+.section {
+  padding-top: var(--section-gap);
+  scroll-margin-top: 88px;
+}
+
+.sectionHead {
+  max-width: 640px;
+  margin-bottom: 40px;
+}
+
+.sectionTitle {
+  font-size: var(--text-h2);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.035em;
+}
+
+.sectionLead {
+  margin-top: 12px;
+  font-size: 17px;
+  line-height: 1.6;
+  color: var(--muted);
+}
+
+/* ---------- How it works: lead step + two quieter steps ---------- */
+.stepGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+  grid-template-rows: auto auto;
+  gap: 20px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.step {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 28px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+  transition:
+    transform var(--duration) var(--ease),
+    box-shadow var(--duration) var(--ease),
+    border-color var(--duration) var(--ease);
+}
+
+.step:hover {
+  transform: translateY(-3px);
+  border-color: rgb(2 66 65 / 22%);
+  box-shadow: 0 14px 36px rgb(2 66 65 / 8%);
+}
+
+.stepLead {
+  grid-row: 1 / 3;
+  padding: 36px;
+  border-color: rgb(2 66 65 / 16%);
+  background:
+    radial-gradient(
+      120% 80% at 100% 0%,
+      rgb(223 242 162 / 45%),
+      transparent 60%
+    ),
+    var(--sage);
+}
+
+.stepHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.stepNumber {
+  font-size: 44px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.04em;
+  color: var(--accent-ink);
+}
+
+.stepLead .stepNumber {
+  font-size: 72px;
+  color: var(--accent-ink);
+}
+
+.stepIcon {
+  display: inline-grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  background: var(--sage);
+  color: var(--primary);
+}
+
+.stepLead .stepIcon {
+  background: var(--surface);
+}
+
+.stepTitle {
+  font-size: var(--text-h3);
+  font-weight: 650;
+  letter-spacing: -0.02em;
+}
+
+.stepLead .stepTitle {
+  font-size: clamp(1.375rem, 1.2rem + 0.6vw, 1.75rem);
+}
+
+.stepText {
+  margin-top: 10px;
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--muted);
+}
+
+.stepLead .stepText {
+  max-width: 44ch;
+  font-size: 16px;
+  color: var(--secondary-ink);
+}
+
+.stepLabel {
+  align-self: flex-start;
+  margin-top: 20px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  border: 1px solid rgb(2 66 65 / 18%);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--primary);
+}
+
+.stepCta {
+  align-self: flex-start;
+  margin-top: auto;
+}
+
+.stepLead .stepLabel {
+  background: var(--surface);
+}
+
+.stepExample {
+  margin: 28px 0;
+  padding: 18px 20px;
+  border-radius: 16px 16px 16px 4px;
+  background: var(--surface);
+  box-shadow: 0 8px 24px rgb(2 66 65 / 6%);
+}
+
+.stepExample figcaption {
+  font-size: 12px;
+  font-weight: 650;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.stepExample blockquote {
+  margin: 6px 0 0;
+  font-size: 16px;
+  line-height: 1.55;
+  color: var(--ink);
+}
+
+@media (max-width: 899px) {
+  .stepGrid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .stepLead {
+    grid-row: auto;
+    padding: 28px;
+  }
+
+  .stepLead .stepNumber {
+    font-size: 56px;
+  }
+}
+
+@media (max-width: 599px) {
+  .stepCta {
+    align-self: stretch;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .step {
+    transition: none;
+  }
+
+  .step:hover {
+    transform: none;
+  }
+}
+
+.categoryGrid {
+  display: grid;
+  gap: 16px;
+}
+.categoryCard {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 24px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  min-height: 112px;
+  transition:
+    border-color var(--duration),
+    transform var(--duration);
+}
+.categoryCard > svg {
+  color: var(--primary);
+  flex: none;
+}
+.categoryCard > svg:last-child {
+  margin-left: auto;
+}
+.categoryCard h3 {
+  font-size: var(--text-h3);
+}
+.categoryCard p {
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 14px;
+}
+.categoryCard:hover,
+.categoryCard:focus-visible {
+  border-color: var(--primary);
+  transform: translateY(-2px);
+}
+.sourceGrid {
+  display: grid;
+  gap: 24px;
+}
+.sourceCard {
+  padding-block: 24px;
+  border-top: 1px solid var(--line);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.sourceCard > svg {
+  color: var(--primary);
+  margin-bottom: 16px;
+}
+.sourceCard h3 {
+  font-size: var(--text-h3);
+}
+.sourceCard p {
+  margin: 12px 0;
+  color: var(--muted);
+}
+.sourceCard a {
+  margin-top: auto;
+}
+.sourceNote {
+  margin-top: 24px;
+  max-width: 75ch;
+  font-size: 14px;
+  color: var(--muted);
+}
+@media (min-width: 768px) {
+  .categoryGrid,
+  .sourceGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (min-width: 1280px) {
+  .categoryGrid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .sourceGrid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .categoryCard {
+    transition: none;
+  }
+  .categoryCard:hover {
+    transform: none;
+  }
+}
+
+.guidanceList {
+  display: grid;
+  gap: 24px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.guidanceList li {
+  padding-top: 24px;
+  border-top: 1px solid var(--line);
+}
+.guidanceList svg {
+  color: var(--primary);
+  margin-bottom: 16px;
+}
+.guidanceList h3 {
+  font-size: var(--text-h3);
+}
+.guidanceList p {
+  margin-top: 12px;
+  color: var(--muted);
+}
+.guidanceNote {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 24px;
+  padding: 24px;
+  margin-top: 32px;
+  background: var(--sage);
+  border-radius: var(--radius-sm);
+}
+.guidanceNote p {
+  flex: 1 1 260px;
+}
+@media (min-width: 768px) {
+  .guidanceList {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (min-width: 1280px) {
+  .guidanceList {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}

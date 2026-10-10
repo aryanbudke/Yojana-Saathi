@@ -26,7 +26,7 @@ The base URL is an origin, **without `/api/v1`**. Restart development or rebuild
 
 Configure backend CORS to allow the exact frontend origin. HTTPS is required for deployed services. Set `NEXT_PUBLIC_REVIEWED_OFFICIAL_HOSTS` only for additional exact public source hosts independently approved by the curator; `gov.in` and `nic.in` links are accepted by the navigation filter by default, but domain acceptance alone does not certify policy correctness.
 
-The current repository implements sessions, answers, scheme discovery/details and guidance. Extraction, matching and question selection still require Developer 3's routes. Do not describe mock-mode success as live integration.
+The current backend source implements sessions, answers, scheme discovery/details, guidance, extraction, matching and question selection. A running API origin, CORS and reviewed published records are still required for a live verification run. Do not describe mock-mode success as live integration.
 
 ## Verification
 
@@ -49,11 +49,11 @@ To capture screenshots while a mock development server is running:
 node scripts/capture-redesign.mjs
 ```
 
-Before/after redesign screenshots are in `artifacts/redesign/before/` and `artifacts/redesign/after/`. Viewport and CTA measurements are saved in `artifacts/redesign/after/metrics.json`. They contain synthetic contract examples, not verified government scheme results.
+Current desktop/mobile screenshots and overflow/CTA measurements are in `artifacts/full-site/`. The capture helper requires the visible mock banner and asserts no page overflow. Set `CAPTURE_URL` to target a production preview instead of port3000. Older before/after workspace screenshots remain in `artifacts/redesign/`. All workflow captures contain synthetic contract examples, not verified government scheme results. The requested reference image was not supplied; visual checks use the written brief.
 
 ## Deploy to Vercel
 
-Import the repository's `feat/frontend` branch into Vercel. Set **Root Directory** to `apps/web`, framework to Next.js, install command to `npm ci`, and build command to `npm run build`. Keep the default Next.js output directory. Set the live public environment variables above and configure backend CORS for the production origin before testing the live journey. No secret, database or Gemini key belongs in the frontend.
+Import the repository's `feat/web-redesign` branch into Vercel. Set **Root Directory** to `apps/web`, framework to Next.js, install command to `npm ci`, and build command to `npm run build`. Keep the default Next.js output directory. Set the live public environment variables above and configure backend CORS for the production origin before testing the live journey. No secret, database or Gemini key belongs in the frontend.
 
 ```bash
 npm run build
@@ -64,13 +64,15 @@ Deployment/live demo require a backend URL, working extraction/matching/question
 
 ## Routes and state
 
-- `/` and `/discover`: composer, editable profile and catalogue.
+- `/`: full landing page with hero, benefits, three-step explanation, interactive finder/preview, categories, official sources, application guidance and footer.
+- `/discover`: composer, editable profile and searchable/filterable catalogue.
 - `/recommendations`: confirmed-profile matches and follow-up questions.
 - `/schemes/[schemeId]`: benefit, eligibility, exclusions, document and source sections.
 - `/schemes/[schemeId]/apply`: personal checklist, verified steps and safe official-portal action.
-- `/help`: privacy-aware explanation of the workflow.
+- `/help`: privacy-aware explanation of the workflow and expandable FAQ.
+- `/about`, `/privacy`, `/disclaimer`: implemented informational pages linked from the footer.
 
-Profile facts and origins stay in React memory across client navigation. Confirmation creates an anonymous expiring server session and saves reviewed fields through `/profiles/answers`. Clear deletes that session before clearing memory. A refresh intentionally clears local profile state; there is no local storage, persistent profile, account sync, ID upload or backend submission flow. Personal document checkbox state is page-local and never claims official verification.
+Profile facts and origins stay in React memory across client navigation. Confirmation creates an anonymous expiring server session and saves provided fields through `/profiles/answers`, leaving new blanks unanswered for follow-up. Clearing a saved field sends null. Clear deletes that session before clearing memory. A refresh intentionally clears local profile state; there is no local storage, persistent profile, account sync, ID upload or backend submission flow. Personal document checkbox state is page-local and never claims official verification.
 
 Optional Saved, Hindi, RAG and public admin UI are not exposed. Saved and Hindi depend on the complete core live gate; admin curation remains the backend owner's responsibility.
 

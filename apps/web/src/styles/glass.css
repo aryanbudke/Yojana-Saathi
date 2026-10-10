@@ -1,0 +1,133 @@
+/* Advanced Glassmorphism Components & Utilities */
+
+.glass,
+.glass-panel,
+.glass-card {
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+  border-radius: var(--radius-lg);
+  position: relative;
+  transition: transform var(--duration) var(--ease),
+              box-shadow var(--duration) var(--ease),
+              border-color var(--duration) var(--ease),
+              background var(--duration) var(--ease);
+}
+
+/* Subtle Specular Highlights on top edge */
+.glass::before,
+.glass-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 12px;
+  right: 12px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, rgba(250, 244, 220, 0.95) 50%, transparent 100%);
+  border-radius: 999px;
+  pointer-events: none;
+}
+
+/* Elevated Glass (Modals, Featured Cards) */
+.glass-elevated {
+  background: var(--glass-bg-elevated);
+  backdrop-filter: var(--glass-blur-heavy);
+  -webkit-backdrop-filter: var(--glass-blur-heavy);
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  box-shadow: var(--glass-shadow-lg), var(--glass-glow);
+}
+
+/* Subtle Glass (Inputs, Inactive elements) */
+.glass-subtle {
+  background: var(--glass-bg-subtle);
+  backdrop-filter: var(--glass-blur-subtle);
+  -webkit-backdrop-filter: var(--glass-blur-subtle);
+  border: 1px solid var(--glass-border-subtle);
+  box-shadow: var(--glass-shadow-sm);
+}
+
+/* Glowing Border Accent Variants */
+.glass-glow-emerald:hover,
+.glass-glow-emerald:focus-within {
+  border-color: rgba(3, 83, 82, 0.5);
+  box-shadow: var(--glass-shadow-lg), var(--glass-glow);
+  transform: translateY(-2px);
+}
+
+.glass-glow-saffron:hover,
+.glass-glow-saffron:focus-within {
+  border-color: rgba(245, 158, 11, 0.5);
+  box-shadow: var(--glass-shadow-lg), var(--glass-glow-saffron);
+  transform: translateY(-2px);
+}
+
+.glass-glow-cyan:hover,
+.glass-glow-cyan:focus-within {
+  border-color: rgba(6, 182, 212, 0.5);
+  box-shadow: var(--glass-shadow-lg), 0 0 32px 0 rgba(6, 182, 212, 0.2);
+  transform: translateY(-2px);
+}
+
+/* Pill / Badge Glass */
+.glass-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: var(--radius-pill);
+  background: rgba(250, 244, 220, 0.7);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* Ambient Luminous Orbs */
+.ambient-glow-wrapper {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.ambient-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(65px);
+  pointer-events: none;
+  z-index: -1;
+  opacity: 0.65;
+  will-change: transform;
+}
+
+.orb-emerald {
+  background: radial-gradient(circle, rgba(3, 83, 82, 0.35) 0%, rgba(5, 150, 105, 0.05) 70%, transparent 100%);
+}
+
+.orb-saffron {
+  background: radial-gradient(circle, rgba(245, 158, 11, 0.3) 0%, rgba(217, 119, 6, 0.05) 70%, transparent 100%);
+}
+
+.orb-cyan {
+  background: radial-gradient(circle, rgba(6, 182, 212, 0.3) 0%, rgba(14, 116, 144, 0.05) 70%, transparent 100%);
+}
+
+.orb-indigo {
+  background: radial-gradient(circle, rgba(99, 102, 241, 0.25) 0%, rgba(79, 70, 229, 0.05) 70%, transparent 100%);
+}
+
+/* Fallback for browsers without backdrop-filter */
+@supports not (backdrop-filter: blur(1px)) {
+  .glass,
+  .glass-panel,
+  .glass-card,
+  .glass-elevated,
+  .glass-subtle,
+  .glass-pill {
+    background: var(--surface);
+    border-color: var(--line);
+  }
+}

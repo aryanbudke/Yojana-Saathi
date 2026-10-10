@@ -14,7 +14,7 @@ import {
   type ProfileField,
   type ProfileFacts,
 } from "@/lib/api/contracts";
-import { mergeExtraction } from "./model";
+import { fieldsToConfirm, mergeExtraction } from "./model";
 import type { ProfileDraft } from "./types";
 function useProfileState() {
   const [draft, setDraft] = useState<ProfileDraft>({
@@ -43,15 +43,22 @@ function useProfileState() {
   }
   async function confirm() {
     const facts = profileSchema.parse(draft.facts);
-    const active =
+    let active =
       session && Date.parse(session.expires_at) > Date.now()
         ? session
         : await api.createSession();
     setSession(active);
     // Save reviewed facts using the existing one-field endpoint; model values are now citizen-confirmed.
     try {
-      for (const field of Object.keys(facts) as ProfileField[])
-        await api.answer(active.session_id, field, facts[field]);
+      for (const field of fieldsToConfirm(facts, active.facts)) {
+        const response = await api.answer(
+          active.session_id,
+          field,
+          facts[field],
+        );
+        active = { ...active, facts: response.facts };
+        setSession(active);
+      }
     } catch (error) {
       if (error instanceof ApiError && error.status === 404) {
         setSession(null);
@@ -93,6 +100,7 @@ function useProfileState() {
     if (!session) throw new Error("Start a session first");
     profileSchema.parse({ ...draft.facts, [field]: value });
     const response = await api.answer(session.session_id, field, value);
+    setSession({ ...session, facts: response.facts });
     setDraft((prev) => ({
       facts: response.facts,
       origins: { ...prev.origins, [field]: "user" },

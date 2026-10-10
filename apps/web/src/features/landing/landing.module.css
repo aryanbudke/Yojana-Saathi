@@ -1,0 +1,361 @@
+/* Hero + benefits strip. The hero showcase is the page's one bold element. */
+
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  align-items: start;
+  gap: 56px;
+  padding: 40px 0 56px;
+}
+
+.heroCopy {
+  padding-top: 24px;
+}
+
+.heroTitle {
+  max-width: 15ch;
+  font-size: var(--text-display);
+  font-weight: 700;
+  line-height: 1.04;
+  letter-spacing: -0.04em;
+  color: var(--ink);
+}
+
+.heroAccent {
+  color: var(--primary);
+  background-image: linear-gradient(var(--lime), var(--lime));
+  background-repeat: no-repeat;
+  background-size: 100% 0.16em;
+  background-position: 0 92%;
+}
+
+.heroLead {
+  max-width: 52ch;
+  margin-top: 20px;
+  font-size: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
+  line-height: 1.6;
+  color: var(--muted);
+}
+
+.heroActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 32px;
+}
+
+.heroActions :global(.button) {
+  min-height: 52px;
+  padding-inline: 22px;
+  font-size: 15px;
+}
+
+.valueProps {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 24px;
+  margin: 28px 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: 14px;
+  font-weight: 550;
+  color: var(--secondary-ink);
+}
+
+.valueProps li {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.valueCheck {
+  display: inline-grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--sage);
+  color: var(--primary);
+}
+
+/* ---------- Showcase (signature) ---------- */
+.showcase {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
+  gap: 20px;
+  padding: 12px 0;
+  isolation: isolate;
+}
+
+.showcase::before {
+  content: "";
+  position: absolute;
+  inset: 4% 0 8% 6%;
+  z-index: -2;
+  border-radius: 50%;
+  background:
+    radial-gradient(closest-side, rgb(223 242 162 / 55%), transparent 70%),
+    radial-gradient(
+      closest-side at 70% 60%,
+      rgb(230 241 232 / 95%),
+      transparent
+    );
+}
+
+.showcaseLines {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  width: 100%;
+  height: 100%;
+  stroke: rgb(2 66 65 / 14%);
+  stroke-width: 1;
+}
+
+.previewCard {
+  position: relative;
+  padding: 20px 22px;
+  border-radius: 20px;
+  transition:
+    transform var(--duration) var(--ease),
+    box-shadow var(--duration) var(--ease);
+}
+
+.previewCard:hover,
+.previewCard:focus-within {
+  transform: translateY(-4px);
+  box-shadow:
+    var(--shadow-lift),
+    inset 0 1px 0 rgb(255 255 255 / 70%);
+}
+
+.cardOne {
+  grid-area: 1 / 1;
+}
+
+/* Raised front card: offset down and deeper shadow encode the layering. */
+.cardTwo {
+  grid-area: 1 / 2 / 3 / 3;
+  z-index: 2;
+  margin-top: 96px;
+  box-shadow:
+    var(--shadow-lift),
+    inset 0 1px 0 rgb(255 255 255 / 70%);
+}
+
+.cardThree {
+  grid-area: 2 / 1;
+  margin-left: 28px;
+}
+
+.previewTop {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.exampleTag {
+  white-space: nowrap;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: rgb(16 35 27 / 6%);
+  font-size: 11px;
+  font-weight: 650;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--secondary-ink);
+}
+
+.categoryTag {
+  white-space: nowrap;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: var(--sage);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--primary);
+}
+
+.previewName {
+  margin-top: 14px;
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.previewFull {
+  margin-top: 2px;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.previewAuthority {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 12px;
+  font-size: 13px;
+  font-weight: 550;
+  color: var(--secondary-ink);
+}
+
+.previewPurpose {
+  margin: 8px 0 12px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--ink);
+}
+
+.showcaseNote {
+  grid-area: 3 / 1 / 4 / 3;
+  justify-self: end;
+  max-width: 40ch;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--muted);
+  text-align: right;
+}
+
+/* ---------- Benefits strip ---------- */
+.featureStrip {
+  padding: 28px 8px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+}
+
+.featureList {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.featureItem {
+  padding: 4px 24px;
+  border-left: 1px solid var(--line);
+}
+
+.featureItem:first-child {
+  border-left: 0;
+}
+
+.featureIcon {
+  display: inline-grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  margin-bottom: 14px;
+  border-radius: 12px;
+  background: var(--sage);
+  color: var(--primary);
+}
+
+.featureTitle {
+  font-size: 15px;
+  font-weight: 650;
+  line-height: 1.35;
+  letter-spacing: -0.01em;
+}
+
+.featureText {
+  margin-top: 6px;
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--muted);
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 1099px) {
+  .hero {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 40px;
+    padding-top: 32px;
+  }
+
+  .heroTitle {
+    max-width: 18ch;
+  }
+
+  .showcase {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+    padding: 0;
+  }
+
+  .showcase::before,
+  .showcaseLines {
+    display: none;
+  }
+
+  .cardOne,
+  .cardTwo,
+  .cardThree {
+    grid-area: auto;
+    margin: 0;
+  }
+
+  .showcaseNote {
+    grid-area: auto;
+    grid-column: 1 / -1;
+    justify-self: start;
+    max-width: none;
+    text-align: left;
+  }
+
+  .featureList {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    row-gap: 28px;
+  }
+
+  .featureItem:nth-child(3) {
+    border-left: 0;
+  }
+}
+
+@media (max-width: 767px) {
+  .showcase {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .heroActions :global(.button) {
+    flex: 1 1 100%;
+  }
+}
+
+@media (max-width: 599px) {
+  .featureStrip {
+    padding: 8px 4px;
+  }
+
+  .featureList {
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: 0;
+  }
+
+  .featureItem {
+    padding: 20px;
+    border-left: 0;
+    border-top: 1px solid var(--line);
+  }
+
+  .featureItem:first-child {
+    border-top: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .previewCard {
+    transition: none;
+  }
+
+  .previewCard:hover,
+  .previewCard:focus-within {
+    transform: none;
+  }
+}

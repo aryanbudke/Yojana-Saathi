@@ -20,10 +20,18 @@ for (const width of [320, 375, 390, 768, 1024, 1280, 1440]) {
         .include("footer")
         .withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"])
         .analyze();
-      expect(results.violations).toEqual([]);
+      expect(
+        results.violations.map(({ id, nodes }) => ({
+          id,
+          failures: nodes.map(({ target, failureSummary }) => ({
+            target,
+            failureSummary,
+          })),
+        })),
+      ).toEqual([]);
     }
     await expect(
-      page.getByRole("heading", { name: "Contract Fixture Scheme" }),
+      page.getByRole("heading", { name: "Find schemes for your situation" }),
     ).toBeVisible();
     await check();
     await page.keyboard.press("Tab");

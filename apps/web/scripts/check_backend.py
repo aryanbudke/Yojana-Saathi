@@ -11,7 +11,7 @@ repo = web.parents[1]
 def git(*args: str) -> str:
     return subprocess.check_output(['git', *args], cwd=repo, text=True).strip()
 
-paths = git('ls-tree', '-r', '--name-only', 'origin/main', 'services/api/app/api').splitlines()
+paths = git('ls-tree', '-r', '--name-only', 'origin/main', 'services/api/app/api', 'services/api/app/modules/ai/routes.py').splitlines()
 routes = []
 for path in paths:
     if not path.endswith('.py'):
