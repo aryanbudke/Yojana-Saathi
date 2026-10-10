@@ -10,7 +10,16 @@ export function AppHeader() {
   const [open, setOpen] = useState(false);
   const trigger = useRef<HTMLButtonElement>(null);
   const links = [
-    { href: "/discover", label: "Discover", active: pathname !== "/help" },
+    {
+      href: "/discover",
+      label: "Discover",
+      active: pathname !== "/help" && pathname !== "/dashboard",
+    },
+    {
+      href: "/dashboard",
+      label: "Dashboard",
+      active: pathname === "/dashboard",
+    },
     { href: "/help", label: "How it works", active: pathname === "/help" },
   ];
   return (

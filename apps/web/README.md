@@ -64,6 +64,7 @@ Deployment/live demo require a backend URL, working extraction/matching/question
 
 ## Routes and state
 
+- `/dashboard`: guest workspace with actual profile details, current scheme-check counts, next-step actions, source-linked results and a published catalogue preview. Unknown or stale matches are not displayed as completed checks. Refreshing clears the in-memory profile. This page does not imply an authenticated account or application-status tracking.
 - `/` and `/discover`: composer, editable profile and catalogue.
 - `/recommendations`: confirmed-profile matches and follow-up questions.
 - `/schemes/[schemeId]`: benefit, eligibility, exclusions, document and source sections.
@@ -73,5 +74,7 @@ Deployment/live demo require a backend URL, working extraction/matching/question
 Profile facts and origins stay in React memory across client navigation. Confirmation creates an anonymous expiring server session and saves reviewed fields through `/profiles/answers`. Clear deletes that session before clearing memory. A refresh intentionally clears local profile state; there is no local storage, persistent profile, account sync, ID upload or backend submission flow. Personal document checkbox state is page-local and never claims official verification.
 
 Optional Saved, Hindi, RAG and public admin UI are not exposed. Saved and Hindi depend on the complete core live gate; admin curation remains the backend owner's responsibility.
+
+The header links to Dashboard, and profile confirmation links back to it. Browser verification can use an alternate port with `PLAYWRIGHT_PORT=3010 npm run test:e2e`; a separate checkout/copy is needed when another Next development server already holds this checkout's lock. Dashboard screenshots use explicitly labeled synthetic fixtures and are saved under `artifacts/dashboard/`.
 
 See `HANDOFF.md` for endpoint/session details and limitations, and `PROGRESS.md` for sequential task checks and commits.

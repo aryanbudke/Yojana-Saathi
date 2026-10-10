@@ -137,6 +137,7 @@ export function ProfileComposer() {
       </GlassPanel>
       {p.reviewing && (
         <section
+          id="profile-review"
           className="panel profile-review"
           aria-labelledby="review-heading"
         >
@@ -280,6 +281,10 @@ export function ProfileComposer() {
               Your details are confirmed for this anonymous session.{" "}
               <Link href="/recommendations" className="text-link">
                 See my recommendations →
+              </Link>
+              {" · "}
+              <Link href="/dashboard" className="text-link">
+                Open my dashboard →
               </Link>
             </InlineAlert>
           )}

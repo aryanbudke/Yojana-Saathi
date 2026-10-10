@@ -67,3 +67,11 @@ The existing frontend now uses a compact two-column discovery workspace, six vis
 The primary discovery action is inside a 720px desktop viewport: approximately 665px at 1024px wide, 675px at 1280px and 681px at 1440px. All values and verdicts still come from the existing typed client or explicitly labeled fixtures. No backend, session contract, eligibility algorithm or dependency changed. English is displayed as the current language; optional Saved, Hindi, authentication and an applications dashboard are not advertised before their existing integration gate.
 
 Seven sequential UI commits are tracked in `PROGRESS.md`. The audit is `UI-REDESIGN.md`; final visual evidence and measurements are under `artifacts/redesign/after/`, with baseline captures under `before/`. Run `node scripts/capture-redesign.mjs` against a running mock preview to reproduce them. Live API verification and deployment retain the previously documented external dependencies.
+
+## User dashboard handoff
+
+`/dashboard` adds a guest workspace with a profile summary, provided-field counts, scheme-check counts, follow-up status counts, next-step navigation, source-backed match cards, a published catalogue preview and category links. All counts come from the existing profile and matching providers. Matches appear only when the profile is confirmed, the anonymous session has not expired and the cached session/fact key exactly matches the profile. There is no client-side eligibility evaluation or invented application-status tracking.
+
+Profile review opens the existing editable form through a real navigation target. Guidance uses the existing scheme checklist route. Catalogue loading, empty and retry states consume the unchanged typed REST client. The dashboard inherits mock labeling and disabled placeholder source links. It adds no backend endpoints, login/account synchronization, persistent profile storage or saved-scheme controls.
+
+Dashboard verification passed 23 unit/contract tests, 14 distinct dashboard/profile/navigation browser checks, seven additional axe scans, no overflow at the five requested widths, lint, strict types, formatting and the production build. Screenshots under `artifacts/dashboard/` show explicitly synthetic contract fixtures. These results establish frontend behavior in mock mode, not live API or government-data correctness.
