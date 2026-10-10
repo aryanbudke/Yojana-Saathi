@@ -1,5 +1,6 @@
-import { describe, it, expect } from "vitest";
-import { createLiveApi, ApiError } from "./client";
+import { describe, it, expect, test } from "vitest";
+import { createLiveApi, ApiError, errorMessage } from "./client";
+import { messages } from "@/i18n/messages";
 import { createMockApi } from "./mock";
 import {
   blankFacts,
@@ -177,4 +178,21 @@ describe("contract boundary", () => {
       null,
     );
   });
+});
+
+test("errorMessage words known client codes in the reader's language", () => {
+  const hiErrors = messages.hi.errors;
+  const live = new ApiError("LIVE_API_REQUIRED", "Voice input requires the live API.", 503);
+  expect(errorMessage(live, hiErrors)).toBe(hiErrors.codes.LIVE_API_REQUIRED);
+  // Server failures stay generic; backend wording for 4xx passes through.
+  expect(errorMessage(new ApiError("SERVICE_UNAVAILABLE", "x", 503), hiErrors)).toBe(
+    hiErrors.unavailable,
+  );
+  expect(errorMessage(new ApiError("HTTP_ERROR", "x", 502), hiErrors)).toBe(
+    hiErrors.unavailable,
+  );
+  expect(errorMessage(new ApiError("VALIDATION", "Age is too high", 422), hiErrors)).toBe(
+    "Age is too high",
+  );
+  expect(errorMessage(new Error("boom"), hiErrors)).toBe(hiErrors.generic);
 });

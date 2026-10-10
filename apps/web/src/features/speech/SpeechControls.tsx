@@ -2,13 +2,15 @@
 
 import { Mic, Volume2, VolumeX } from "lucide-react";
 import { Button, InlineAlert } from "@/components/ui";
-import { useSpeech } from "./SpeechProvider";
+import { useMessages } from "@/i18n/client";
+import { LOCALE_NAMES, LOCALES } from "@/i18n/config";
+import { SPEECH_LANGUAGES, useSpeech } from "./SpeechProvider";
 
-export const speechLanguages = [
-  { code: "en-IN" as const, label: "English" },
-  { code: "hi-IN" as const, label: "हिन्दी" },
-  { code: "kn-IN" as const, label: "ಕನ್ನಡ" },
-];
+/** Same languages as the interface, each named in its own script. */
+const speechLanguages = LOCALES.map((locale) => ({
+  code: SPEECH_LANGUAGES[locale],
+  label: LOCALE_NAMES[locale],
+}));
 
 export function SpeechInputControls({
   onTranscript,
@@ -16,10 +18,11 @@ export function SpeechInputControls({
   onTranscript: (text: string) => void;
 }) {
   const speech = useSpeech();
+  const t = useMessages().speech;
   return (
     <div className="speech-controls">
       <label className="speech-language">
-        <span>Voice language</span>
+        <span>{t.voiceLanguage}</span>
         <select
           className="input"
           value={speech.language}
@@ -45,15 +48,15 @@ export function SpeechInputControls({
       >
         <Mic size={16} />
         {speech.recording
-          ? "Listening…"
+          ? t.listening
           : speech.working
-            ? "Transcribing…"
-            : "Speak instead"}
+            ? t.transcribing
+            : t.speak}
       </Button>
       <span className="small muted" aria-live="polite">
         {speech.recording
-          ? "Listening… recording stops automatically when you finish speaking."
-          : "Your recording is sent to Sarvam AI and is not saved by Yojana Saathi."}
+          ? t.listeningHint
+          : t.privacyNote}
       </span>
       {speech.error && <InlineAlert error>{speech.error}</InlineAlert>}
     </div>
@@ -62,10 +65,11 @@ export function SpeechInputControls({
 
 export function ReadAloudButton({ text }: { text: string }) {
   const speech = useSpeech();
+  const t = useMessages().speech;
   return (
     <div className="read-aloud">
       <label className="speech-language compact">
-        <span>Audio language</span>
+        <span>{t.audioLanguage}</span>
         <select
           className="input"
           value={speech.language}
@@ -91,11 +95,11 @@ export function ReadAloudButton({ text }: { text: string }) {
         }
       >
         {speech.speaking ? <VolumeX size={16} /> : <Volume2 size={16} />}
-        {speech.speaking ? "Stop audio" : "Read aloud"}
+        {speech.speaking ? t.stopAudio : t.readAloud}
       </Button>
       {speech.language !== "en-IN" && (
         <span className="small muted">
-          AI-translated audio; check the original text.
+          {t.translatedAudio}
         </span>
       )}
       {speech.error && <InlineAlert error>{speech.error}</InlineAlert>}

@@ -73,7 +73,8 @@ test("language selector translates the page and keeps working state", async ({
   await page.goto("/discover");
   await page.getByRole("button", { name: "Try an example" }).click();
   const text = await page.locator("#profile-text").inputValue();
-  await page.getByRole("combobox", { name: "Language" }).selectOption("hi");
+  const banner = page.getByRole("banner");
+  await banner.getByRole("combobox", { name: "Language" }).selectOption("hi");
   await expect(page.locator("html")).toHaveAttribute("lang", "hi");
   await expect(
     page
@@ -83,11 +84,14 @@ test("language selector translates the page and keeps working state", async ({
   ).toHaveText(["होम", "खोजें", "मिलान", "प्रोफ़ाइल", "सहेजी गई"]);
   // A refresh, not a reload: the description typed before switching is still there.
   await expect(page.locator("#profile-text")).toHaveValue(text);
+  // Voice input follows the interface language until the person picks one.
+  await expect(page.getByRole("button", { name: "बोलकर बताएँ" })).toBeVisible();
+  await expect(page.getByLabel("बोलने की भाषा")).toHaveValue("hi-IN");
   await page.reload();
   await expect(page.locator("html")).toHaveAttribute("lang", "hi");
-  await page.getByRole("combobox", { name: "भाषा" }).selectOption("kn");
+  await banner.getByRole("combobox", { name: "भाषा" }).selectOption("kn");
   await expect(page.locator("html")).toHaveAttribute("lang", "kn");
-  await page.getByRole("combobox", { name: "ಭಾಷೆ" }).selectOption("en");
+  await banner.getByRole("combobox", { name: "ಭಾಷೆ" }).selectOption("en");
   await expect(page.locator("html")).toHaveAttribute("lang", "en");
 });
 
