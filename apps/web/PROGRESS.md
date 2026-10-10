@@ -224,3 +224,14 @@ The remaining dependency order is packaging/handoff → live API verification �
 | UI-05 | `67dad94`                                                                  |
 | UI-06 | `5846eba`                                                                  |
 | UI-07 | Commit containing this entry, resolved by `git log --oneline --grep=UI-07` |
+
+## DASH-01 — User dashboard
+
+- Status: COMPLETED
+- Scope: Guest dashboard, actual profile and match summaries, next-step navigation, published catalogue preview, category links and responsive accessible layout.
+- Files: src/app/dashboard/{page.tsx,dashboard.css}, src/features/dashboard/{Dashboard.tsx,model.ts,model.test.ts}, src/components/AppHeader.tsx, src/features/profile/ProfileComposer.tsx, e2e/dashboard.spec.ts, playwright.config.ts, artifacts/dashboard/*.png, README.md, HANDOFF.md, PROGRESS.md.
+- Tests executed: ESLint, strict TypeScript, 23 unit/contract tests, 14 distinct browser checks, full formatting checks and production build passed. Seven axe scans passed: guest dashboard at 320/375/768/1024/1440, plus populated dashboard at 375/1440. Profile creation, exact-fact match summaries, stale-match suppression, refresh privacy, category filters and guidance navigation verified. Three screenshots inspected and saved in artifacts/dashboard/.
+- Problems/dependencies: The dashboard consumes the existing session and scheme contracts. Live service availability remains external. Saved-scheme/account synchronization and official application tracking are not implemented or represented as working features.
+- Problems encountered during verification: Existing Next dev server held this checkout's lock, so browser tests used an isolated temporary copy with Webpack and bundled Node. Production build needed permission to launch TypeScript subprocesses outside the sandbox. One refresh test timed out waiting for the development server's full load event; waiting for DOM content plus explicit UI assertions passed on rerun. No outstanding dashboard verification failures.
+- Commit reference: `7723ed5` — feat(web): add accessible guest user dashboard.
+- Next task: Dashboard complete. Live API/deployment verification remains separate.
