@@ -63,7 +63,7 @@ export function RagTester() {
             aria-describedby={error ? "token-help rag-error" : "token-help"}
             aria-invalid={error.startsWith("Reviewer token rejected")}
             disabled={pending}
-            className="text-base"
+            className="input text-base"
           />
           <p id="token-help" className="muted">
             Use ADMIN_REVIEW_TOKEN from the private backend .env. It stays in
@@ -79,10 +79,11 @@ export function RagTester() {
             value={question}
             onChange={(event) => setQuestion(event.target.value)}
             required
-            maxLength={1000}
+            minLength={2}
+            maxLength={500}
             aria-describedby="question-help"
             disabled={pending}
-            className="text-base"
+            className="input textarea text-base"
           />
           <p id="question-help" className="muted">
             Try Atal Pension Yojana, Jan Dhan accounts, seed support or handloom
@@ -93,7 +94,7 @@ export function RagTester() {
           <Button
             type="submit"
             busy={pending}
-            disabled={!question.trim() || token.trim().length < 32}
+            disabled={question.trim().length < 2 || token.trim().length < 32}
           >
             {pending ? "Reading draft sources…" : "Ask draft records"}
           </Button>

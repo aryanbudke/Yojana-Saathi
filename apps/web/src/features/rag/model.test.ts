@@ -24,6 +24,17 @@ afterEach(() => {
   vi.unstubAllEnvs();
 });
 describe("local reviewer answer boundary", () => {
+  it("enforces the existing backend question limits before sending credentials", async () => {
+    const fetcher = vi.fn();
+    vi.stubGlobal("fetch", fetcher);
+    await expect(askDrafts("a", "synthetic-token")).rejects.toThrow(
+      "between 2 and 500",
+    );
+    await expect(askDrafts("a".repeat(501), "synthetic-token")).rejects.toThrow(
+      "between 2 and 500",
+    );
+    expect(fetcher).not.toHaveBeenCalled();
+  });
   it("rejects publication and citations outside retrieved records", () => {
     expect(draftAnswerSchema.safeParse(fixture).success).toBe(true);
     expect(

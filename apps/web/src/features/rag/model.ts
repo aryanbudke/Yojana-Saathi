@@ -30,6 +30,8 @@ export async function askDrafts(
   question: string,
   token: string,
 ): Promise<DraftAnswer> {
+  if (question.trim().length < 2 || question.length > 500)
+    throw new Error("Enter a question between 2 and 500 characters.");
   const base = new URL(process.env.NEXT_PUBLIC_API_BASE_URL ?? "");
   if (base.origin !== "http://localhost:8000")
     throw new Error("This test page requires the local backend on port 8000.");

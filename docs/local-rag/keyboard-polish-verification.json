@@ -1,0 +1,363 @@
+{
+  "status": "passed",
+  "scope": "keyboard-only actual sample ask plus final desktop/mobile polish",
+  "focus_stops": [
+    {
+      "id": "",
+      "tag": "A",
+      "focusVisible": true,
+      "outline": "solid",
+      "shadow": "none"
+    },
+    {
+      "id": "",
+      "tag": "A",
+      "focusVisible": true,
+      "outline": "solid",
+      "shadow": "none"
+    },
+    {
+      "id": "",
+      "tag": "A",
+      "focusVisible": true,
+      "outline": "solid",
+      "shadow": "none"
+    },
+    {
+      "id": "",
+      "tag": "A",
+      "focusVisible": true,
+      "outline": "solid",
+      "shadow": "none"
+    },
+    {
+      "id": "",
+      "tag": "A",
+      "focusVisible": true,
+      "outline": "solid",
+      "shadow": "none"
+    },
+    {
+      "id": "",
+      "tag": "A",
+      "focusVisible": true,
+      "outline": "solid",
+      "shadow": "none"
+    },
+    {
+      "id": "",
+      "tag": "A",
+      "focusVisible": true,
+      "outline": "solid",
+      "shadow": "none"
+    },
+    {
+      "id": "",
+      "tag": "SELECT",
+      "focusVisible": true,
+      "outline": "none",
+      "shadow": "none"
+    },
+    {
+      "id": "",
+      "tag": "A",
+      "focusVisible": true,
+      "outline": "solid",
+      "shadow": "color(srgb 0.00784314 0.172549 0.168627 / 0.14) 0px 1px 2px 0px"
+    },
+    {
+      "id": "",
+      "tag": "A",
+      "focusVisible": true,
+      "outline": "solid",
+      "shadow": "none"
+    },
+    {
+      "id": "review-token",
+      "tag": "INPUT",
+      "focusVisible": true,
+      "outline": "solid",
+      "shadow": "rgba(2, 66, 65, 0) 0px 0px 0px 1.77801e-05px"
+    },
+    {
+      "id": "",
+      "parent": "",
+      "tag": "BUTTON",
+      "focusVisible": true,
+      "outline": "solid",
+      "shadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.1) 0px 1px 3px 0px, rgba(0, 0, 0, 0.1) 0px 1px 2px -1px"
+    },
+    {
+      "id": "",
+      "parent": "",
+      "tag": "A",
+      "focusVisible": true,
+      "outline": "solid",
+      "shadow": "none"
+    },
+    {
+      "id": "",
+      "parent": "source-apy",
+      "tag": "SUMMARY",
+      "focusVisible": true,
+      "outline": "solid",
+      "shadow": "none"
+    },
+    {
+      "id": "",
+      "tag": "SUMMARY",
+      "focusVisible": true,
+      "outline": "solid",
+      "shadow": "none"
+    },
+    {
+      "id": "",
+      "tag": "SUMMARY",
+      "focusVisible": true,
+      "outline": "solid",
+      "shadow": "none"
+    },
+    {
+      "id": "",
+      "tag": "A",
+      "focusVisible": true,
+      "outline": "solid",
+      "shadow": "none"
+    },
+    {
+      "id": "",
+      "tag": "A",
+      "focusVisible": true,
+      "outline": "solid",
+      "shadow": "none"
+    },
+    {
+      "id": "",
+      "tag": "A",
+      "focusVisible": true,
+      "outline": "solid",
+      "shadow": "none"
+    },
+    {
+      "id": "",
+      "tag": "A",
+      "focusVisible": true,
+      "outline": "solid",
+      "shadow": "none"
+    },
+    {
+      "id": "",
+      "tag": "A",
+      "focusVisible": true,
+      "outline": "solid",
+      "shadow": "none"
+    },
+    {
+      "id": "",
+      "tag": "A",
+      "focusVisible": true,
+      "outline": "solid",
+      "shadow": "none"
+    },
+    {
+      "id": "",
+      "tag": "A",
+      "focusVisible": true,
+      "outline": "solid",
+      "shadow": "none"
+    },
+    {
+      "id": "",
+      "tag": "A",
+      "focusVisible": true,
+      "outline": "solid",
+      "shadow": "none"
+    },
+    {
+      "id": "",
+      "tag": "A",
+      "focusVisible": true,
+      "outline": "solid",
+      "shadow": "none"
+    },
+    {
+      "id": "",
+      "tag": "A",
+      "focusVisible": true,
+      "outline": "solid",
+      "shadow": "none"
+    },
+    {
+      "id": "",
+      "tag": "A",
+      "focusVisible": true,
+      "outline": "solid",
+      "shadow": "none"
+    },
+    {
+      "id": "",
+      "tag": "A",
+      "focusVisible": true,
+      "outline": "solid",
+      "shadow": "none"
+    },
+    {
+      "id": "",
+      "tag": "A",
+      "focusVisible": true,
+      "outline": "solid",
+      "shadow": "none"
+    },
+    {
+      "id": "",
+      "tag": "NEXTJS-PORTAL",
+      "focusVisible": false,
+      "outline": "none",
+      "shadow": "none"
+    },
+    {
+      "id": "",
+      "tag": "BODY",
+      "focusVisible": false,
+      "outline": "none",
+      "shadow": "none"
+    },
+    {
+      "id": "",
+      "tag": "A",
+      "focusVisible": true,
+      "outline": "solid",
+      "shadow": "none"
+    },
+    {
+      "id": "",
+      "tag": "A",
+      "focusVisible": true,
+      "outline": "solid",
+      "shadow": "none"
+    },
+    {
+      "id": "",
+      "tag": "A",
+      "focusVisible": true,
+      "outline": "solid",
+      "shadow": "none"
+    },
+    {
+      "id": "",
+      "tag": "A",
+      "focusVisible": true,
+      "outline": "solid",
+      "shadow": "none"
+    },
+    {
+      "id": "",
+      "tag": "A",
+      "focusVisible": true,
+      "outline": "solid",
+      "shadow": "none"
+    },
+    {
+      "id": "",
+      "tag": "A",
+      "focusVisible": true,
+      "outline": "solid",
+      "shadow": "none"
+    },
+    {
+      "id": "",
+      "tag": "A",
+      "focusVisible": true,
+      "outline": "solid",
+      "shadow": "none"
+    },
+    {
+      "id": "",
+      "tag": "SELECT",
+      "focusVisible": true,
+      "outline": "none",
+      "shadow": "none"
+    },
+    {
+      "id": "",
+      "tag": "A",
+      "focusVisible": true,
+      "outline": "solid",
+      "shadow": "color(srgb 0.00784314 0.172549 0.168627 / 0.14) 0px 1px 2px 0px"
+    },
+    {
+      "id": "",
+      "tag": "A",
+      "focusVisible": true,
+      "outline": "solid",
+      "shadow": "none"
+    },
+    {
+      "id": "review-token",
+      "tag": "INPUT",
+      "focusVisible": true,
+      "outline": "solid",
+      "shadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px"
+    }
+  ],
+  "http_status": 200,
+  "cited_slugs": [
+    "apy"
+  ],
+  "answer": "According to the unverified Atal Pension Yojana record, subscribers receive a guaranteed minimum pension ranging from Rs. 1000/- per month to Rs. 5000/- per month (specifically Rs. 1000/-, Rs. 2000/-, Rs. 3000/-, Rs. 4000/-, or Rs. 5000/- per month) after the age of 60 years until death.",
+  "viewports": [
+    {
+      "width": 375,
+      "horizontal_overflow": false,
+      "controls": [
+        {
+          "height": 47,
+          "border": "rgb(140, 126, 74)",
+          "background": "rgb(250, 244, 220)"
+        },
+        {
+          "height": 68,
+          "border": "rgb(140, 126, 74)",
+          "background": "rgb(250, 244, 220)"
+        },
+        {
+          "height": 46,
+          "border": "rgba(0, 0, 0, 0)",
+          "background": "rgb(3, 83, 82)"
+        },
+        {
+          "height": 46,
+          "border": "oklab(0.999994 0.0000455678 0.0000200868 / 0.9)",
+          "background": "oklab(0.965503 -0.00297379 0.0319862 / 0.8)"
+        }
+      ]
+    },
+    {
+      "width": 1280,
+      "horizontal_overflow": false,
+      "controls": [
+        {
+          "height": 47,
+          "border": "rgb(140, 126, 74)",
+          "background": "rgb(250, 244, 220)"
+        },
+        {
+          "height": 68,
+          "border": "rgb(140, 126, 74)",
+          "background": "rgb(250, 244, 220)"
+        },
+        {
+          "height": 46,
+          "border": "rgba(0, 0, 0, 0)",
+          "background": "rgb(3, 83, 82)"
+        },
+        {
+          "height": 46,
+          "border": "oklab(0.999994 0.0000455678 0.0000200868 / 0.9)",
+          "background": "oklab(0.965503 -0.00297379 0.0319862 / 0.8)"
+        }
+      ]
+    }
+  ],
+  "token_cleared": true
+}
