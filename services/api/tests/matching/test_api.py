@@ -213,7 +213,7 @@ def test_unverified_dataset_record_is_a_labelled_preliminary_match(
     response = match(
         client,
         sid,
-        {"occupation": "farmer", "support_needs": ["agriculture"]},
+        {"age": 24, "occupation": "farmer", "support_needs": ["agriculture"]},
     )
     preliminary = next(
         item for item in response["results"] if item["verification_status"] == "preliminary"
@@ -229,6 +229,13 @@ def test_unverified_dataset_record_is_a_labelled_preliminary_match(
     assert preliminary["documents_text"].startswith("Income certificate")
     assert preliminary["application_text"].startswith("Apply")
     assert all("probability" not in reason for reason in preliminary["matching_reasons"])
+    question = client.post(
+        "/api/v1/questions/next",
+        json={"session_id": sid, "run_id": response["run_id"]},
+    )
+    assert question.status_code == 200
+    assert question.json()["field"] == "family_income_inr"
+    assert "unverified draft" in question.json()["reason"]
 
 
 def test_extraction_is_stateless_and_can_be_corrected_before_matching(

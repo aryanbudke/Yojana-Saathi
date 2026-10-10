@@ -10,7 +10,7 @@ tests and acceptance checks pass.
 | DM-03 | Normalize safe rules and query dataset directly with SQL | COMPLETED |
 | DM-04 | Filter mandatory failures and rank deterministic matches | COMPLETED |
 | DM-05 | Explain matches, missing facts, and preliminary status | COMPLETED |
-| DM-06 | Separate citizen matching routes from RAG/admin routes | PENDING |
+| DM-06 | Separate citizen matching routes from RAG/admin routes | COMPLETED |
 | DM-07 | Evaluate labelled profiles and run full regression checks | PENDING |
 
 ## DM-01 — Dataset and dependency audit
@@ -112,3 +112,22 @@ tests and acceptance checks pass.
 - **Commit reference:** This checkpoint's `feat(matching)` commit.
 - **Next task:** DM-06 — Separate citizen matching routes from RAG/admin routes
   and complete targeted follow-up behavior.
+
+## DM-06 — Route isolation and targeted follow-up questions
+
+- **Status:** COMPLETED
+- **Files created or modified:** Dedicated citizen matching router, AI/admin
+  route cleanup, application router registration, deterministic question
+  fallback, API test coverage, and route-isolation test.
+- **Tests executed:** Ruff and focused mypy passed; matching API, question,
+  answer-validation, route-isolation, and staging-search regression tests passed
+  (96 passed, 2 environment-gated tests skipped).
+- **Problems encountered:** An initial generic category fallback repeated after
+  citizens had already answered a reviewed condition as unknown. It was removed;
+  preliminary follow-ups now require an actual metadata-matched draft with a
+  narrowly proposed, unanswered field.
+- **Dependency result:** The citizen router imports deterministic matching and
+  question services only. RAG, embeddings, and pgvector remain available solely
+  to the existing admin staging routes.
+- **Commit reference:** This checkpoint's `refactor(matching)` commit.
+- **Next task:** DM-07 — Run labelled evaluation and full regression checks.

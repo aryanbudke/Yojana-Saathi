@@ -19,6 +19,7 @@ from app.core.config import Settings, get_settings
 from app.core.errors import install_error_handlers, install_request_id_middleware
 from app.db.session import create_database_engine, create_session_factory
 from app.modules.ai.routes import router as ai_router
+from app.modules.matching.routes import router as matching_router
 from app.modules.speech.routes import router as speech_router
 
 
@@ -67,6 +68,7 @@ def create_app(
     application.include_router(profiles_router)
     application.include_router(saved_router)
     application.include_router(verification_router)
+    application.include_router(matching_router)
     application.include_router(ai_router)
     application.include_router(speech_router)
     return application
