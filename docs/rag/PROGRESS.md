@@ -329,7 +329,7 @@ override, frontend change, publication or remote deployment is authorized here.
 | Task | Status | Verification / dependency |
 | --- | --- | --- |
 | AUTH-01 Private environment | COMPLETED | Settings/AISettings, private mode/ignore and read-only PostgreSQL schema checks |
-| AUTH-02 Authenticated retrieval | PENDING | Real actual-data subset and provider embeddings, normal reviewer auth |
+| AUTH-02 Authenticated retrieval | COMPLETED | Real actual-data subset and provider embeddings, normal reviewer auth |
 | AUTH-03 Grounded generation | PENDING | AUTH-02 committed; configured model and actual retrieved records |
 | AUTH-04 Citation/source review | PENDING | AUTH-03 committed; membership, raw-record equality and claim-support review |
 | AUTH-05 PostgreSQL integration tests | PENDING | Two existing isolated-schema tests; provider mocks explicitly distinguished |
@@ -346,3 +346,14 @@ override, frontend change, publication or remote deployment is authorized here.
 - Failed checks: none. Deployed server configuration remains unverified; local settings do not establish remote readiness.
 - Commit: `docs(ai): verify authorized RAG server configuration` (resolve by title).
 - Next task: AUTH-02 actual-subset authenticated retrieval, only after this commit.
+
+### AUTH-02 — Authenticated actual-subset retrieval
+
+- Status: COMPLETED
+- Dependency: AUTH-01 committed as `1cbdf63`.
+- Scope: existing application factory with real private Settings and actual provider configuration; real Uvicorn HTTP listener bound to an observed ephemeral loopback port; unique temporary PostgreSQL schema configured through the supported engine factory parameter. No dependency overrides or auth mocks.
+- Dataset: three longest actual records plus five other actual scheme records; native-token chunks and real Gemini768 vectors. Shared staging remains the existing empty snapshot. This is a bounded integration test, not full3397 indexing.
+- Verification:403 for both missing/wrong credentials,200 for all16 valid title/topic queries;16/16 expected top1 results. Returned raw records equal the actual export, all review statuses draft, publication_allowed=false. Real Gemini, PostgreSQL and TCP HTTP used; no mocks/overrides. Full corpus remains unverified.
+- Files: owned sanitized retrieval evidence and this progress file; temporary harness outside repository, no frontend/runtime API changes.
+- Commit: `test(ai): verify authenticated actual-data subset retrieval` (resolve by title).
+- Next task: AUTH-03 generation only after this task verifies and commits.

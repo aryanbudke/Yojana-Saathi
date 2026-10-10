@@ -1,0 +1,206 @@
+{
+  "scope": "eight actual records in isolated PostgreSQL schema; real provider and HTTP API",
+  "full_corpus_verified": false,
+  "auth_bypassed": false,
+  "shared_staging_rows_before": 0,
+  "origin": "http://127.0.0.1:52588",
+  "records": 8,
+  "chunks": 14,
+  "model": "gemini-embedding-001",
+  "dimensions": 768,
+  "input_sha256": "7a37ee1dd159521ea86e5fb21c86dceb5220b42bb43657d43d797d1d5a65392a",
+  "checks": [
+    {
+      "credential": "missing",
+      "status": 403
+    },
+    {
+      "credential": "wrong",
+      "status": 403
+    }
+  ],
+  "status": "passed",
+  "queries": 16,
+  "top1_hits": 16,
+  "results": [
+    {
+      "query": "Krishonnati Yojana - Sub Mission On Seed And Planting Material (SMSP)",
+      "expected_slug": "ky-smsp",
+      "top3": [
+        "ky-smsp",
+        "cm-sky",
+        "financial-assistance-scheme"
+      ],
+      "top1_correct": true,
+      "raw_source_equal": true
+    },
+    {
+      "query": "Financial Assistance For Cultural Activities In Performing Arts For Building Grants Including Studio Theatres",
+      "expected_slug": "facapabgist",
+      "top3": [
+        "facapabgist",
+        "financial-assistance-scheme",
+        "ky-smsp"
+      ],
+      "top1_correct": true,
+      "raw_source_equal": true
+    },
+    {
+      "query": "Agriculture And Processed Foods Export Promotion Scheme Of APEDA For The 15th Finance Commission Cycle (2021-22 To 2025-26)",
+      "expected_slug": "financial-assistance-scheme",
+      "top3": [
+        "financial-assistance-scheme",
+        "ky-smsp",
+        "facapabgist"
+      ],
+      "top1_correct": true,
+      "raw_source_equal": true
+    },
+    {
+      "query": "Chief Minister\u2019s Shasakt Kisan Yojana",
+      "expected_slug": "cm-sky",
+      "top3": [
+        "cm-sky",
+        "ky-smsp",
+        "financial-assistance-scheme"
+      ],
+      "top1_correct": true,
+      "raw_source_equal": true
+    },
+    {
+      "query": "Atal Pension Yojana",
+      "expected_slug": "apy",
+      "top3": [
+        "apy",
+        "pmjdy",
+        "ky-smsp"
+      ],
+      "top1_correct": true,
+      "raw_source_equal": true
+    },
+    {
+      "query": "Pradhan Mantri Jan Dhan Yojana",
+      "expected_slug": "pmjdy",
+      "top3": [
+        "pmjdy",
+        "apy",
+        "nhdpccwms"
+      ],
+      "top1_correct": true,
+      "raw_source_equal": true
+    },
+    {
+      "query": "National Handloom Development Programme: Concessional Credit/Weaver MUDRA Scheme",
+      "expected_slug": "nhdpccwms",
+      "top3": [
+        "nhdpccwms",
+        "facapabgist",
+        "financial-assistance-scheme"
+      ],
+      "top1_correct": true,
+      "raw_source_equal": true
+    },
+    {
+      "query": "Pre-Matric Scholarship for Backward Class Students",
+      "expected_slug": "pmsfbcs",
+      "top3": [
+        "pmsfbcs",
+        "pmjdy",
+        "facapabgist"
+      ],
+      "top1_correct": true,
+      "raw_source_equal": true
+    },
+    {
+      "query": "seed testing laboratories certification and seed planting material subsidy",
+      "expected_slug": "ky-smsp",
+      "top3": [
+        "ky-smsp",
+        "financial-assistance-scheme",
+        "cm-sky"
+      ],
+      "top1_correct": true,
+      "raw_source_equal": true
+    },
+    {
+      "query": "building grants for studio theatres and performing arts cultural activities",
+      "expected_slug": "facapabgist",
+      "top3": [
+        "facapabgist",
+        "ky-smsp",
+        "financial-assistance-scheme"
+      ],
+      "top1_correct": true,
+      "raw_source_equal": true
+    },
+    {
+      "query": "APEDA assistance for refrigerated containers and food export infrastructure",
+      "expected_slug": "financial-assistance-scheme",
+      "top3": [
+        "financial-assistance-scheme",
+        "ky-smsp",
+        "facapabgist"
+      ],
+      "top1_correct": true,
+      "raw_source_equal": true
+    },
+    {
+      "query": "tea and rubber plantation cash assistance",
+      "expected_slug": "cm-sky",
+      "top3": [
+        "cm-sky",
+        "ky-smsp",
+        "financial-assistance-scheme"
+      ],
+      "top1_correct": true,
+      "raw_source_equal": true
+    },
+    {
+      "query": "pension on attaining sixty years for subscribers",
+      "expected_slug": "apy",
+      "top3": [
+        "apy",
+        "pmjdy",
+        "facapabgist"
+      ],
+      "top1_correct": true,
+      "raw_source_equal": true
+    },
+    {
+      "query": "zero balance basic savings bank account",
+      "expected_slug": "pmjdy",
+      "top3": [
+        "pmjdy",
+        "apy",
+        "nhdpccwms"
+      ],
+      "top1_correct": true,
+      "raw_source_equal": true
+    },
+    {
+      "query": "handloom weaver loans with margin money assistance",
+      "expected_slug": "nhdpccwms",
+      "top3": [
+        "nhdpccwms",
+        "facapabgist",
+        "pmjdy"
+      ],
+      "top1_correct": true,
+      "raw_source_equal": true
+    },
+    {
+      "query": "pre matric scholarship for backward class school students",
+      "expected_slug": "pmsfbcs",
+      "top3": [
+        "pmsfbcs",
+        "pmjdy",
+        "ky-smsp"
+      ],
+      "top1_correct": true,
+      "raw_source_equal": true
+    }
+  ],
+  "real_http": true,
+  "real_postgresql": true,
+  "real_gemini": true
+}
