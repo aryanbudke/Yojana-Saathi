@@ -32,6 +32,10 @@ test("complete the core journey using Tab, text input, Enter and Space", async (
   await tabTo(page.getByRole("button", { name: "Find my schemes" }));
   await page.keyboard.press("Enter");
   await expect(page.getByLabel("Age", { exact: true })).toHaveValue("24");
+  // Extraction also saves the facts to the session; the form unlocks when that finishes.
+  await expect(
+    page.getByRole("button", { name: "Confirm my details" }),
+  ).toBeEnabled();
   await tabTo(page.getByRole("button", { name: "Confirm my details" }));
   await page.keyboard.press("Enter");
   await expect(

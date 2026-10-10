@@ -73,7 +73,8 @@ test("language selector translates the page and keeps working state", async ({
   await page.goto("/discover");
   await page.getByRole("button", { name: "Try an example" }).click();
   const text = await page.locator("#profile-text").inputValue();
-  await page.getByRole("combobox", { name: "Language" }).selectOption("hi");
+  const banner = page.getByRole("banner");
+  await banner.getByRole("combobox", { name: "Language" }).selectOption("hi");
   await expect(page.locator("html")).toHaveAttribute("lang", "hi");
   await expect(
     page
@@ -85,9 +86,9 @@ test("language selector translates the page and keeps working state", async ({
   await expect(page.locator("#profile-text")).toHaveValue(text);
   await page.reload();
   await expect(page.locator("html")).toHaveAttribute("lang", "hi");
-  await page.getByRole("combobox", { name: "भाषा" }).selectOption("kn");
+  await banner.getByRole("combobox", { name: "भाषा" }).selectOption("kn");
   await expect(page.locator("html")).toHaveAttribute("lang", "kn");
-  await page.getByRole("combobox", { name: "ಭಾಷೆ" }).selectOption("en");
+  await banner.getByRole("combobox", { name: "ಭಾಷೆ" }).selectOption("en");
   await expect(page.locator("html")).toHaveAttribute("lang", "en");
 });
 
