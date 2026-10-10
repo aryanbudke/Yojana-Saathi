@@ -123,6 +123,16 @@ The remaining dependency order is packaging/handoff → live API verification �
 - Commit reference: commit containing this audit; resolve with `git log --format="%h %s" --grep="T1-11"`.
 - Next task: Resume T1-11 when the API is supplied. T1-12 is PENDING and has not started because live verification must pass first. Optional Saved and Hindi also remain unstarted behind that gate.
 
+### T1-11 update — 2026-10-10: live API verified, blocked only on published data
+
+- Status: still BLOCKED, but the blocker is narrower. All eight core routes now exist on `main` (`scripts/check_backend.py`: no missing routes).
+- Live contract test: new `src/lib/api/live.test.ts` drives the app's own typed client against a real backend and validates every response with the frontend zod contracts. Opt-in: `LIVE_API_URL=https://yojana-saathi-api.onrender.com npx vitest run src/lib/api/live.test.ts`. Against production: 5/5 passed (schemes, extract, session plus answers, matches, next question); it deletes its session afterwards.
+- Browser journey in live mode (`NEXT_PUBLIC_API_MODE=live`, port 3000, which production CORS allows): describe → extraction 503 shows the "enter manually" message and opens review → manual facts → confirm (server session) → recommendations ("No matches found yet", follow-up reports no questions) → clear (server session deleted). No errors.
+- Remaining blockers, both backend-side:
+  1. Production has **zero published schemes**. The 3,397 imported records and the 10-scheme normalized batch are drafts awaiting independent review, so match cards, scheme detail and guidance cannot be verified live.
+  2. Production AI extraction returns **503** (`GEMINI_API_KEY`/`GEMINI_MODEL` not effective), so users get manual entry only.
+- Fixed while testing: with no filters and an empty catalogue, discovery said "No schemes found for these filters"; it now says "No schemes are available yet" (en/hi/kn).
+
 ## Verified commit references
 
 | Task  | Commit    |

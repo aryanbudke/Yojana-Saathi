@@ -170,15 +170,22 @@ export function Discovery() {
         </>
       ) : (
         !r.error && (
-          <EmptyState title={t.emptyTitle}>
-            <p>{t.emptyText}</p>
-            <Button
-              variant="quiet"
-              onClick={() => update(new URLSearchParams())}
-            >
-              {t.clearFilters}
-            </Button>
-          </EmptyState>
+          // No filters and nothing listed means the catalogue itself is empty.
+          query ? (
+            <EmptyState title={t.emptyTitle}>
+              <p>{t.emptyText}</p>
+              <Button
+                variant="quiet"
+                onClick={() => update(new URLSearchParams())}
+              >
+                {t.clearFilters}
+              </Button>
+            </EmptyState>
+          ) : (
+            <EmptyState title={t.catalogueEmptyTitle}>
+              <p>{t.catalogueEmptyText}</p>
+            </EmptyState>
+          )
         )
       )}
     </section>

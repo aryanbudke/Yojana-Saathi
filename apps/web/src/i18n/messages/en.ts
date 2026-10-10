@@ -371,6 +371,9 @@ export const en = {
     emptyTitle: "No schemes found for these filters",
     emptyText:
       "Try another category or broaden your search. National schemes are included when relevant.",
+    catalogueEmptyTitle: "No schemes are available yet",
+    catalogueEmptyText:
+      "Schemes appear here once they have been reviewed against their official sources.",
     manualVerification: "Manual verification required · {status}",
   },
   profile: {
