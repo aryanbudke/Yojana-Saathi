@@ -422,3 +422,13 @@ The user authorized localhost website integration after stopping bulk indexing. 
 - Full3397 index remains incomplete; no bulk run resumed. Secrets remain private; no frontend edits in the upstream checkout.
 - Commit: `feat(ai): serve an isolated authenticated local RAG sample` (resolve by title).
 - Next task: WEB-02 frontend test page in the isolated latest-UI worktree after this commit.
+
+### WEB-02 / WEB-03 — Local website integration verified
+
+- Status: COMPLETED. WEB-01 commit `a5fa9ed`; isolated latest-frontend worktree WEB-02 commit `321fa08`, WEB-03 commit `be8fe94`. Detailed progress and sanitized browser evidence are in the sibling local-rag-demo/docs/local-rag directory.
+- Passing: actual localhost browser→normal authenticated API→Gemini→pgvector→draft answer; cited apy and all retrieved raw records match the actual export. Invalid reviewer token403; valid answer200. No auth overrides, invented data or published records.
+- Passing:36 frontend tests, lint, TypeScript, production build and formatting; keyboard-only ask/source expansion/clear, mobile/desktop polish, four widths without overflow, zero automated main-content accessibility violations. Backend114 related checks passed WEB-01; two real PostgreSQL checks previously passed AUTH-05.
+- Problems fixed: frontend question bounds now match2–500 API contract; browser harness alert selector narrowed to exclude framework announcer. No remaining failing check in this sample scope. Whole-site behavior and full-corpus correctness are not inferred.
+- Local API and website remain running at http://localhost:8000 and http://localhost:3000/rag for manual testing. User enters ADMIN_REVIEW_TOKEN from private backend.env; no secrets embedded in the frontend or evidence. Existing /health returns200.
+- Blocked/unverified: full3397 indexing remains incomplete and stopped; Gemini quota headroom is not established for bulk work. No bulk run resumed, deployment attempted or production-readiness claimed. Eight unverified records remain unpublished in the isolated local schema; shared staging was not replaced.
+- Commit: `docs(ai): record verified localhost website handoff` (resolve by title). Next task: none in this handoff; manual localhost testing is available.
