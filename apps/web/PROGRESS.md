@@ -400,3 +400,28 @@ Brief: complete 10-section GovTech landing page in the confirmed direction (ivor
 - N6 Motion and accessibility: 200–260ms transitions, arrow nudge on the CTA, scroll-aware bar (`useSyncExternalStore`), all disabled under `prefers-reduced-motion`; visible focus outline on every control; 44px minimum targets.
 - N7 Verification: typecheck, lint, 29/29 Vitest, 27/27 Playwright (including axe at seven widths and the new navbar and language tests), `next build`; checked with no overflow at 320–1440px in all three languages.
 - Test updates: journeys that started the composer on `/` now start on `/discover`, since the home finder section was removed earlier.
+
+## Step 02 Redesign — Progressive Profiling & Dynamic Eligibility
+
+| ID     | Task                                       | Status      |
+| ------ | ------------------------------------------ | ----------- |
+| TASK-1 | Inspect Existing Implementation            | COMPLETED   |
+| TASK-2 | Refactor Profile State                     | IN_PROGRESS |
+| TASK-3 | Redesign Profile Confirmation              | PENDING     |
+| TASK-4 | Implement Optional Details                 | PENDING     |
+| TASK-5 | Connect Matching Workflow                  | PENDING     |
+| TASK-6 | Dynamic Questions                          | PENDING     |
+| TASK-7 | Responsive UI and Accessibility            | PENDING     |
+| TASK-8 | Complete Testing                           | PENDING     |
+
+### TASK 1 — Inspect Existing Implementation
+
+- Status: COMPLETED
+- Scope: Audited profile components (`ProfileComposer`, `ProfileEditor`, `ProfileForm`, `ProfileSummary`), state management (`useProfile`, `useProfileState`, `types.ts`, `model.ts`), validation (`profileSchema`), API contracts (`extractSchema`, `sessionSchema`, `answerSchema`, `matchesSchema`, `questionSchema`), and routes (`/discover`, `/profile`, `/recommendations`).
+- Key Findings:
+  - Current implementation renders a static 11-field form grid (`age`, `state_code`, `occupation`, `family_income_inr`, `land_area_acres`, `land_registration`, `category`, `is_student`, `gender`, `social_category`, `has_disability`), causing overwhelming clutter with 8+ "Unknown" entries when only 2 facts are extracted.
+  - State differentiates `user` vs `model_extracted` via `origins`, but UI renders all 11 fields uniformly.
+  - API expects all 11 fields; missing/unanswered fields must remain `null`. Values `0` (income/age) and `false` (boolean) must never be coerced to `null`.
+  - Verified mock and live API contracts and Playwright e2e test environment.
+- Next Task: TASK 2 — Refactor Profile State
+
