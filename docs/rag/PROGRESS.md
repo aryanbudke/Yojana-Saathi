@@ -201,5 +201,34 @@ are preparation, not evidence that those commands ran.
 - Scope: derive environment names from existing configuration/fixtures, distinguish reviewer from publication credentials, supply connection/migration/test setup and reuse the existing data workflow. No invented project/credential/model values.
 - Verification: both inline Python command blocks parse; variable aliases match Settings/AISettings, installed dotenv loader confirmed, existing PostgreSQL fixture process-variable behavior and exact test selectors checked. Diff whitespace check passed. These checks did not execute migrations or connect to a database.
 - Problems: credentials and authorized target absent; runbook commands must not be reported as executed live.
-- Commit: task commit `docs(ai): document exact live RAG setup` (resolve by title).
+- Commit: `a4c3b1c` — `docs(ai): document exact live RAG setup`.
 - Next task: LIVE-03 verify connected project availability; stop dependent live tasks if unavailable.
+
+### LIVE-03 — Authorized project discovery and blocker verification
+
+- Status: COMPLETED (availability check only; authorized target not found)
+- Files modified: this progress document. Connected Supabase `list_projects` returned only inactive `tanvo`, unrelated to Yojana Saathi. No SQL, migrations, restores, project creation or writes against it.
+- Configuration: whole workspace search including ignored files found backend templates but no backend `.env`. Process presence checks were false for DATABASE_URL, STAGING_SEARCH_PG_URL, GEMINI_API_KEY, GEMINI_MODEL, GEMINI_EMBEDDING_MODEL, ADMIN_REVIEW_TOKEN, ADMIN_REVIEWER_ID and HTTP-verification variables. Frontend `.env.local` was neither read nor modified.
+- Passing verification: existing importer revalidated the original export, canonical copy and existing review artifact for equality/hash;3397 draft/unverified rows, publication_allowed=false. Existing regression suite328 passed,94% app coverage; Ruff lint and mypy97 files passed. No runtime code rebuilt.
+- Failed tests: none. No live connection failure fabricated; absent configuration prevented an attempt.
+- Blocked tests: both PostgreSQL tests were explicitly invoked and skipped with `STAGING_SEARCH_PG_URL not set`. This is not PostgreSQL verification. Existing Starlette test-client deprecation warning only.
+- Commit: task commit `docs(ai): record live integration blockers and regression results` (resolve by title).
+- Next task: LIVE-04 connection/migrations only after a correct authorized configuration/account is supplied, following `LIVE_SETUP.md` and the existing data workflow.
+
+### Remaining requested live tasks
+
+| User step | Status | Evidence/dependency |
+| --- | --- | --- |
+| 4 Connection checks and migrations | BLOCKED | Authorized Yojana Saathi SQL configuration unavailable; repository head checked, live revision not checked |
+| 5 Dataset validation and staging import | BLOCKED | Offline3397-record validation/review artifact passed; real PostgreSQL staging import not run |
+| 6 Gemini768-dimensional embeddings | BLOCKED | API key and account-enabled model configuration absent; no provider call or real dimension confirmation |
+| 7 PostgreSQL vector indexing/retrieval | BLOCKED | No database or embeddings; no vector query executed |
+| 8 Two PostgreSQL tests | BLOCKED | Invoked, both skipped for missing STAGING_SEARCH_PG_URL |
+| 9 Actual query quality/citations | BLOCKED | No authenticated live retrieval; synthetic contract checks do not establish actual relevance/support |
+| 10 Keep records unpublished | Constraint preserved | No database/publication writes; offline records remain unverified drafts. Live staging boundary still requires target verification |
+| 11 Regression tests and progress | Local checks COMPLETED; live checks BLOCKED |328 passed,0 failed,2 skipped; updated progress and setup handoff |
+
+Required next input is an authorized server configuration **path**, or connection
+to the Supabase account/project holding Yojana Saathi; no credentials in chat.
+Setup names/commands are in `docs/rag/LIVE_SETUP.md`. No frontend changes,
+deployment, production migration, paid embedding calls or live success claims.
