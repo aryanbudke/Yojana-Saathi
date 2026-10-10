@@ -331,7 +331,7 @@ override, frontend change, publication or remote deployment is authorized here.
 | AUTH-01 Private environment | COMPLETED | Settings/AISettings, private mode/ignore and read-only PostgreSQL schema checks |
 | AUTH-02 Authenticated retrieval | COMPLETED | Real actual-data subset and provider embeddings, normal reviewer auth |
 | AUTH-03 Grounded generation | COMPLETED | AUTH-02 committed; configured model and actual retrieved records |
-| AUTH-04 Citation/source review | PENDING | AUTH-03 committed; membership, raw-record equality and claim-support review |
+| AUTH-04 Citation/source review | COMPLETED | AUTH-03 committed; membership, raw-record equality and claim-support review |
 | AUTH-05 PostgreSQL integration tests | PENDING | Two existing isolated-schema tests; provider mocks explicitly distinguished |
 | AUTH-06 Full3397 indexing | PENDING | Verified quota headroom/pacing, native token guards and full transaction |
 | AUTH-07 Publication boundary | PENDING | No unverified draft enters published/public matching tables |
@@ -368,3 +368,14 @@ override, frontend change, publication or remote deployment is authorized here.
 - Files: staging_search.py, its existing request-contract test, authenticated-subset-answer.json, generation-diagnostic.json and this progress file. Secrets excluded; private config0600/ignored; no frontend diff.
 - Commit: `fix(ai): use REST JSON enum for authenticated draft answers` (resolve by title).
 - Next task: AUTH-04 citation/source support review after this commit.
+
+### AUTH-04 — Actual citation/source and claim support
+
+- Status: COMPLETED
+- Dependency: AUTH-03 verified/committed as `7b1c3f1`.
+- Verification: generated inline [apy] and cited_slugs match an actual retrieved source; all three returned raw records equal the original export exactly. Each remains unverified/draft, official_url empty and publication_allowed=false. Manual support review checks all five pension amounts plus age60/until-death against apy benefits. Draft framing present; no independent official-policy or eligibility verification inferred.
+- Scope/limit: one actual-source answer in the eight-record schema, not statistical grounding accuracy or full3397 retrieval. Citation membership alone does not prove arbitrary future answers true. Source-integrity and supported-claim assertions pass.
+- Files: citation-support-verification.json, temporary-schema cleanup evidence and this progress document. No runtime/frontend edits or publication writes.
+- Problems: none after AUTH-03 request fix. Temporary server/schema cleanup verified; shared staging remains0 before/after.
+- Commit: `test(ai): verify actual retrieved citation and pension claim support` (resolve by title).
+- Next task: AUTH-05 two PostgreSQL integration tests after this commit.
