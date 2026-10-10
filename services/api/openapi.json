@@ -182,6 +182,21 @@
               }
             ],
             "title": "State Code"
+          },
+          "support_needs": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/SupportNeed"
+                },
+                "maxItems": 10,
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Support Needs"
           }
         },
         "title": "ConfirmedFacts",
@@ -711,7 +726,8 @@
               "social_category",
               "gender",
               "has_disability",
-              "is_student"
+              "is_student",
+              "support_needs"
             ],
             "title": "Field",
             "type": "string"
@@ -734,6 +750,12 @@
               },
               {
                 "type": "boolean"
+              },
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
               },
               {
                 "type": "null"
@@ -966,6 +988,21 @@
               }
             ],
             "title": "State Code"
+          },
+          "support_needs": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/SupportNeed"
+                },
+                "maxItems": 10,
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Support Needs"
           }
         },
         "title": "ProfileFacts",
@@ -1333,6 +1370,39 @@
       "SchemeMatchResult": {
         "additionalProperties": false,
         "properties": {
+          "application_text": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Application Text"
+          },
+          "benefit_text": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Benefit Text"
+          },
+          "documents_text": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Documents Text"
+          },
           "failed_rules": {
             "items": {
               "$ref": "#/components/schemas/RuleOutcome"
@@ -1341,9 +1411,16 @@
             "type": "array"
           },
           "last_verified_at": {
-            "format": "date-time",
-            "title": "Last Verified At",
-            "type": "string"
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Verified At"
           },
           "manual_review_rules": {
             "items": {
@@ -1359,13 +1436,26 @@
             "title": "Matched Rules",
             "type": "array"
           },
+          "matching_reasons": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Matching Reasons",
+            "type": "array"
+          },
+          "missing_information": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Missing Information",
+            "type": "array"
+          },
           "official_source_urls": {
             "items": {
               "format": "uri",
               "minLength": 1,
               "type": "string"
             },
-            "minItems": 1,
             "title": "Official Source Urls",
             "type": "array"
           },
@@ -1400,6 +1490,15 @@
             },
             "title": "Unknown Rules",
             "type": "array"
+          },
+          "verification_status": {
+            "default": "verified",
+            "enum": [
+              "verified",
+              "preliminary"
+            ],
+            "title": "Verification Status",
+            "type": "string"
           }
         },
         "required": [
@@ -1411,8 +1510,7 @@
           "matched_rules",
           "failed_rules",
           "unknown_rules",
-          "last_verified_at",
-          "official_source_urls"
+          "last_verified_at"
         ],
         "title": "SchemeMatchResult",
         "type": "object"
@@ -1703,6 +1801,11 @@
         ],
         "title": "StagingSearchResult",
         "type": "object"
+      },
+      "SupportNeed": {
+        "maxLength": 80,
+        "minLength": 1,
+        "type": "string"
       },
       "SynthesisRequest": {
         "additionalProperties": false,

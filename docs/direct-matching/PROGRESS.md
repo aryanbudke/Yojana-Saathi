@@ -11,7 +11,7 @@ tests and acceptance checks pass.
 | DM-04 | Filter mandatory failures and rank deterministic matches | COMPLETED |
 | DM-05 | Explain matches, missing facts, and preliminary status | COMPLETED |
 | DM-06 | Separate citizen matching routes from RAG/admin routes | COMPLETED |
-| DM-07 | Evaluate labelled profiles and run full regression checks | PENDING |
+| DM-07 | Evaluate labelled profiles and run full regression checks | COMPLETED |
 
 ## DM-01 — Dataset and dependency audit
 
@@ -131,3 +131,23 @@ tests and acceptance checks pass.
   to the existing admin staging routes.
 - **Commit reference:** This checkpoint's `refactor(matching)` commit.
 - **Next task:** DM-07 — Run labelled evaluation and full regression checks.
+
+## DM-07 — Labelled evaluation and full regression
+
+- **Status:** COMPLETED
+- **Files created or modified:** Regenerated `services/api/openapi.json`, added
+  `docs/direct-matching/EVALUATION.md`, and finalized this progress log.
+- **Tests executed:** 420 backend tests passed with 2 PostgreSQL-only admin
+  staging tests skipped; backend application mypy passed for 80 modules. The
+  frontend passed typecheck, ESLint, 38 tests (5 environment-gated skips), and
+  its production build. The OpenAPI artifact matches the application.
+- **Synthetic evaluation:** 44 profiles, 164/164 provisional classification
+  agreement, 0/149 unsafe passes, 38/38 missing-information recall, 781/781
+  source linkage, 3/3 invalid-profile checks, and zero recorded failures.
+- **Limitations:** No independent label-review receipt exists, so results remain
+  provisional and official accuracy fields remain null. Repository-wide format
+  checks expose pre-existing drift in unrelated files fetched from `origin/main`;
+  full test mypy also exposes one unrelated annotation issue in
+  `tests/ai/test_gemini.py:173`. These were recorded but not modified.
+- **Commit reference:** This checkpoint's `test(matching)` commit.
+- **Next task:** None — direct matching implementation is complete.
