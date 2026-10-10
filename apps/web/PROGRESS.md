@@ -225,6 +225,182 @@ The remaining dependency order is packaging/handoff → live API verification �
 | UI-06 | `5846eba`                                                                  |
 | UI-07 | Commit containing this entry, resolved by `git log --oneline --grep=UI-07` |
 
+# Full-site redesign (SR) — landing page and shared shell
+
+Brief: complete 10-section GovTech landing page in the confirmed direction (ivory `#F8F8F3`, forest `#14532D`, deep `#103C28`, accent `#21865B`, sage, lime; Inter; glass only on nav, hero showcase and scheme finder). Branding stays **yojana saathi.** Backend, schema and matching engine are untouched. The reference screenshot was **not supplied**, so per-task comparisons are against the written brief only.
+
+## SR-01 — Inspect existing code and map it to the brief
+
+- Status: COMPLETED
+- Files: none (read-only)
+- Tests/verification: baseline `npx playwright test` 21/21 passed (Chromium build 1248 installed for the pinned Playwright).
+- Findings: routes `/`, `/discover` (alias), `/help`, `/recommendations`, `/schemes/[id]`, `/schemes/[id]/apply`. Reuse ProfileComposer, Discovery, MatchCard, RuleChecklist, FollowUpCard, verdict labels and the mock-mode API client. `/discover` must remain the working tool page ("Create my profile"/"Edit profile" link there). Official links verified to resolve: india.gov.in, igod.gov.in (+ /sg/states), egazette.gov.in, pmkisan.gov.in, pmayg.dord.gov.in, education.gov.in. `pmayg.nic.in` does not resolve and is not used.
+- Decisions (confirmed by user): honest About/Privacy/Disclaimer pages + FAQ on /help, no Contact/Terms; hero scheme cards show name/authority/category/official link only, labelled "Example scheme"; asymmetric How-it-works; glass limited to three places.
+- Next task: SR-02
+
+## SR-02 — Tokens, typography, glass primitive and navigation
+
+- Status: COMPLETED
+- Files: src/app/globals.css (tokens), src/styles/shell.css (new), src/app/layout.tsx, src/components/AppHeader.tsx, e2e/redesign.spec.ts
+- Tests/verification: lint (0 warnings), strict TypeScript, full Playwright 21/21 after fix. Screenshots at 1440/900/390 (menu open), 0px horizontal overflow.
+- Problems/dependencies: axe flagged nav text at 4.23:1 through the 72% translucent header over green content. Raised header to 90% opacity and darkened nav text (#37443E); worst-case composite now 8.14:1. Older `.header nav a` rule out-specified the mobile-only CTA hide; fixed with a more specific selector. Nav spec updated for the new Home/Discover schemes/How it works/About links and CTA.
+- Commit reference: resolve with `git log --oneline --grep="SR-02"`.
+- Next task: SR-03
+
+## SR-03 — Hero and benefits strip
+
+- Status: COMPLETED
+- Files: src/features/landing/{content.ts,HeroSection.tsx,SchemePreviewCard.tsx,FeatureStrip.tsx,landing.module.css} (new), src/app/page.tsx, src/app/discover/page.tsx (now a real page, not an alias), src/app/globals.css, src/styles/shell.css, e2e/redesign.spec.ts
+- Tests/verification: lint, strict TypeScript, full Playwright 21/21 (axe at 7 widths). Screenshots at 1440/1280/1024/390, 0px overflow; hero CTA bottom ≈600px at 1280×720.
+- Content accuracy: hero cards show only name, full name, authority, category, a one-line purpose and a checked official link, each labelled "Example scheme" with a note that eligibility is not checked. No amounts, percentages or approval claims. PM-Vidyalaxmi links to education.gov.in because its own portal is not on a gov.in domain and fails the site's official-URL guard.
+- Problems/dependencies: (1) absolutely positioned cards hid each other's text — replaced with a staggered two-column grid (raised middle card) so no content is covered. (2) Vertically centred copy pushed the CTA below 720px at 1280 — copy is now top-aligned. (3) Brief accent #21865B is 4.26:1 on ivory; added `--accent-ink` #1F7F56 (4.66:1) for text under 18px, kept #21865B for icons/large text. (4) Viewport spec now checks the hero CTA (`#finder`) instead of the form button that moved below the fold.
+- Commit reference: resolve with `git log --oneline --grep="SR-03"`.
+- Next task: SR-04
+
+## SR-04 — How it works
+
+- Status: COMPLETED
+- Files: src/features/landing/{HowItWorks.tsx,sections.module.css}, src/app/page.tsx, src/features/profile/{ProfileComposer.tsx,model.ts}, src/lib/classes.ts, e2e/landing.spec.ts, PROGRESS.md. Resumed and preserved the unfinished changes from the earlier approved redesign session.
+- Verification: lint and strict TypeScript passed; four existing redesign browser tests and two new section tests passed. Inspected actual 375/1280 screenshots, tested the finder anchor and no horizontal overflow. The screenshot is not supplied; comparison is against the written brief and the confirmed asymmetric layout. Sticky navigation can appear inside tall element captures; final full-page captures will reset scrolling.
+- Problems: moved the shared example to a plain module for Server Component imports; corrected misleading “no forms” copy. Existing API and mock boundaries preserved.
+- Commit: commit containing this entry, resolve with `git log --oneline --grep=SR-04`.
+- Next: SR-05 scheme finder and matching preview.
+
+| Task                              | Status    |
+| --------------------------------- | --------- |
+| SR-01 Inspect/map                 | COMPLETED |
+| SR-02 Tokens/navigation           | COMPLETED |
+| SR-03 Hero/benefits               | COMPLETED |
+| SR-04 How it works                | COMPLETED |
+| SR-05 Interactive finder          | COMPLETED |
+| SR-06 Categories/sources          | COMPLETED |
+| SR-07 Guidance/footer             | COMPLETED |
+| SR-08 Responsive                  | COMPLETED |
+| SR-09 API journeys                | COMPLETED |
+| SR-10 Visual/accessibility polish | COMPLETED |
+
+## SR-05 — Interactive finder and matching preview
+
+- Status: COMPLETED
+- Files: src/features/landing/{SchemeFinder,MatchingPreview}.tsx, src/features/profile/ProfileComposer.tsx, src/features/matching/Recommendations.tsx, src/app/page.tsx, src/styles/shell.css, e2e/{landing,accessibility,redesign}.spec.ts, PROGRESS.md.
+- Verification: lint, strict TypeScript and formatting passed; 19 unit/contract tests and eight affected browser tests passed. Confirmed inline extract/review/correct/confirm/question/answer/rematch/clear flow without routing away. Category selection sets only stated interest; gender/student remain unknown. Actual desktop/mobile captures inspected; 375px has no overflow.
+- Problems: corrected an exact-label test selector and reran the affected suite serially after overlapping Playwright artifact cleanup caused a test-runner error. Reused existing hooks, MatchCard and FollowUpCard rather than duplicating business logic. Discovery stays functional on /discover; screenshot reference absent. Mock mode remains explicit, and no live success is claimed.
+- Commit: commit containing this entry, resolve with `git log --oneline --grep=SR-05`.
+- Next: SR-06 categories and verified external destinations.
+
+## SR-06 — Categories and official sources
+
+- Status: COMPLETED
+- Files: src/features/landing/{PopularCategories,OfficialSources}.tsx, sections.module.css, src/app/page.tsx, e2e/landing.spec.ts, PROGRESS.md.
+- Verification: lint and strict TypeScript passed; two new browser journeys passed at375/1280. Six category links reach existing /discover URL filters; four HTTPS government destinations use the existing safe external-link component with new-tab announcements and noreferrer. Actual category/source screenshots inspected. National Portal and Gazette primary web evidence checked; local direct reachability of directory/Gazette links failed in this network, so no current availability guarantee is claimed. Links were also checked in the earlier SR-01 review.
+- Problems: source destinations are discovery references, not proof of synthetic-record verification or official endorsement. No government seals, scraped policy or new backend categories are invented. Reference image absent; written brief used.
+- Commit: commit containing this entry, resolve with `git log --oneline --grep=SR-06`.
+- Next: SR-07 application guidance, complete footer and honest informational routes.
+
+## SR-07 — Guidance, footer and informational routes
+
+- Status: COMPLETED
+- Files: src/features/landing/ApplicationGuidance.tsx, sections.module.css, src/components/{AppFooter,Brand,AppHeader}.tsx, src/app/{layout,page,help/page,about/page,privacy/page,disclaimer/page}.tsx, src/styles/shell.css, e2e/{landing,redesign}.spec.ts, PROGRESS.md.
+- Verification: lint and strict TypeScript passed; guidance/footer routes/FAQ and sticky/mobile navigation browser tests passed. Four guidance steps and current-year copyright verified. Actual1280 guidance/footer and375 footer captures inspected; no mobile overflow. Footer destinations resolve to implemented routes/anchors. Shared logo reused.
+- Problems: footer adds another navigation landmark, so existing test locators now explicitly select Main navigation. Per the prior user-approved decisions, Contact/Terms/subscriptions are not invented; actual Help/FAQ/Privacy/Disclaimer pages are supplied. Application tracking text is conditional and refers to the official authority. Reference image absent; written brief used.
+- Commit: commit containing this entry, resolve with `git log --oneline --grep=SR-07`.
+- Next: SR-08 full responsive matrix.
+
+## SR-08 — Responsive and rendered contrast gate
+
+- Status: COMPLETED
+- Files: src/app/globals.css, src/styles/shell.css, src/features/landing/sections.module.css, e2e/accessibility.spec.ts, artifacts/full-site/{home,finder,categories}-{375,1280}.png, PROGRESS.md.
+- Verification: all eight responsive/CTA journeys passed after fixes at320/375/390/768/1024/1280/1440. Thirty-five axe scans across initial home, review, recommendations, detail and guidance found no WCAG A/AA violations; no horizontal overflow. Keyboard answer interaction/reduced motion included. Lint and strict TypeScript passed. Actual desktop/mobile screenshots inspected.
+- Problems: initial matrix found low-contrast decorative step numerals and4.4:1 secondary text on sage. Used accent-ink for numerals and a scoped sage-ink token for preview text. Enlarged example/brand/text-link/match-title/footer link targets to44px. Test diagnostic output now records compact actionable targets. No reference image exists; comparison remains against the approved written direction.
+- Commit: commit containing this entry, resolve with `git log --oneline --grep=SR-08`.
+- Next: SR-09 complete API-client/user-flow regression gate.
+
+## SR-09 — API contracts and existing user journeys
+
+- Status: COMPLETED (frontend wiring and mock/contract verification; live integration remains unverified).
+- Files: src/features/profile/{hooks.tsx,model.ts,model.test.ts}, src/lib/api/{mock.ts,client.test.ts}, e2e/landing.spec.ts, scripts/check_backend.py, artifacts/backend-readiness.json, README.md, HANDOFF.md, PROGRESS.md.
+- Verification: lint and strict TypeScript passed; 21 unit/contract tests and all 28 browser journeys passed. The affected landing flow also passed after adding an explicit clear-after-follow-up assertion. Existing extraction/review/manual/confirmation, filters/history, question yes/no/not-sure/edit/skip/rematch, clear, details, guidance, keyboard and responsive/axe coverage passed. Static backend audit self-check confirms every core route exists in fetched main f14fb2c, including the mounted AI routes; this is not a live test.
+- Problems/fix: initial confirmation submitted null for every unanswered field, suppressing real backend questions. Submit provided values and previously saved fields only, retaining zero/false and sending null when clearing known facts. Successful writes update the session snapshot, including follow-up answers and partial saves. Mock explicit-null behavior now follows the backend answered-field contract, so browser regressions expose this bug rather than masking it.
+- Integration dependency: localhost:8000 health check refused the connection; no deployed live origin or independently reviewed dataset was supplied. Historical T1-11 stays BLOCKED. No backend-owned file changed, no synthetic fixture passed off as live evidence. Screenshot reference remains absent; written brief used.
+- Commit: commit containing this entry, resolve with `git log --oneline --grep=SR-09`.
+- Next: SR-10 final desktop/mobile screenshot inspection, Impeccable polish and production checks.
+
+## SR-10 — Final visual polish, accessibility and production gate
+
+- Status: COMPLETED against the confirmed written brief. Supplied-reference image comparison could not be performed because no image was provided.
+- Files: src/app/globals.css, src/styles/shell.css, src/components/AppHeader.tsx, src/features/landing/{MatchingPreview.tsx,landing.module.css,sections.module.css}, e2e/{keyboard,landing}.spec.ts, scripts/capture-redesign.mjs, .prettierignore, README.md, HANDOFF.md, UI-REDESIGN.md, artifacts/full-site/*, PROGRESS.md.
+- Verification: lint (zero warnings), strict TypeScript,21 unit/contract tests, all28 browser journeys, formatting and optimized production build passed. The affected keyboard journey reran with explicit focus-visible/outline assertions at each action target and passed. Thirty-five axe scans across320/375/390/768/1024/1280/1440 reported no A/AA violations or overflow; reduced motion verified. Single light theme only.
+- Visual evidence: production mock preview at localhost:3001;20 PNG captures at375/1280 plus metrics. Inspected representative desktop/mobile hero, finder, categories, recommendations, details, guidance, help and catalogue surfaces. Capture self-checks found no overflow or browser runtime/console errors across14 page states; hero CTA bottom603.25px at1280×720 (591.44px at375). The full landing page supplies all ten sections in order. Existing keyboard-only flow reaches confirmation, question/answer/rematch, details and checkbox without mouse input.
+- Polish: consolidated recurring secondary text into a semantic token, displayed “Not sure” instead of raw `not_sure`, and used the shared conditional-class helper in navigation. Preserved the approved asymmetric process and layered hero. Impeccable's active hook reported no deterministic issues; independent rendered review and frontend-ui restraint pass completed. No duplicate detector run, new dependency or backend edit.
+- Problems: the earlier capture helper waited for catalogue content that moved off home; updated it to the actual landing flow, explicit mock gate and production-preview support. Formatting initially flagged generated Impeccable cache; excluded that cache, then the complete formatting check passed. Removed automatic Next build declaration churn from the source diff.
+- Limits: Chromium checked; no manual screen-reader, Safari/Firefox or physical-device validation. Reference image unavailable. Live API/CORS/reviewed dataset/deployment remain unverified and separate from the completed frontend scope; synthetic results are visibly labeled.
+- Commit: commit containing this entry, resolve with `git log --oneline --grep=SR-10`.
+- Next: frontend brief complete; live gate requires a supplied running API and reviewed scheme records.
+
+## Full-site implementation commit references
+
+| Task                     | Commit                                                          |
+| ------------------------ | --------------------------------------------------------------- |
+| SR-02 Tokens/navigation  | `3b25e13`                                                       |
+| SR-03 Hero/benefits      | `f7b5297`                                                       |
+| SR-04 How it works       | `a1ba55d`                                                       |
+| SR-05 Interactive finder | `77b1fac`                                                       |
+| SR-06 Categories/sources | `7719ddd`                                                       |
+| SR-07 Guidance/footer    | `ffef785`                                                       |
+| SR-08 Responsive         | `9d18aca`                                                       |
+| SR-09 API journeys       | `0009c7f`                                                       |
+| SR-10 Final polish       | Commit containing this entry (`git log --oneline --grep=SR-10`) |
+
+## SR-11 — Modern Indian Civic Luxury UI/UX Redesign
+
+- Status: COMPLETED
+- Scope: Full visual and structural redesign aligned with the user-provided reference mockup (`media_1791581880002_05923fe7.jpg`).
+- Core Design System & Tokens:
+  - Palette: Obsidian Forest (`#102A24`), Deep Emerald (`#165541`), Warm Porcelain (`#F7F5F0`), Champagne (`#D8C5A1`), Antique Gold (`#8A6020`), Sage Mist (`#E7EDE7`), Ink (`#17211D`), Slate (`#68736D`), Pure White (`#FFFFFF`).
+  - Glassmorphism: Multi-layered `GlassCard` with specular top edge highlight, ambient drop shadow, and backdrop blur.
+  - Typography: Crisp geometric typography with tight headlines and warm editorial script notes.
+- Implemented Redesigned Sections:
+  1. Sticky Navigation: Floating white pill menu with Home / Discover / How it works / About, English language selector, and Deep Emerald CTA button.
+  2. Hero Section: Asymmetric two-column composition with authentic Rashtrapati Bhavan architecture + Indian flag background, handwritten script `"Real schemes. Real opportunities."` with curved directional arrow, and 3 cascading offset glass scheme cards (`PM-KISAN`, `PM-Vidyalaxmi`, `PMAY-Gramin`).
+  3. Benefits Strip: 4 glass cards with sage circle icons highlighting key civic values.
+  4. How It Works: 3-step connected workflow with numbered badges (`1`, `2`, `3`), plain language intake description, and interactive anchor.
+  5. Scheme Finder: Interactive citizen input with plain-language textarea, 6 category quick chips (`🌾 Farmer`, `🎓 Student`, `❤️ Women`, `👥 Senior Citizen`, `💼 Small Business`, `🏠 Housing`), combined with matching preview card featuring 6 extracted facts and botanical leaf illustration.
+  6. Explore Categories: 6 pastel circle cards with category icons, labels, and "View all schemes" button.
+  7. Trusted Official Sources: 4 cards with national emblem (`/images/emblem.png`, `/images/india-gov-logo.png`) and bottom reassurance banner.
+  8. Application Guidance: 4 numbered roadmap cards (`01`, `02`, `03`, `04`) with icons and direct link to help documentation.
+  9. Dark Editorial Footer: Obsidian Forest (`#102A24`) with Champagne headings, navigation links, and WCAG AA compliant disclosures.
+- Quality & Verification:
+  - TypeScript: Zero errors (`tsc --noEmit`).
+  - ESLint: Zero warnings (`eslint . --max-warnings=0`).
+  - Vitest: 21 / 21 unit & contract tests passing.
+  - Playwright E2E: 28 / 28 tests passing cleanly across all responsive breakpoints (`320px`, `375px`, `390px`, `768px`, `1024px`, `1280px`, `1440px`).
+  - Accessibility: Zero axe-core WCAG A/AA contrast violations across all screen sizes.
+  - Visual verification: Full-page captures at desktop (1440px) and mobile (390px) verified against the reference design.
+
+## SR-12 — Multilingual interface: English, हिन्दी, ಕನ್ನಡ
+
+- Status: COMPLETED
+- Approach: typed dictionaries with no new dependency. `src/i18n/messages/en.ts` is the source; `hi.ts` and `kn.ts` are typed `Messages`, so a missing key fails the build. The chosen language is stored in a `locale` cookie (falling back to `Accept-Language`); the server layout passes only that language's messages to the client. Switching calls `router.refresh()`, so text in progress (the profile description) survives.
+- Files: `src/i18n/*`, `src/components/layout/LanguageSwitcher.tsx`, every live page and component under `src/app`, `src/components`, `src/features`; `src/lib/format.ts` (`labelFor`, locale-aware `displayDate`); `src/lib/api/client.ts` (`errorMessage` takes translated text); `src/lib/api/use-resource.ts` (errors worded at render time).
+- Removed: unused `features/landing` components and CSS modules that depended on the old hero data.
+- Not translated by design: scheme names, rules, documents and other API content (published by the source, usually English). AI extraction still sends `locale: "en-IN"`, the only value the backend accepts.
+- Rendering: all routes are now dynamic because the layout reads the cookie. Measured 3–7 ms per route on `next start`.
+- Typography: Indic system fonts added to the stack; `html:lang(hi|kn)` relaxes heading line-height and resets letter-spacing so matras and conjuncts are not clipped.
+- Verification: `src/i18n/messages.test.ts` checks identical keys and list lengths, matching `{placeholders}` and no untranslated copies; typecheck, lint, 29/29 Vitest, 27/27 Playwright, `next build`.
+- Review needed: translations were written without a native-speaker review; have Hindi and Kannada reviewed before public launch.
+
+## SR-13 — Navigation bar redesign
+
+- Status: COMPLETED
+- N1 Inspect: the old header had three overlapping CSS layers (`globals.css` ×2, `shell.css`); the nav was a pill capsule with Home / Discover / How it works / About and a non-functional "English" label.
+- N2 Configuration: primary links are Home, Discover, Matches, Profile, Saved (changed on request from the brief's Discover / Check eligibility / Application guide), matching the mobile bottom dock. About, How it works and the new Application guide stay reachable from the footer.
+- N3 Desktop: `src/styles/navbar.css`, `.site-*` namespace. 72px translucent bar, `blur(16px)`, hairline border, text links with a sliding underline, rounded teal CTA. Colours follow the current teal / Sidecar Yellow theme rather than the brief's earlier green palette. 59 dead `.header*` selectors removed.
+- N4 Mobile (< 1024px): hamburger opens a native `<dialog>` drawer (focus trap, Escape, inert page, focus returns to the trigger) with body scroll lock. The breakpoint is 1024px, not 768px: the full bar cannot fit Kannada labels below that. The language selector stays in the bar down to 360px and moves into the drawer at 320px.
+- N5 Routes: every link uses `next/link`; active state is route-aware (scheme and guide pages highlight Discover, `/eligibility` highlights Matches). New `/guide` page lists real catalogue schemes and links each to its existing source-backed checklist at `/schemes/[id]/apply`; nothing is written by hand.
+- N6 Motion and accessibility: 200–260ms transitions, arrow nudge on the CTA, scroll-aware bar (`useSyncExternalStore`), all disabled under `prefers-reduced-motion`; visible focus outline on every control; 44px minimum targets.
+- N7 Verification: typecheck, lint, 29/29 Vitest, 27/27 Playwright (including axe at seven widths and the new navbar and language tests), `next build`; checked with no overflow at 320–1440px in all three languages.
+- Test updates: journeys that started the composer on `/` now start on `/discover`, since the home finder section was removed earlier.
+
 ## DASH-01 — User dashboard
 
 - Status: COMPLETED
@@ -244,3 +420,14 @@ The remaining dependency order is packaging/handoff → live API verification �
 - Tests executed: Five browser checks passed against the refreshed server: server-rendered links and active routes on both localhost addresses, dashboard direct load/reload/client navigation with no page or hydration errors on both addresses, and the existing mobile keyboard navigation regression. ESLint, strict TypeScript, targeted formatting and diff checks passed. The user's existing dashboard tab displayed the updated header with no error overlay. API availability was not part of this regression and is unchanged.
 - Commit reference: Commit containing this entry, resolved by `git log --oneline --grep="fix(web): recover stale dashboard hydration"`.
 - Next task: Hydration recovery complete; live API/deployment gate remains separate.
+
+## DASH-03 — Align dashboard with the pushed UI
+
+- Status: COMPLETED
+- Dependency order: imported main at `366452e`, adapted dashboard to its shell/providers/routes, connected bookmark controls and translations, verified all affected flows, then committed.
+- Scope: Same teal/warm-yellow theme across the existing UI and dashboard, shared navbar/mobile dock, current profile/account state, localized source-backed checks and browser-local bookmarks. Account facts restore through the existing providers; repeated same-user auth notifications no longer cancel the temporary-session restore.
+- Files: src/app/dashboard/{page.tsx,dashboard.css}; src/features/dashboard/{Dashboard.tsx,Previews.tsx}; shared Navbar/MobileBottomNav and navbar.css; saved-scheme store, SaveSchemeButton and list formatting; profile hooks and ProfileComposer/ProfileEditor return links; English/Hindi/Kannada messages; dashboard/hydration/keyboard/navigation browser tests; README.md; HANDOFF.md; three dashboard captures and this record. Upstream main files, including backend/AI changes, were merged unchanged outside apps/web.
+- Tests executed: ESLint, strict TypeScript, 35 unit/contract tests, targeted formatting/diff checks and production builds passed. All 45 distinct browser checks verified against an isolated mock production preview, including all existing core features, narrow/wide layouts, translated layouts, bookmark persistence/removal/storage errors, account restore/reload/sign-out privacy and hydration on both localhost addresses. The final full suite passed 44/45; its keyboard test was corrected to wait for saving controls to become enabled and passed on a targeted rerun. No remaining verification failures. Desktop and mobile screenshots inspected and refreshed in artifacts/dashboard/.
+- Problems resolved: stale generated types after upstream route renames; profile-test extraction/saving race; outdated auth/voice navigation selectors; Kannada navigation overflow at 1024px; development compilation timeouts; stable saved-store hydration snapshots; corrupt bookmark data; and repeated-auth-notification cancellation of account session restoration. Tests use explicit fixture data and an intercepted Supabase account, not real authentication or a live eligibility engine. Native-speaker review and live deployment/API verification remain separate.
+- Commit reference: Commit containing this entry, resolved by `git log --oneline --grep="feat(web): align dashboard with current teal UI"`.
+- Next task: Dashboard update complete; live integration/deployment gate remains separate.

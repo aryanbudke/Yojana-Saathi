@@ -1,4 +1,6 @@
+import React from "react";
 import { GuidancePage } from "@/features/guidance/GuidancePage";
+
 export default async function Page({
   params,
 }: {

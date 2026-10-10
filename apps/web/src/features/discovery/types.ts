@@ -6,18 +6,15 @@ import {
   BriefcaseBusiness,
   House,
 } from "lucide-react";
+/** Labels live in messages `categoryAudience`, keyed by value. */
 export const categories = [
-  { label: "Farmer", value: "agriculture", icon: Sprout },
-  { label: "Student", value: "education", icon: GraduationCap },
-  { label: "Women", value: "women", icon: HeartHandshake },
-  { label: "Senior Citizen", value: "senior_citizen", icon: Sun },
-  {
-    label: "Small Business",
-    value: "entrepreneurship",
-    icon: BriefcaseBusiness,
-  },
-  { label: "Housing", value: "housing", icon: House },
-];
+  { value: "agriculture", icon: Sprout },
+  { value: "education", icon: GraduationCap },
+  { value: "women", icon: HeartHandshake },
+  { value: "senior_citizen", icon: Sun },
+  { value: "entrepreneurship", icon: BriefcaseBusiness },
+  { value: "housing", icon: House },
+] as const;
 export function queryFromSearch(search: string) {
   const source = new URLSearchParams(search);
   const result = new URLSearchParams();

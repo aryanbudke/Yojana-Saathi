@@ -1,27 +1,41 @@
 "use client";
 
 import Link from "next/link";
+import { Brand } from "./Brand";
 import { usePathname } from "next/navigation";
 import { useRef, useState } from "react";
-import { Globe2, Menu, X } from "lucide-react";
+import { ArrowRight, Globe2, Menu, X } from "lucide-react";
+import { cn } from "@/lib/classes";
+
+type NavLink = {
+  href: string;
+  label: string;
+  isActive: (path: string) => boolean;
+};
+
+const links: NavLink[] = [
+  { href: "/", label: "Home", isActive: (path) => path === "/" },
+  {
+    href: "/discover",
+    label: "Discover schemes",
+    isActive: (path) =>
+      path.startsWith("/discover") ||
+      path.startsWith("/schemes") ||
+      path.startsWith("/recommendations"),
+  },
+  {
+    href: "/help",
+    label: "How it works",
+    isActive: (path) => path === "/help",
+  },
+  { href: "/about", label: "About", isActive: (path) => path === "/about" },
+];
 
 export function AppHeader() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const trigger = useRef<HTMLButtonElement>(null);
-  const links = [
-    {
-      href: "/discover",
-      label: "Discover",
-      active: pathname !== "/help" && pathname !== "/dashboard",
-    },
-    {
-      href: "/dashboard",
-      label: "Dashboard",
-      active: pathname === "/dashboard",
-    },
-    { href: "/help", label: "How it works", active: pathname === "/help" },
-  ];
+  const close = () => setOpen(false);
   return (
     <header
       className="header"
@@ -37,50 +51,46 @@ export function AppHeader() {
           className="brand"
           href="/"
           aria-label="yojana saathi home"
-          onClick={() => setOpen(false)}
+          onClick={close}
         >
-          <span className="brand-mark" aria-hidden="true">
-            <svg viewBox="0 0 32 32" fill="none">
-              <path
-                d="M9 22V11m0 5c0-5 5-8 13-8 0 8-3 13-9 13"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-              />
-              <path
-                d="m10 22 9-9"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-              />
-            </svg>
-          </span>
-          <span>
-            yojana saathi<span className="brand-dot">.</span>
-          </span>
+          <Brand />
         </Link>
         <nav
           id="main-navigation"
-          className={open ? "is-open" : ""}
+          className={cn(open && "is-open")}
           aria-label="Main navigation"
         >
           {links.map((link) => (
             <Link
               key={link.href}
               href={link.href}
-              aria-current={link.active ? "page" : undefined}
-              onClick={() => setOpen(false)}
+              aria-current={link.isActive(pathname) ? "page" : undefined}
+              onClick={close}
             >
               {link.label}
             </Link>
           ))}
+          <Link
+            className="button primary nav-cta-mobile"
+            href="/discover"
+            onClick={close}
+          >
+            Find my schemes
+            <ArrowRight size={16} aria-hidden="true" />
+          </Link>
         </nav>
-        <span
-          className="header-language"
-          aria-label="Current language: English"
-        >
-          <Globe2 size={16} aria-hidden="true" /> English
-        </span>
+        <div className="header-actions">
+          <span
+            className="header-language"
+            aria-label="Current language: English"
+          >
+            <Globe2 size={16} aria-hidden="true" /> English
+          </span>
+          <Link className="button primary header-cta" href="/discover">
+            Find my schemes
+            <ArrowRight size={16} aria-hidden="true" />
+          </Link>
+        </div>
         <button
           ref={trigger}
           className="menu-toggle"

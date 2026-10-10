@@ -1,5 +1,26 @@
 # Frontend redesign audit
 
+## Current full-site redesign (SR-01–SR-10)
+
+The later approved brief expands the home route to ten complete sections. The reference screenshot was not supplied; the written direction and established ivory/forest-green/sage/lime palette are the visual baseline. Bundled Inter, clear typography, staggered hero examples, asymmetric process steps and quiet reading surfaces preserve the approved system. No backend or AI-engine files changed.
+
+| Section          | Implementation / behavior                                                                                   |
+| ---------------- | ----------------------------------------------------------------------------------------------------------- |
+| Navigation       | Sticky glass shell, active routes, mobile menu with Escape/focus restoration; actual English language label |
+| Mock banner      | Visible synthetic-data disclosure on workflow pages                                                         |
+| Hero             | Two columns, three labeled examples with official links; no checked eligibility or approval claims          |
+| Benefits         | Four compact items, responsive4/2/1 layout                                                                  |
+| How it works     | Lead step plus two quieter steps; working finder anchor                                                     |
+| Finder           | Existing profile hook, optional interest-only categories, extraction/review/manual/confirm/clear            |
+| Preview          | Six facts, existing matches/rules/questions/answer/rematch workflow; unknowns retained                      |
+| Categories       | Six links to existing discovery URL filters; valid empty states                                             |
+| Official sources | Four safe HTTPS government destinations; independent-platform disclosure                                    |
+| Guidance/footer  | Four honest preparation steps, complete working navigation and informational routes                         |
+
+Current evidence and production-preview captures live in `artifacts/full-site/`. The capture helper verifies mock mode, overflow and desktop CTA placement. Automated checks cover21 unit/contracts,28 browser journeys,35 axe scans across seven widths, keyboard-only navigation and reduced motion. See `PROGRESS.md` for each verified gate and commit. Live integration and supplied-reference comparison remain unverified; the current backend source has all core routes but no running/deployed origin was supplied.
+
+## Earlier compact-workspace audit (historical UI-01–UI-07)
+
 Verified against the current source, the supplied request, documentation (`documents/design.md`, `frontend.md`, `brd.md` and feature frontend specifications), and actual mock-mode screenshots captured before changes. The existing contract/session flow is the integration boundary. Inspiration references reviewed: [Linear](https://linear.app), [Raycast](https://raycast.com), [Vercel](https://vercel.com), [Apple](https://apple.com).
 
 ## Prioritized dependency order
@@ -26,4 +47,4 @@ Before/after screenshots were compared and inspected across desktop and mobile r
 
 Release checks: 19 unit/contract tests, 21 distinct browser checks, 35 axe scans over seven widths, lint, strict TypeScript, formatting and production build passed. The first final suite caught header contrast at 1024/1280 when scrolling over a green button. The text color was corrected and the entire responsive/accessibility matrix plus discovery/navigation/filter regressions reran successfully. Production routes include home, discover, help, recommendations, scheme detail and guidance.
 
-The backend/live deployment gate remains separate and unverified: extract, matching and next-question routes plus a deployed API origin are still needed. Saved/Hindi/authentication/application tracking remain outside the approved current integration gate.
+The earlier audit recorded missing extraction, matching and question routes. Those routes are now present in the current backend source; a running/deployed API origin and real reviewed records remain necessary for live verification. Saved/Hindi/authentication/application tracking remain outside the approved current integration gate.

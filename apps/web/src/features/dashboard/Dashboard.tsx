@@ -1,10 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   ArrowRight,
   ArrowUpRight,
+  Bookmark,
+  Check,
   CircleHelp,
   Compass,
   FileCheck2,
@@ -16,104 +18,25 @@ import {
   ShieldCheck,
   UserRound,
 } from "lucide-react";
-import {
-  Badge,
-  Button,
-  InlineAlert,
-  Skeleton,
-  SourceLink,
-} from "@/components/ui";
+import { Badge, GlassCard, InlineAlert, Skeleton } from "@/components/ui";
 import { useProfile } from "@/features/profile/hooks";
-import { fields, states } from "@/features/profile/types";
+import { fields } from "@/features/profile/types";
 import { ModeNotice } from "@/features/profile/ProfileComposer";
 import { useMatching } from "@/features/matching/hooks";
 import { MatchCard } from "@/features/matching/MatchCard";
 import { categories } from "@/features/discovery/types";
-import { api } from "@/lib/api";
-import { useResource } from "@/lib/api/use-resource";
-import { displayDate } from "@/lib/format";
-import { dashboardSummary, profileDisplay } from "./model";
-
-function CataloguePreview() {
-  const load = useCallback(
-    () => api.schemes(new URLSearchParams({ limit: "3" })),
-    [],
-  );
-  const resource = useResource(load);
-  return (
-    <section
-      className="dashboard-panel dashboard-catalogue"
-      aria-labelledby="catalogue-title"
-    >
-      <div className="dashboard-section-heading">
-        <div>
-          <p className="eyebrow">Explore your options</p>
-          <h2 id="catalogue-title">From the scheme catalogue</h2>
-        </div>
-        <Link className="text-link" href="/discover#browse">
-          Browse all <ArrowUpRight size={16} aria-hidden="true" />
-        </Link>
-      </div>
-      <p className="muted small">
-        Published scheme information. These are not personalized matches.
-      </p>
-      {resource.loading ? (
-        <Skeleton />
-      ) : resource.error ? (
-        <div className="stack">
-          <InlineAlert error>{resource.error}</InlineAlert>
-          <Button variant="secondary" onClick={resource.retry}>
-            Retry catalogue
-          </Button>
-        </div>
-      ) : resource.data?.items.length ? (
-        <div className="dashboard-catalogue-list">
-          {resource.data.items.slice(0, 3).map((scheme) => (
-            <article key={scheme.id}>
-              <span className="dashboard-icon">
-                <FileCheck2 size={20} aria-hidden="true" />
-              </span>
-              <div>
-                <p className="small muted">
-                  {scheme.government_level === "central"
-                    ? "Central government"
-                    : "State government"}{" "}
-                  · {scheme.category}
-                </p>
-                <h3>
-                  <Link href={`/schemes/${scheme.id}`}>{scheme.name}</Link>
-                </h3>
-                <p className="small muted">{scheme.summary}</p>
-                <div className="dashboard-source">
-                  <span>
-                    Last verified {displayDate(scheme.last_verified_at)}
-                  </span>
-                  <SourceLink url={scheme.official_sources[0].official_url} />
-                </div>
-              </div>
-              <Link
-                className="dashboard-arrow"
-                href={`/schemes/${scheme.id}`}
-                aria-label={`Read about ${scheme.name}`}
-              >
-                <ArrowUpRight size={20} aria-hidden="true" />
-              </Link>
-            </article>
-          ))}
-        </div>
-      ) : (
-        <p className="dashboard-inline-empty">
-          No published schemes are available right now. You can still review
-          your profile.
-        </p>
-      )}
-    </section>
-  );
-}
+import { useAuth } from "@/features/auth/AuthProvider";
+import { useMessages } from "@/i18n/client";
+import { format } from "@/i18n/config";
+import { dashboardSummary } from "./model";
+import { CataloguePreview, SavedPreview } from "./Previews";
 
 export function Dashboard() {
   const profile = useProfile();
   const matching = useMatching();
+  const { user, loading: authLoading } = useAuth();
+  const m = useMessages();
+  const t = m.dashboard;
   const [now, setNow] = useState(() => Date.now());
   useEffect(() => {
     if (!profile.session) return;
@@ -137,41 +60,39 @@ export function Dashboard() {
   });
   const results = summary.current?.results;
   const nextScheme = results?.find((match) => match.status !== "not_eligible");
-  function reviewProfile() {
-    profile.setReviewing(true);
-  }
+  const reviewHref = "/profile#profile-review";
+  const reviewProfile = () => profile.setReviewing(true);
+  const accountName =
+    typeof user?.user_metadata?.full_name === "string"
+      ? user.user_metadata.full_name.trim()
+      : "";
   const steps = [
     {
-      label: "Review your details",
-      text: summary.active
-        ? "Your details are confirmed for this session."
-        : "Add what you know. You can leave other details unknown.",
-      href: "/discover#profile-review",
+      label: t.profileStep,
+      text: summary.active ? t.profileConfirmed : t.profileAdd,
+      href: reviewHref,
       done: summary.active,
-      action: summary.active ? "Edit details" : "Review details",
+      action: summary.active ? t.editDetails : t.profileStep,
       onClick: reviewProfile,
     },
     {
-      label: "Check relevant schemes",
-      text: summary.current
-        ? "See the checked conditions and any information still needed."
-        : "Get a shortlist after confirming your profile.",
-      href: summary.active ? "/recommendations" : "/discover#profile-review",
+      label: t.checkStep,
+      text: summary.current ? t.checkReady : t.checkLead,
+      href: summary.active ? "/recommendations" : reviewHref,
       done: Boolean(summary.current),
-      action: summary.current ? "View checks" : "Check schemes",
+      action: summary.current ? t.viewChecks : t.checkStep,
       onClick: summary.active ? undefined : reviewProfile,
     },
     {
-      label: "Prepare your next step",
-      text: "Read the official requirements before preparing an application.",
-      href: nextScheme
-        ? `/schemes/${nextScheme.scheme_id}/apply`
-        : "/discover#browse",
+      label: t.guidanceStep,
+      text: t.guidanceLead,
+      href: nextScheme ? `/schemes/${nextScheme.scheme_id}/apply` : "/guide",
       done: false,
-      action: nextScheme ? "Open guidance" : "Explore schemes",
+      action: nextScheme ? t.openGuidance : m.footer.guide,
       onClick: undefined,
     },
   ];
+
   return (
     <>
       <ModeNotice />
@@ -179,129 +100,128 @@ export function Dashboard() {
         <aside className="dashboard-sidebar">
           <div className="dashboard-workspace-label">
             <span className="dashboard-icon">
-              <UserRound size={20} aria-hidden="true" />
+              <LayoutDashboard size={21} aria-hidden="true" />
             </span>
             <div>
-              <strong>Your workspace</strong>
-              <span>Guest access</span>
+              <strong>{t.workspace}</strong>
+              <span>
+                {authLoading
+                  ? m.common.loading
+                  : user
+                    ? t.accountAccess
+                    : t.guestAccess}
+              </span>
             </div>
           </div>
-          <nav aria-label="Dashboard sections">
+          <nav aria-label={t.sections}>
             <a href="#dashboard-overview" className="dashboard-nav-active">
               <LayoutDashboard size={18} aria-hidden="true" />
-              Overview
+              {t.overview}
             </a>
             <a href="#dashboard-profile">
               <UserRound size={18} aria-hidden="true" />
-              My profile
+              {m.footer.profile}
             </a>
             <a href="#dashboard-recommendations">
               <ListChecks size={18} aria-hidden="true" />
-              My schemes
+              {t.mySchemes}
+            </a>
+            <a href="#dashboard-saved">
+              <Bookmark size={18} aria-hidden="true" />
+              {m.nav.saved}
             </a>
             <Link href="/discover#browse">
               <Compass size={18} aria-hidden="true" />
-              Explore schemes
+              {m.common.exploreSchemes}
             </Link>
             <Link href="/help">
               <CircleHelp size={18} aria-hidden="true" />
-              Help & guidance
+              {t.help}
             </Link>
           </nav>
           <div className="dashboard-privacy">
-            <LockKeyhole size={19} aria-hidden="true" />
-            <strong>Your details stay private</strong>
+            <LockKeyhole size={20} aria-hidden="true" />
+            <strong>{t.privacyTitle}</strong>
             <p>
-              Your profile stays in this tab’s memory. Refreshing clears it.
-              Server sessions expire automatically.
+              {authLoading
+                ? t.accountLoading
+                : user
+                  ? t.accountPrivacy
+                  : t.guestPrivacy}
             </p>
-            <Link className="text-link" href="/help">
-              How your data is used{" "}
-              <ArrowUpRight size={14} aria-hidden="true" />
+            <Link className="text-link" href="/privacy">
+              {t.privacyAction}
+              <ArrowUpRight size={15} aria-hidden="true" />
             </Link>
           </div>
         </aside>
         <div className="dashboard-content" id="dashboard-overview">
           <div className="dashboard-breadcrumb">
-            <Link href="/discover">Home</Link>
+            <Link href="/">{m.nav.home}</Link>
             <span aria-hidden="true">/</span>
-            <span>My dashboard</span>
+            <span>{m.nav.dashboard}</span>
           </div>
           <header className="dashboard-heading">
             <div>
-              <p className="eyebrow">My dashboard</p>
-              <h1>
-                Your next step starts here<span className="green">.</span>
-              </h1>
-              <p>
-                A clear view of your details, scheme checks and what to do next.
-              </p>
+              <p className="section-eyebrow">{m.nav.dashboard}</p>
+              <h1>{t.title}</h1>
+              <p>{t.lead}</p>
             </div>
             <Link
               className="button primary"
-              href="/discover#profile-review"
+              href={reviewHref}
               onClick={reviewProfile}
             >
-              {summary.provided ? "Review my details" : "Create my profile"}
+              {summary.provided ? t.reviewDetails : t.createProfile}
               <ArrowRight size={17} aria-hidden="true" />
             </Link>
           </header>
-          {summary.expired && (
-            <InlineAlert>
-              Your session has expired. Your details are still here. Review and
-              confirm them to check schemes again.
-            </InlineAlert>
-          )}
-          <div className="dashboard-stats" aria-label="Your current progress">
-            <div>
+          {summary.expired && <InlineAlert>{t.sessionExpired}</InlineAlert>}
+          <div className="dashboard-stats" aria-label={t.progress}>
+            <GlassCard className="dashboard-stat">
               <span className="dashboard-icon">
                 <UserRound size={20} aria-hidden="true" />
               </span>
-              <p>Details provided</p>
+              <p>{t.detailsProvided}</p>
               <strong>
                 {summary.provided}
                 <small> / {summary.totalFields}</small>
               </strong>
-              <span>Other details stay unknown</span>
-            </div>
-            <div>
+              <span>{t.unknownRemain}</span>
+            </GlassCard>
+            <GlassCard className="dashboard-stat">
               <span className="dashboard-icon">
                 <FileCheck2 size={20} aria-hidden="true" />
               </span>
-              <p>Schemes checked</p>
-              <strong>{results ? results.length : "—"}</strong>
+              <p>{t.checked}</p>
+              <strong>{results?.length ?? "—"}</strong>
               <span>
-                {results
-                  ? "From your last completed check"
-                  : "Confirm your profile to begin"}
+                {summary.current ? t.conditionsReviewed : t.confirmFirst}
               </span>
-            </div>
-            <div>
+            </GlassCard>
+            <GlassCard className="dashboard-stat">
               <span className="dashboard-icon">
                 <CircleHelp size={20} aria-hidden="true" />
               </span>
-              <p>Need more information</p>
+              <p>{t.needsInformation}</p>
               <strong>{summary.needsInformation ?? "—"}</strong>
-              <span>
-                {summary.manualReview
-                  ? `${summary.manualReview} also need manual review`
-                  : "Unknown conditions are never assumed"}
-              </span>
-            </div>
+              <span>{t.unknownNotAssumed}</span>
+            </GlassCard>
           </div>
           <div className="dashboard-main-grid">
             <div className="dashboard-primary-column">
-              <section
+              <GlassCard
+                as="section"
                 className="dashboard-panel dashboard-next-steps"
                 aria-labelledby="next-steps-title"
               >
                 <div className="dashboard-section-heading">
                   <div>
-                    <p className="eyebrow">One step at a time</p>
-                    <h2 id="next-steps-title">Continue your journey</h2>
+                    <p className="section-eyebrow">{t.stepEyebrow}</p>
+                    <h2 id="next-steps-title">{t.continueJourney}</h2>
                   </div>
                   <Badge tone={summary.active ? "success" : "neutral"}>
-                    {summary.active ? "Profile confirmed" : "Get started"}
+                    {summary.active ? m.common.confirmedByYou : t.getStarted}
                   </Badge>
                 </div>
                 <ol>
@@ -311,7 +231,7 @@ export function Dashboard() {
                         className={`dashboard-step-number ${step.done ? "done" : ""}`}
                       >
                         {step.done ? (
-                          <ShieldCheck size={18} aria-label="Completed" />
+                          <Check size={16} aria-hidden="true" />
                         ) : (
                           String(index + 1).padStart(2, "0")
                         )}
@@ -325,13 +245,13 @@ export function Dashboard() {
                           onClick={step.onClick}
                         >
                           {step.action}
-                          <ArrowRight size={14} aria-hidden="true" />
+                          <ArrowRight size={15} aria-hidden="true" />
                         </Link>
                       </div>
                     </li>
                   ))}
                 </ol>
-              </section>
+              </GlassCard>
               <section
                 id="dashboard-recommendations"
                 aria-labelledby="my-schemes-title"
@@ -339,12 +259,13 @@ export function Dashboard() {
               >
                 <div className="dashboard-section-heading">
                   <div>
-                    <p className="eyebrow">Based on your details</p>
-                    <h2 id="my-schemes-title">Your scheme checks</h2>
+                    <p className="section-eyebrow">{t.schemeEyebrow}</p>
+                    <h2 id="my-schemes-title">{t.schemeChecks}</h2>
                   </div>
                   {summary.current && (
                     <Link className="text-link" href="/recommendations">
-                      View all <ArrowUpRight size={16} aria-hidden="true" />
+                      {t.viewAll}
+                      <ArrowUpRight size={16} aria-hidden="true" />
                     </Link>
                   )}
                 </div>
@@ -353,124 +274,155 @@ export function Dashboard() {
                     {results.slice(0, 2).map((match) => (
                       <MatchCard key={match.scheme_id} match={match} />
                     ))}
-                    <p className="small muted">
-                      These checks provide preliminary guidance. They do not
-                      indicate approval.
-                    </p>
+                    {Boolean(summary.manualReview) && (
+                      <p className="small muted">
+                        {format(t.manualReviewCount, {
+                          count: summary.manualReview ?? 0,
+                        })}
+                      </p>
+                    )}
+                    <p className="small muted">{t.preliminary}</p>
                   </div>
                 ) : (
-                  <div className="dashboard-panel dashboard-empty">
+                  <GlassCard className="dashboard-panel dashboard-empty">
                     <span className="dashboard-empty-icon">
-                      <Compass size={28} aria-hidden="true" />
+                      <Compass size={27} aria-hidden="true" />
                     </span>
                     <h3>
                       {summary.current
-                        ? "No matches in your latest check"
+                        ? t.emptyCheckedTitle
                         : summary.active
-                          ? "Your profile is ready"
-                          : "Let’s find the support relevant to you"}
+                          ? t.readyTitle
+                          : t.emptyTitle}
                     </h3>
                     <p>
                       {summary.current
-                        ? "Review your details or browse schemes for another kind of support."
+                        ? t.emptyCheckedLead
                         : summary.active
-                          ? "Check scheme conditions to bring your shortlist into this dashboard."
-                          : "Start with your state, occupation and the support you need. We’ll help you understand the published conditions."}
+                          ? t.readyLead
+                          : t.emptyLead}
                     </p>
                     <Link
                       className="button secondary"
-                      href={
-                        summary.active
-                          ? "/recommendations"
-                          : "/discover#profile-review"
-                      }
+                      href={summary.active ? "/recommendations" : reviewHref}
                       onClick={summary.active ? undefined : reviewProfile}
                     >
-                      {summary.active ? "Check my schemes" : "Add my details"}
+                      {summary.active ? t.checkSchemes : t.createProfile}
                       <ArrowRight size={16} aria-hidden="true" />
                     </Link>
-                  </div>
+                  </GlassCard>
                 )}
               </section>
+              <SavedPreview />
             </div>
             <aside className="dashboard-secondary-column">
-              <section
+              <GlassCard
+                as="section"
                 className="dashboard-panel dashboard-profile"
                 id="dashboard-profile"
                 aria-labelledby="dashboard-profile-title"
               >
                 <div className="dashboard-section-heading">
-                  <h2 id="dashboard-profile-title">My profile</h2>
+                  <h2 id="dashboard-profile-title">{m.footer.profile}</h2>
                   <Link
                     className="dashboard-arrow"
-                    href="/discover#profile-review"
+                    href={reviewHref}
                     onClick={reviewProfile}
-                    aria-label="Edit my profile"
+                    aria-label={t.editDetails}
                   >
                     <Pencil size={18} aria-hidden="true" />
                   </Link>
                 </div>
-                <div className="dashboard-profile-identity">
-                  <span className="dashboard-avatar">
-                    <UserRound size={25} aria-hidden="true" />
-                  </span>
-                  <div>
-                    <strong>Guest profile</strong>
-                    <span>
-                      <MapPin size={13} aria-hidden="true" />
-                      {states.find(
-                        ([code]) => code === profile.draft.facts.state_code,
-                      )?.[1] ?? "State not provided"}
-                    </span>
-                  </div>
-                </div>
-                <Badge tone={summary.active ? "success" : "warning"}>
-                  {summary.active
-                    ? "Confirmed by you"
-                    : summary.provided
-                      ? "Awaiting your confirmation"
-                      : "Not started"}
-                </Badge>
-                <dl>
-                  {fields
-                    .slice(0, 4)
-                    .filter((field) => field.key !== "state_code")
-                    .map((field) => (
-                      <div key={field.key}>
-                        <dt>{field.label}</dt>
-                        <dd>
-                          {profileDisplay(profile.draft.facts[field.key])}
-                        </dd>
+                {authLoading ? (
+                  <>
+                    <p role="status" className="small muted">
+                      {t.accountLoading}
+                    </p>
+                    <Skeleton />
+                  </>
+                ) : (
+                  <>
+                    <div className="dashboard-profile-identity">
+                      <span className="dashboard-avatar">
+                        <UserRound size={25} aria-hidden="true" />
+                      </span>
+                      <div>
+                        <strong>
+                          {user
+                            ? accountName || t.accountProfile
+                            : t.guestProfile}
+                        </strong>
+                        <span>
+                          <MapPin size={13} aria-hidden="true" />
+                          {profile.draft.facts.state_code
+                            ? m.states[profile.draft.facts.state_code]
+                            : t.stateMissing}
+                        </span>
                       </div>
-                    ))}
-                </dl>
+                    </div>
+                    <Badge tone={summary.active ? "success" : "warning"}>
+                      {summary.active
+                        ? m.common.confirmedByYou
+                        : summary.provided
+                          ? t.awaiting
+                          : t.notStarted}
+                    </Badge>
+                    <dl>
+                      {fields
+                        .slice(0, 4)
+                        .filter((field) => field.key !== "state_code")
+                        .map((field) => (
+                          <div key={field.key}>
+                            <dt>{m.fields[field.key]}</dt>
+                            <dd>
+                              {profile.draft.facts[field.key] === null
+                                ? t.notProvided
+                                : String(profile.draft.facts[field.key])}
+                            </dd>
+                          </div>
+                        ))}
+                    </dl>
+                  </>
+                )}
                 <Link
                   className="button secondary wide"
-                  href="/discover#profile-review"
+                  href={reviewHref}
                   onClick={reviewProfile}
                 >
-                  Review all details <ArrowRight size={16} aria-hidden="true" />
+                  {t.reviewAll}
+                  <ArrowRight size={16} aria-hidden="true" />
                 </Link>
-                <p className="small muted">
-                  Only share what’s needed. Don’t enter Aadhaar numbers.
-                </p>
-              </section>
-              <section
-                className="dashboard-support"
+                <p className="small muted">{m.profile.privacy}</p>
+              </GlassCard>
+              <GlassCard
+                as="section"
+                variant="subtle"
+                className="dashboard-panel dashboard-support"
                 aria-labelledby="dashboard-help-title"
               >
                 <span className="dashboard-icon">
-                  <ShieldCheck size={21} aria-hidden="true" />
+                  <ShieldCheck size={22} aria-hidden="true" />
                 </span>
-                <h2 id="dashboard-help-title">Know before you apply</h2>
-                <p>
-                  Check the conditions, keep your documents ready and use the
-                  official application portal.
-                </p>
-                <Link className="text-link" href="/help">
-                  How it works <ArrowRight size={15} aria-hidden="true" />
+                <h2 id="dashboard-help-title">{t.helpTitle}</h2>
+                <p>{t.helpLead}</p>
+                <Link className="text-link" href="/guide">
+                  {m.footer.guide}
+                  <ArrowRight size={15} aria-hidden="true" />
                 </Link>
-              </section>
+              </GlassCard>
+              {!authLoading && !user && (
+                <GlassCard
+                  as="section"
+                  className="dashboard-panel dashboard-account"
+                >
+                  <h2>{m.auth.asideTitle}</h2>
+                  <p>{t.signInLead}</p>
+                  <Link className="button secondary wide" href="/signin">
+                    {m.nav.signIn}
+                    <ArrowRight size={16} aria-hidden="true" />
+                  </Link>
+                </GlassCard>
+              )}
             </aside>
           </div>
           <CataloguePreview />
@@ -478,15 +430,13 @@ export function Dashboard() {
             className="dashboard-categories"
             aria-labelledby="dashboard-categories-title"
           >
-            <h2 id="dashboard-categories-title">
-              What support are you looking for?
-            </h2>
+            <h2 id="dashboard-categories-title">{t.supportTitle}</h2>
             <div>
-              {categories.map(({ label, value, icon: Icon }) => (
+              {categories.map(({ value, icon: Icon }) => (
                 <Link key={value} href={`/discover?category=${value}#browse`}>
-                  <Icon size={19} aria-hidden="true" />
-                  <span>{label}</span>
-                  <ArrowUpRight size={14} aria-hidden="true" />
+                  <Icon size={20} aria-hidden="true" />
+                  <span>{m.categoryAudience[value]}</span>
+                  <ArrowUpRight size={15} aria-hidden="true" />
                 </Link>
               ))}
             </div>

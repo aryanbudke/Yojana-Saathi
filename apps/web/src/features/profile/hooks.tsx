@@ -1,12 +1,14 @@
 "use client";
 import {
   createContext,
+  useEffect,
   useContext,
   useState,
   useRef,
   type ReactNode,
 } from "react";
 import { api, ApiError } from "@/lib/api";
+import { useSpeech } from "@/features/speech/SpeechProvider";
 import {
   blankFacts,
   profileSchema,
@@ -14,9 +16,20 @@ import {
   type ProfileField,
   type ProfileFacts,
 } from "@/lib/api/contracts";
-import { mergeExtraction } from "./model";
+import { fieldsToConfirm, mergeExtraction } from "./model";
 import type { ProfileDraft } from "./types";
+import {
+  useAuth,
+  type StoredYojanaProfile,
+} from "@/features/auth/AuthProvider";
 function useProfileState() {
+  const { language } = useSpeech();
+  const {
+    user,
+    loading: authLoading,
+    saveProfileFacts,
+    clearProfileFacts,
+  } = useAuth();
   const [draft, setDraft] = useState<ProfileDraft>({
     facts: { ...blankFacts },
     origins: {},
@@ -26,32 +39,89 @@ function useProfileState() {
   const [confirmed, setConfirmed] = useState(false);
   const [session, setSession] = useState<ProfileSession | null>(null);
   const revision = useRef(0);
-  async function extract() {
-    const current = revision.current;
-    const response = await api.extract(text);
-    if (revision.current !== current) return;
-    setDraft((prev) => mergeExtraction(prev, response.facts));
-    setReviewing(true);
-    setConfirmed(false);
-  }
-  function edit(field: ProfileField, value: ProfileFacts[ProfileField]) {
-    setDraft((prev) => ({
-      facts: { ...prev.facts, [field]: value },
-      origins: { ...prev.origins, [field]: "user" },
-    }));
-    setConfirmed(false);
-  }
-  async function confirm() {
-    const facts = profileSchema.parse(draft.facts);
-    const active =
+  const hydratedUserId = useRef<string | null>(null);
+
+  // Auth can emit the same user as different objects during initial restoration.
+  // Depend on identity and serialized facts so that notification cannot cancel
+  // an in-flight matching-session restore for the same account and profile.
+  const userId = user?.id ?? null;
+  const storedFacts = JSON.stringify(
+    (user?.user_metadata?.yojana_profile as StoredYojanaProfile | undefined)
+      ?.facts ?? null,
+  );
+
+  useEffect(() => {
+    let cancelled = false;
+    void (async () => {
+      await Promise.resolve();
+      if (cancelled || authLoading) return;
+
+      if (!userId) {
+        if (hydratedUserId.current) {
+          revision.current++;
+          setText("");
+          setDraft({ facts: { ...blankFacts }, origins: {} });
+          setSession(null);
+          setReviewing(false);
+          setConfirmed(false);
+        }
+        hydratedUserId.current = null;
+        return;
+      }
+
+      if (hydratedUserId.current === userId) return;
+      hydratedUserId.current = userId;
+
+      const parsed = profileSchema.safeParse(JSON.parse(storedFacts));
+      if (!parsed.success) return;
+
+      const facts = parsed.data;
+      setDraft({
+        facts,
+        origins: Object.fromEntries(
+          Object.keys(facts).map((field) => [field, "imported"]),
+        ),
+      });
+      setReviewing(true);
+      setConfirmed(false);
+
+      let active = await api.createSession();
+      for (const field of fieldsToConfirm(facts, active.facts)) {
+        const response = await api.answer(
+          active.session_id,
+          field,
+          facts[field],
+        );
+        active = { ...active, facts: response.facts };
+      }
+      if (cancelled) return;
+      setSession(active);
+      setConfirmed(true);
+    })().catch(() => {
+      if (!cancelled) setConfirmed(false);
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [authLoading, userId, storedFacts]);
+
+  async function saveFacts(facts: ProfileFacts) {
+    let active =
       session && Date.parse(session.expires_at) > Date.now()
         ? session
         : await api.createSession();
     setSession(active);
-    // Save reviewed facts using the existing one-field endpoint; model values are now citizen-confirmed.
     try {
-      for (const field of Object.keys(facts) as ProfileField[])
-        await api.answer(active.session_id, field, facts[field]);
+      for (const field of fieldsToConfirm(facts, active.facts)) {
+        const response = await api.answer(
+          active.session_id,
+          field,
+          facts[field],
+        );
+        active = { ...active, facts: response.facts };
+        setSession(active);
+      }
     } catch (error) {
       if (error instanceof ApiError && error.status === 404) {
         setSession(null);
@@ -64,6 +134,30 @@ function useProfileState() {
       }
       throw error;
     }
+    return active;
+  }
+
+  async function extract() {
+    const current = revision.current;
+    const response = await api.extract(text, language);
+    if (revision.current !== current) return;
+    const extractedDraft = mergeExtraction(draft, response.facts);
+    setDraft(extractedDraft);
+    setReviewing(true);
+    setConfirmed(false);
+    await saveFacts(profileSchema.parse(extractedDraft.facts));
+  }
+  function edit(field: ProfileField, value: ProfileFacts[ProfileField]) {
+    setDraft((prev) => ({
+      facts: { ...prev.facts, [field]: value },
+      origins: { ...prev.origins, [field]: "user" },
+    }));
+    setConfirmed(false);
+  }
+  async function confirm() {
+    const facts = profileSchema.parse(draft.facts);
+    const active = await saveFacts(facts);
+    if (user) await saveProfileFacts(facts);
     setDraft({
       facts,
       origins: Object.fromEntries(Object.keys(facts).map((k) => [k, "user"])),
@@ -79,6 +173,7 @@ function useProfileState() {
         if (!(e instanceof ApiError) || e.status !== 404) throw e;
       }
     }
+    if (user) await clearProfileFacts();
     revision.current++;
     setText("");
     setDraft({ facts: { ...blankFacts }, origins: {} });
@@ -93,10 +188,12 @@ function useProfileState() {
     if (!session) throw new Error("Start a session first");
     profileSchema.parse({ ...draft.facts, [field]: value });
     const response = await api.answer(session.session_id, field, value);
+    setSession({ ...session, facts: response.facts });
     setDraft((prev) => ({
       facts: response.facts,
       origins: { ...prev.origins, [field]: "user" },
     }));
+    if (user) await saveProfileFacts(response.facts);
     return response.facts;
   }
   return {

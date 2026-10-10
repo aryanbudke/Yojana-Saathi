@@ -1,6 +1,6 @@
 import { test, expect } from "@playwright/test";
 async function begin(page: import("@playwright/test").Page) {
-  await page.goto("/");
+  await page.goto("/discover");
   await page.getByRole("button", { name: "Try an example" }).click();
   await page.getByRole("button", { name: "Find my schemes" }).click();
   await page.getByRole("button", { name: "Confirm my details" }).click();

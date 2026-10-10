@@ -1,37 +1,36 @@
 import Link from "next/link";
-export default function Help() {
+import { getMessages } from "@/i18n/server";
+
+export default async function Help() {
+  const m = await getMessages();
+  const h = m.help;
   return (
     <article className="reading-page">
-      <p className="eyebrow">Made to make things clearer</p>
+      <p className="eyebrow">{h.eyebrow}</p>
       <h1>
-        A few details.
-        <br />A better starting point.
+        {h.titleLine1}
+        <br />
+        {h.titleLine2}
       </h1>
       <ol className="steps">
-        <li>
-          <h2>Tell us about yourself</h2>
-          <p>
-            Share only what is needed. Never enter Aadhaar numbers, bank details
-            or identity documents.
-          </p>
-        </li>
-        <li>
-          <h2>Check your details</h2>
-          <p>
-            Review every extracted fact. Correct mistakes or leave anything you
-            don’t know blank.
-          </p>
-        </li>
-        <li>
-          <h2>Understand your options</h2>
-          <p>
-            Read which conditions pass, fail or need more information. Follow
-            the source links and prepare your documents.
-          </p>
-        </li>
+        {h.steps.map((step) => (
+          <li key={step.title}>
+            <h2>{step.title}</h2>
+            <p>{step.text}</p>
+          </li>
+        ))}
       </ol>
+      <section id="faq" className="faq" aria-labelledby="faq-title">
+        <h2 id="faq-title">{h.faqTitle}</h2>
+        {h.faq.map(({ q, a }) => (
+          <details key={q}>
+            <summary>{q}</summary>
+            <p>{a}</p>
+          </details>
+        ))}
+      </section>
       <Link href="/discover" className="button primary">
-        Start discovering
+        {h.cta}
       </Link>
     </article>
   );

@@ -19,23 +19,24 @@ import { useProfile } from "./hooks";
 import { useMatching } from "@/features/matching/hooks";
 import { fields, states } from "./types";
 import { fieldValue } from "./model";
+import { useMessages } from "@/i18n/client";
+import { format } from "@/i18n/config";
 import Link from "next/link";
+import { SpeechInputControls } from "@/features/speech/SpeechControls";
 
-export const example =
-  "I’m a 24-year-old farmer from Maharashtra helping my family farm 1.5 acres.";
 export function ModeNotice() {
+  const m = useMessages();
   return isMock ? (
     <div className="mode-notice">
       <span className="mode-dot" />
-      <strong>Mock mode</strong>
-      <span>
-        Synthetic contract examples. These are not government scheme
-        recommendations.
-      </span>
+      <strong>{m.mock.label}</strong>
+      <span>{m.mock.notice}</span>
     </div>
   ) : null;
 }
 export function ProfileComposer() {
+  const m = useMessages();
+  const t = m.profile;
   const p = useProfile();
   const matching = useMatching();
   const [busy, setBusy] = useState<"extract" | "confirm" | "clear" | null>(
@@ -53,7 +54,7 @@ export function ProfileComposer() {
       await p[kind]();
       if (kind === "clear") matching.reset();
     } catch (e) {
-      setError(errorMessage(e));
+      setError(errorMessage(e, m.errors));
       if (kind === "extract") p.setReviewing(true);
     } finally {
       setBusy(null);
@@ -63,13 +64,10 @@ export function ProfileComposer() {
     <div className="profile-workspace">
       <GlassPanel className="composer-shell">
         <div className="section-heading">
-          <h2>Tell us about your situation</h2>
-          <Badge>Your profile</Badge>
+          <h2>{t.title}</h2>
+          <Badge>{t.badge}</Badge>
         </div>
-        <p className="muted composer-description">
-          You don’t need to know a scheme’s name. Just share a few details about
-          yourself.
-        </p>
+        <p className="muted composer-description">{t.lead}</p>
         <form
           onSubmit={(e) => {
             e.preventDefault();
@@ -77,27 +75,34 @@ export function ProfileComposer() {
           }}
         >
           <label className="sr-only" htmlFor="profile-text">
-            Tell us about yourself
+            {t.textLabel}
           </label>
           <TextArea
             id="profile-text"
             maxLength={1000}
-            placeholder="I’m a farmer in Maharashtra looking for support for my family…"
+            placeholder={t.placeholder}
             value={p.text}
             onChange={(e) => p.setText(e.target.value)}
             aria-describedby="profile-privacy profile-counter"
+          />
+          <SpeechInputControls
+            onTranscript={(transcript) =>
+              p.setText(
+                p.text.trim() ? `${p.text.trim()} ${transcript}` : transcript,
+              )
+            }
           />
           <div className="composer-meta">
             <Button
               type="button"
               variant="quiet"
-              onClick={() => p.setText(example)}
+              onClick={() => p.setText(t.example)}
             >
               <Sparkles size={15} aria-hidden="true" />
-              Try an example
+              {t.tryExample}
             </Button>
             <span id="profile-counter" className="small muted">
-              {p.text.length}/1000 characters
+              {format(t.characters, { count: p.text.length })}
             </span>
           </div>
           <Button
@@ -106,7 +111,7 @@ export function ProfileComposer() {
             busy={busy === "extract"}
             disabled={!p.text.trim() || busy !== null}
           >
-            {busy === "extract" ? "Reviewing your details…" : "Find my schemes"}
+            {busy === "extract" ? t.reviewing : t.findMySchemes}
             <ArrowRight size={18} />
           </Button>
           <Button
@@ -119,18 +124,15 @@ export function ProfileComposer() {
               setError("");
             }}
           >
-            Enter details manually
+            {t.enterManually}
             <SlidersHorizontal size={15} />
           </Button>
           {isMock && (
-            <p className="small muted mock-extract-note">
-              Mock extraction returns the sample farmer profile. Use manual
-              entry for your own details.
-            </p>
+            <p className="small muted mock-extract-note">{t.mockNote}</p>
           )}
           <p id="profile-privacy" className="privacy-note">
             <ShieldCheck size={15} aria-hidden="true" />
-            Only share what’s needed. Don’t enter Aadhaar numbers.
+            {t.privacy}
           </p>
         </form>
         {error && !p.reviewing && <InlineAlert error>{error}</InlineAlert>}
@@ -143,27 +145,28 @@ export function ProfileComposer() {
         >
           <div className="section-heading">
             <div>
-              <p className="eyebrow">02 / CHECK YOUR DETAILS</p>
+              <p className="eyebrow">{t.reviewEyebrow}</p>
               <h2 id="review-heading" ref={reviewHeading} tabIndex={-1}>
-                Check your details
+                {t.reviewTitle}
               </h2>
             </div>
             <Badge tone={p.confirmed ? "success" : "warning"}>
-              {p.confirmed ? "Confirmed by you" : "Needs your review"}
+              {p.confirmed ? m.common.confirmedByYou : t.needsReview}
             </Badge>
           </div>
-          <p className="muted">
-            Correct anything that doesn’t look right. Blank fields stay unknown;
-            nothing is assumed.
-          </p>
+          <p className="muted">{t.reviewLead}</p>
           <div className="review-summary" aria-live="polite">
             <span>
-              {fields.filter((f) => p.draft.facts[f.key] !== null).length}{" "}
-              details provided
+              {format(t.provided, {
+                count: fields.filter((f) => p.draft.facts[f.key] !== null)
+                  .length,
+              })}
             </span>
             <span>
-              {fields.filter((f) => p.draft.facts[f.key] === null).length} still
-              unknown
+              {format(t.stillUnknown, {
+                count: fields.filter((f) => p.draft.facts[f.key] === null)
+                  .length,
+              })}
             </span>
           </div>
           <form
@@ -176,14 +179,14 @@ export function ProfileComposer() {
               className="profile-edit-fields"
               disabled={busy === "confirm" || busy === "clear"}
             >
-              <legend className="sr-only">Review your profile facts</legend>
+              <legend className="sr-only">{t.reviewLegend}</legend>
               <div className="profile-fields">
                 {fields.map((f) => {
                   const v = p.draft.facts[f.key];
                   const id = "fact-" + f.key;
                   return (
                     <div className="field" key={f.key}>
-                      <label htmlFor={id}>{f.label}</label>
+                      <label htmlFor={id}>{m.fields[f.key]}</label>
                       {f.kind === "state" ||
                       f.kind === "choice" ||
                       f.kind === "boolean" ? (
@@ -204,19 +207,21 @@ export function ProfileComposer() {
                             p.edit(f.key, fieldValue(f.kind, e.target.value))
                           }
                         >
-                          <option value="">Unknown</option>
+                          <option value="">{m.common.unknown}</option>
                           {f.kind === "state" ? (
-                            states.map(([code, label]) => (
+                            states.map((code) => (
                               <option key={code} value={code}>
-                                {label}
+                                {m.states[code]}
                               </option>
                             ))
                           ) : (
                             <>
-                              <option value="yes">Yes</option>
-                              <option value="no">No</option>
+                              <option value="yes">{m.common.yes}</option>
+                              <option value="no">{m.common.no}</option>
                               {f.kind === "choice" && (
-                                <option value="not_sure">Not sure</option>
+                                <option value="not_sure">
+                                  {m.common.notSure}
+                                </option>
                               )}
                             </>
                           )}
@@ -237,7 +242,7 @@ export function ProfileComposer() {
                           }
                           step={f.key === "land_area_acres" ? "any" : 1}
                           value={v === null ? "" : String(v)}
-                          placeholder="Unknown"
+                          placeholder={m.common.unknown}
                           onChange={(e) =>
                             p.edit(f.key, fieldValue(f.kind, e.target.value))
                           }
@@ -245,10 +250,10 @@ export function ProfileComposer() {
                       )}
                       <span id={`${id}-origin`} className="field-origin">
                         {p.draft.origins[f.key] === "user"
-                          ? "Edited or confirmed by you"
+                          ? t.originUser
                           : v === null
-                            ? "Not provided · stays unknown"
-                            : "Extracted · please review"}
+                            ? t.originBlank
+                            : t.originExtracted}
                       </span>
                     </div>
                   );
@@ -261,7 +266,7 @@ export function ProfileComposer() {
                 busy={busy === "confirm"}
                 disabled={busy !== null}
               >
-                {p.confirmed ? "Confirm updated details" : "Confirm my details"}
+                {p.confirmed ? t.confirmUpdated : t.confirm}
                 <ArrowRight size={16} />
               </Button>
               <Button
@@ -271,20 +276,20 @@ export function ProfileComposer() {
                 disabled={busy !== null}
                 onClick={() => void run("clear")}
               >
-                Clear my details
+                {t.clear}
               </Button>
             </div>
           </form>
           {error && <InlineAlert error>{error}</InlineAlert>}
           {p.confirmed && (
             <InlineAlert>
-              Your details are confirmed for this anonymous session.{" "}
+              {t.confirmedNotice}{" "}
               <Link href="/recommendations" className="text-link">
-                See my recommendations →
+                {t.seeRecommendations}
               </Link>
               {" · "}
               <Link href="/dashboard" className="text-link">
-                Open my dashboard →
+                {m.dashboard.openDashboard} →
               </Link>
             </InlineAlert>
           )}
@@ -292,9 +297,9 @@ export function ProfileComposer() {
       )}
       <div className="sr-only" role="status">
         {busy === "extract"
-          ? "Reviewing your details"
+          ? t.statusReviewing
           : busy === "confirm"
-            ? "Saving confirmed details"
+            ? t.statusSaving
             : ""}
       </div>
     </div>

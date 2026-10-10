@@ -2,15 +2,31 @@ import { test, expect, type Locator } from "@playwright/test";
 test("complete the core journey using Tab, text input, Enter and Space", async ({
   page,
 }) => {
-  await page.goto("/");
+  await page.goto("/discover");
   async function tabTo(target: Locator) {
+    // Extracted fields can appear while the session answers are still saving.
+    // Wait for the real control to become available before testing Tab order.
+    await expect(target).toBeVisible();
+    await expect(target).toBeEnabled();
     for (let n = 0; n < 60; n++) {
       if (
         await target
           .evaluate((el) => el === document.activeElement)
           .catch(() => false)
-      )
+      ) {
+        const focus = await target.evaluate((el) => {
+          const style = getComputedStyle(el);
+          return {
+            visible: el.matches(":focus-visible"),
+            outline: style.outlineStyle,
+            width: parseFloat(style.outlineWidth),
+          };
+        });
+        expect(focus.visible).toBe(true);
+        expect(focus.outline).not.toBe("none");
+        expect(focus.width).toBeGreaterThan(0);
         return;
+      }
       await page.keyboard.press("Tab");
     }
     throw new Error("Target not reachable by Tab");

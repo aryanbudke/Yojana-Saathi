@@ -1,7 +1,9 @@
+"use client";
 import { Check, Minus, HelpCircle, FileQuestion } from "lucide-react";
 import { SourceLink } from "@/components/ui";
 import type { RuleOutcome, SourceReference } from "@/lib/api/contracts";
-import { ruleLabels } from "./types";
+import { useMessages } from "@/i18n/client";
+import { format } from "@/i18n/config";
 const icons = {
   pass: Check,
   fail: Minus,
@@ -15,6 +17,7 @@ export function RuleChecklist({
   rules: RuleOutcome[];
   sources?: SourceReference[];
 }) {
+  const m = useMessages();
   return (
     <ul className="rule-list">
       {rules.map((rule) => {
@@ -26,7 +29,7 @@ export function RuleChecklist({
               <Icon size={15} aria-hidden="true" />
             </span>
             <div>
-              <strong>{ruleLabels[rule.result]}</strong>
+              <strong>{m.ruleResults[rule.result]}</strong>
               <p>{rule.reason}</p>
               {source ? (
                 <>
@@ -39,7 +42,7 @@ export function RuleChecklist({
                 </>
               ) : (
                 <span className="source-unavailable">
-                  Source reference unavailable · {rule.source_id}
+                  {format(m.match.sourceUnavailable, { id: rule.source_id })}
                 </span>
               )}
             </div>

@@ -1,34 +1,105 @@
 import { test, expect } from "@playwright/test";
 
-test("sticky navigation, active route and keyboard mobile menu", async ({
+test("navbar links, active route, CTA and keyboard mobile drawer", async ({
   page,
 }) => {
+  const destinations = ["Home", "Discover", "Matches", "Dashboard", "Saved"];
+  await page.setViewportSize({ width: 1280, height: 720 });
   await page.goto("/");
+  const nav = page.getByRole("banner").getByRole("navigation", {
+    name: "Main navigation",
+  });
+  await expect(nav.getByRole("link")).toHaveText(destinations);
+  await expect(nav.getByRole("link", { name: "Home" })).toHaveAttribute(
+    "aria-current",
+    "page",
+  );
   await expect(
     page
-      .getByRole("navigation")
-      .getByRole("link", { name: "Discover", exact: true }),
-  ).toHaveAttribute("aria-current", "page");
+      .locator(".site-actions")
+      .getByRole("link", { name: "Find my schemes" }),
+  ).toHaveAttribute("href", "/discover");
+
+  for (const [name, url] of [
+    ["Discover", /\/discover$/],
+    ["Matches", /\/recommendations$/],
+    ["Dashboard", /\/dashboard$/],
+    ["Saved", /\/saved$/],
+  ] as const) {
+    await nav.getByRole("link", { name }).click();
+    await expect(page).toHaveURL(url);
+    await expect(nav.locator("[aria-current]")).toHaveText(name);
+  }
+  await page
+    .getByRole("banner")
+    .getByRole("link", { name: "yojana saathi home" })
+    .click();
+  await expect(page).toHaveURL(/\/$/);
+
+  await page.evaluate(() => window.scrollTo(0, 400));
+  await expect(page.locator("header.site-header")).toHaveAttribute(
+    "data-scrolled",
+    "true",
+  );
+  expect((await page.locator("header.site-header").boundingBox())?.y).toBe(0);
+
   await page.setViewportSize({ width: 390, height: 844 });
   const menu = page.getByRole("button", { name: "Open navigation" });
+  const drawer = page.getByRole("dialog", { name: "Menu" });
   await menu.click();
-  await expect(page.getByRole("navigation")).toBeVisible();
+  await expect(drawer).toBeVisible();
+  await expect(drawer.getByRole("link")).toHaveText([
+    ...destinations,
+    "Sign in",
+    "Find my schemes",
+  ]);
+  await expect
+    .poll(() =>
+      page.evaluate(() => getComputedStyle(document.documentElement).overflow),
+    )
+    .toBe("hidden");
   await page.keyboard.press("Escape");
+  await expect(drawer).toBeHidden();
   await expect(menu).toBeFocused();
-  await expect(page.getByRole("navigation")).toBeHidden();
   await menu.click();
+  await drawer.getByRole("link", { name: "Saved" }).click();
+  await expect(page).toHaveURL(/\/saved$/);
+  await expect(drawer).toBeHidden();
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth - innerWidth,
+    ),
+  ).toBe(0);
+});
+
+test("language selector translates the page and keeps working state", async ({
+  page,
+}) => {
+  await page.goto("/discover");
+  await page.getByRole("button", { name: "Try an example" }).click();
+  const text = await page.locator("#profile-text").inputValue();
   await page
-    .getByRole("navigation")
-    .getByRole("link", { name: "How it works" })
-    .click();
-  await expect(page).toHaveURL(/\/help$/);
-  await expect(page.getByRole("navigation")).toBeHidden();
-  await page.setViewportSize({ width: 1280, height: 720 });
+    .getByRole("combobox", { name: "Language", exact: true })
+    .selectOption("hi");
+  await expect(page.locator("html")).toHaveAttribute("lang", "hi");
   await expect(
-    page.getByRole("navigation").getByRole("link", { name: "How it works" }),
-  ).toHaveAttribute("aria-current", "page");
-  await page.evaluate(() => window.scrollTo(0, 400));
-  expect((await page.locator("header.header").boundingBox())?.y).toBe(0);
+    page
+      .getByRole("banner")
+      .getByRole("navigation", { name: "मुख्य नेविगेशन" })
+      .getByRole("link"),
+  ).toHaveText(["होम", "खोजें", "मिलान", "डैशबोर्ड", "सहेजी गई"]);
+  // A refresh, not a reload: the description typed before switching is still there.
+  await expect(page.locator("#profile-text")).toHaveValue(text);
+  await page.reload();
+  await expect(page.locator("html")).toHaveAttribute("lang", "hi");
+  await page
+    .getByRole("combobox", { name: "भाषा", exact: true })
+    .selectOption("kn");
+  await expect(page.locator("html")).toHaveAttribute("lang", "kn");
+  await page
+    .getByRole("combobox", { name: "ಭಾಷೆ", exact: true })
+    .selectOption("en");
+  await expect(page.locator("html")).toHaveAttribute("lang", "en");
 });
 
 test("primary action stays in initial laptop viewport and workspace never overflows", async ({
@@ -37,18 +108,19 @@ test("primary action stays in initial laptop viewport and workspace never overfl
   for (const width of [320, 390, 768, 1024, 1280, 1440]) {
     await page.setViewportSize({ width, height: 720 });
     await page.goto("/");
-    await expect(
-      page.getByRole("heading", { name: "Tell us about your situation" }),
-    ).toBeVisible();
+    await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
     expect(
       await page.evaluate(
         () => document.documentElement.scrollWidth <= window.innerWidth,
       ),
     ).toBe(true);
+    // The hero's primary action must be visible without scrolling on laptops.
+    const heroCta = page
+      .locator("main")
+      .getByRole("link", { name: "Find my schemes" });
+    await expect(heroCta).toHaveAttribute("href", "/discover");
     if (width >= 1024) {
-      const cta = await page
-        .getByRole("button", { name: "Find my schemes" })
-        .boundingBox();
+      const cta = await heroCta.boundingBox();
       expect(cta!.y + cta!.height).toBeLessThanOrEqual(720);
     }
   }
@@ -57,7 +129,7 @@ test("primary action stays in initial laptop viewport and workspace never overfl
 test("recommendation status filter and clear use the actual matches", async ({
   page,
 }) => {
-  await page.goto("/");
+  await page.goto("/discover");
   await page.getByRole("button", { name: "Try an example" }).click();
   await page.getByRole("button", { name: "Find my schemes" }).click();
   await page.getByRole("button", { name: "Confirm my details" }).click();

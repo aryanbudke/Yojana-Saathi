@@ -6,16 +6,15 @@ import type {
 } from "@/lib/api/contracts";
 import { fields } from "@/features/profile/types";
 import { fieldValue } from "@/features/profile/model";
-import { verdictLabels } from "@/features/matching/types";
+import { format } from "@/i18n/config";
+import { en, type Messages } from "@/i18n/messages/en";
 export function answerValue(
   question: NextQuestion,
   value: string,
+  m: Messages = en,
 ): { field: ProfileField; value: ProfileFacts[ProfileField] } {
   const meta = fields.find((f) => f.key === question.field);
-  if (!meta)
-    throw new Error(
-      "This question is not a supported profile field. Please use manual verification.",
-    );
+  if (!meta) throw new Error(m.followUp.unsupported);
   return {
     field: meta.key,
     value:
@@ -27,21 +26,25 @@ export function answerValue(
 export function describeChanges(
   before: MatchesResponse,
   after: MatchesResponse,
+  m: Messages = en,
 ) {
   const changed = after.results.flatMap((next) => {
+    const scheme = next.scheme_name;
     const old = before.results.find((r) => r.scheme_id === next.scheme_id);
-    if (!old) return [`${next.scheme_name}: added to your shortlist.`];
+    if (!old) return [format(m.changes.added, { scheme })];
     if (old.status !== next.status)
       return [
-        `${next.scheme_name}: ${verdictLabels[old.status].text} → ${verdictLabels[next.status].text}.`,
+        format(m.changes.status, {
+          scheme,
+          from: m.verdicts[old.status],
+          to: m.verdicts[next.status],
+        }),
       ];
     if (
       JSON.stringify(old.unknown_rules) !== JSON.stringify(next.unknown_rules)
     )
-      return [`${next.scheme_name}: its unresolved conditions changed.`];
+      return [format(m.changes.unresolved, { scheme })];
     return [];
   });
-  return changed.length
-    ? changed.join(" ")
-    : "Your answer was saved. No scheme status changed; unresolved conditions still need verification.";
+  return changed.length ? changed.join(" ") : m.changes.none;
 }
