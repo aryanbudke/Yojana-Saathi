@@ -123,13 +123,15 @@ export function Navbar() {
         id="site-drawer"
         ref={drawerRef}
         className="site-drawer"
-        aria-label={m.nav.menu}
+        aria-labelledby="site-drawer-title"
         onClose={close}
         onClick={(e) => e.target === e.currentTarget && close()}
       >
         <div className="site-drawer-panel">
           <div className="site-drawer-head">
-            <span className="site-drawer-title">{m.nav.menu}</span>
+            <span id="site-drawer-title" className="site-drawer-title">
+              {m.nav.menu}
+            </span>
             <button
               type="button"
               className="site-menu-button site-drawer-close"
