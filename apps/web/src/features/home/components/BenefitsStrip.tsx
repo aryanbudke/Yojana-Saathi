@@ -37,16 +37,16 @@ export function BenefitsStrip() {
             key={title}
             variant="standard"
             interactive
-            className="p-5 rounded-2xl bg-white/80 backdrop-blur-md border border-white/90 shadow-xs hover:shadow-sm flex flex-col justify-between"
+            className="p-5 rounded-2xl bg-cream/80 backdrop-blur-md border border-white/90 shadow-xs hover:shadow-sm flex flex-col justify-between"
           >
             <div>
-              <div className="w-10 h-10 rounded-xl bg-[#E7EDE7] text-[#165541] flex items-center justify-center mb-3.5">
+              <div className="w-10 h-10 rounded-xl bg-[#e9dca4] text-[#035352] flex items-center justify-center mb-3.5">
                 <Icon size={18} aria-hidden="true" />
               </div>
-              <p className="text-[15px] font-bold text-[#17211D] tracking-tight leading-snug">
+              <p className="text-[15px] font-bold text-[#022c2b] tracking-tight leading-snug">
                 {title}
               </p>
-              <p className="text-xs text-[#68736D] mt-1.5 leading-relaxed">
+              <p className="text-xs text-[#3d5654] mt-1.5 leading-relaxed">
                 {text}
               </p>
             </div>

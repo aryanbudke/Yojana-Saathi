@@ -33,7 +33,7 @@ export function MobileNavbar({ isOpen, onClose }: MobileNavbarProps) {
       onClick={onClose}
     >
       <div
-        className="w-4/5 max-w-sm h-full bg-white/95 backdrop-blur-2xl border-r border-white/80 p-6 flex flex-col justify-between shadow-2xl"
+        className="w-4/5 max-w-sm h-full bg-cream/95 backdrop-blur-2xl border-r border-white/80 p-6 flex flex-col justify-between shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
         <div>
@@ -76,7 +76,7 @@ export function MobileNavbar({ isOpen, onClose }: MobileNavbarProps) {
             <span>Language: English (India)</span>
           </div>
           <Link
-            href="/#finder"
+            href="/discover"
             onClick={onClose}
             className="w-full inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-700 text-white font-semibold shadow-md shadow-emerald-700/20"
           >

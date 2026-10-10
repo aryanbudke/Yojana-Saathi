@@ -12,7 +12,7 @@ test("sticky navigation, active route and keyboard mobile menu", async ({
     page.locator(".header-actions").getByRole("link", {
       name: "Find my schemes",
     }),
-  ).toHaveAttribute("href", "/#finder");
+  ).toHaveAttribute("href", "/discover");
   await page.goto("/discover");
   await expect(
     nav.getByRole("link", { name: "Discover schemes", exact: true }),
@@ -61,7 +61,7 @@ test("primary action stays in initial laptop viewport and workspace never overfl
     const heroCta = page
       .locator("main")
       .getByRole("link", { name: "Find my schemes" });
-    await expect(heroCta).toHaveAttribute("href", "#finder");
+    await expect(heroCta).toHaveAttribute("href", "/discover");
     if (width >= 1024) {
       const cta = await heroCta.boundingBox();
       expect(cta!.y + cta!.height).toBeLessThanOrEqual(720);

@@ -34,13 +34,13 @@ export function ApplicationGuidance() {
   return (
     <section className="my-14 sm:my-20" aria-labelledby="guidance-title">
       <div className="max-w-2xl mb-8 sm:mb-10">
-        <p className="text-xs font-bold uppercase tracking-widest text-[#165541] mb-2">
+        <p className="text-xs font-bold uppercase tracking-widest text-[#035352] mb-2">
           APPLICATION ROADMAP
         </p>
-        <h2 id="guidance-title" className="text-2xl sm:text-3xl font-extrabold text-[#17211D] tracking-tight">
+        <h2 id="guidance-title" className="text-2xl sm:text-3xl font-extrabold text-[#022c2b] tracking-tight">
           Application guidance
         </h2>
-        <p className="text-sm text-[#68736D] mt-1">
+        <p className="text-sm text-[#3d5654] mt-1">
           Four clear stages to prepare and submit your government scheme application.
         </p>
       </div>
@@ -51,21 +51,21 @@ export function ApplicationGuidance() {
             <GlassCard
               variant="standard"
               interactive
-              className="p-5 rounded-2xl bg-white/85 border border-white/95 shadow-xs flex flex-col justify-between h-full"
+              className="p-5 rounded-2xl bg-cream/85 border border-white/95 shadow-xs flex flex-col justify-between h-full"
             >
               <div>
                 <div className="flex items-center justify-between mb-3.5">
-                  <div className="w-9 h-9 rounded-xl bg-[#E7EDE7] text-[#165541] flex items-center justify-center">
+                  <div className="w-9 h-9 rounded-xl bg-[#e9dca4] text-[#035352] flex items-center justify-center">
                     <Icon size={18} aria-hidden="true" />
                   </div>
-                  <span className="text-xs font-black text-[#165541]/70 tracking-wider">
+                  <span className="text-xs font-black text-[#035352]/70 tracking-wider">
                     {step}
                   </span>
                 </div>
-                <h3 className="text-[15px] font-bold text-[#17211D] tracking-tight leading-snug">
+                <h3 className="text-[15px] font-bold text-[#022c2b] tracking-tight leading-snug">
                   {title}
                 </h3>
-                <p className="text-xs text-[#68736D] mt-1.5 leading-relaxed">
+                <p className="text-xs text-[#3d5654] mt-1.5 leading-relaxed">
                   {text}
                 </p>
               </div>
@@ -74,12 +74,12 @@ export function ApplicationGuidance() {
         ))}
       </ol>
 
-      <div className="mt-6 p-4 rounded-2xl bg-white/70 border border-[#17211D]/08 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-[#68736D]">
+      <div className="mt-6 p-4 rounded-2xl bg-cream/70 border border-[#022c2b]/08 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-[#3d5654]">
         <p>
           Yojana Saathi provides guidance and does not submit or approve government applications.
         </p>
         <Link
-          className="inline-flex items-center gap-1 font-bold text-[#165541] hover:text-[#0e3d2e] shrink-0 transition-colors"
+          className="inline-flex items-center gap-1 font-bold text-[#035352] hover:text-[#024241] shrink-0 transition-colors"
           href="/discover"
         >
           <span>Explore scheme guidance</span>

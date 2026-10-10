@@ -57,16 +57,16 @@ export function PopularCategories() {
     <div className="my-14 sm:my-20">
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
         <div>
-          <h2 id="categories-title" className="text-2xl sm:text-3xl font-extrabold text-[#17211D] tracking-tight">
+          <h2 id="categories-title" className="text-2xl sm:text-3xl font-extrabold text-[#022c2b] tracking-tight">
             Explore scheme categories
           </h2>
-          <p className="text-sm text-[#68736D] mt-1">
+          <p className="text-sm text-[#3d5654] mt-1">
             Browse by category to see relevant government schemes.
           </p>
         </div>
         <Link
           href="/discover#browse"
-          className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-bold text-[#165541] hover:text-[#0e3d2e] transition-colors shrink-0"
+          className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-bold text-[#035352] hover:text-[#024241] transition-colors shrink-0"
         >
           <span>View all schemes</span>
           <ArrowRight size={15} />
@@ -84,7 +84,7 @@ export function PopularCategories() {
             <GlassCard
               variant="standard"
               interactive
-              className="p-4 sm:p-4.5 rounded-2xl bg-white/90 border border-white/95 shadow-xs group-hover:border-[#165541]/30 transition-all flex items-center justify-between gap-2 h-full"
+              className="p-4 sm:p-4.5 rounded-2xl bg-cream/90 border border-white/95 shadow-xs group-hover:border-[#035352]/30 transition-all flex items-center justify-between gap-2 h-full"
             >
               <div className="flex items-center gap-2.5 min-w-0">
                 <div
@@ -93,17 +93,17 @@ export function PopularCategories() {
                   <Icon size={18} aria-hidden="true" />
                 </div>
                 <div className="min-w-0">
-                  <h3 className="text-xs sm:text-sm font-bold text-[#17211D] truncate group-hover:text-[#165541] transition-colors">
+                  <h3 className="text-xs sm:text-sm font-bold text-[#022c2b] truncate group-hover:text-[#035352] transition-colors">
                     {name}
                   </h3>
-                  <p className="text-[11px] text-[#68736D] truncate">
+                  <p className="text-[11px] text-[#3d5654] truncate">
                     Schemes
                   </p>
                 </div>
               </div>
               <ArrowRight
                 size={14}
-                className="text-slate-400 group-hover:text-[#165541] group-hover:translate-x-0.5 transition-all shrink-0"
+                className="text-slate-400 group-hover:text-[#035352] group-hover:translate-x-0.5 transition-all shrink-0"
                 aria-hidden="true"
               />
             </GlassCard>

@@ -25,9 +25,9 @@ export function Button({
 
   const variantClasses = {
     primary:
-      "bg-gradient-to-r from-emerald-600 via-emerald-600 to-teal-700 text-white shadow-md shadow-emerald-700/20 hover:shadow-lg hover:shadow-emerald-600/35 hover:-translate-y-0.5 active:translate-y-0 border border-emerald-400/30",
+      "bg-emerald-600 text-white shadow-sm hover:bg-emerald-700 hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 border border-transparent",
     secondary:
-      "bg-white/80 backdrop-blur-md text-slate-800 border border-white/90 shadow-sm hover:bg-white hover:border-emerald-500/40 hover:shadow-md hover:text-emerald-900 hover:-translate-y-0.5 active:translate-y-0",
+      "bg-cream/80 backdrop-blur-md text-slate-800 border border-white/90 shadow-sm hover:bg-cream hover:border-emerald-500/40 hover:shadow-md hover:text-emerald-900 hover:-translate-y-0.5 active:translate-y-0",
     quiet:
       "bg-transparent text-emerald-800 hover:bg-emerald-50/70 hover:text-emerald-950 border border-transparent hover:border-emerald-200/50",
     saffron:

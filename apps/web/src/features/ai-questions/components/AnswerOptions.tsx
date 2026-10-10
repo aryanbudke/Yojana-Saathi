@@ -27,7 +27,7 @@ export function AnswerOptions({
               className={`radio-option p-4 rounded-2xl border transition-all duration-150 flex items-center gap-3 cursor-pointer select-none backdrop-blur-md ${
                 selected
                   ? "bg-emerald-100/90 border-emerald-500 shadow-sm text-emerald-950 font-bold"
-                  : "bg-white/80 border-slate-200/80 text-slate-700 hover:bg-white hover:border-emerald-300"
+                  : "bg-cream/80 border-slate-200/80 text-slate-700 hover:bg-cream hover:border-emerald-300"
               }`}
             >
               <input

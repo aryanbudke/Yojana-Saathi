@@ -67,7 +67,7 @@ function ProcessStepCard({ step, lead }: { step: Step; lead?: boolean }) {
         </figure>
       )}
       {lead && (
-        <Link className={cn("button primary", styles.stepCta)} href="#finder">
+        <Link className={cn("button primary", styles.stepCta)} href="/discover">
           Describe your situation
           <ArrowRight size={16} aria-hidden="true" />
         </Link>

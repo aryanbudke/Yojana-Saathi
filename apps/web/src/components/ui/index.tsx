@@ -105,7 +105,7 @@ export function EmptyState({
   children: ReactNode;
 }) {
   return (
-    <div className="empty rounded-3xl p-8 sm:p-12 text-center bg-white/60 backdrop-blur-md border border-slate-200/80">
+    <div className="empty rounded-3xl p-8 sm:p-12 text-center bg-cream/60 backdrop-blur-md border border-slate-200/80">
       <h3 className="text-lg font-bold text-slate-900 mb-2">{title}</h3>
       <div className="empty-content text-slate-600 text-sm max-w-md mx-auto space-y-4">{children}</div>
     </div>

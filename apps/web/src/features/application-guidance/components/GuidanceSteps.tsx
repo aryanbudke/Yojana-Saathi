@@ -37,7 +37,7 @@ export function GuidanceSteps({ steps, sources }: GuidanceStepsProps) {
           return (
             <li
               key={step.step_number}
-              className="p-4.5 rounded-2xl bg-white/80 backdrop-blur-md border border-slate-200/70 flex items-start gap-4 transition-all duration-200 hover:bg-white"
+              className="p-4.5 rounded-2xl bg-cream/80 backdrop-blur-md border border-slate-200/70 flex items-start gap-4 transition-all duration-200 hover:bg-cream"
             >
               <span className="step-number w-8 h-8 rounded-xl bg-emerald-100 text-emerald-800 font-extrabold flex items-center justify-center shrink-0 text-sm shadow-xs">
                 {step.step_number}

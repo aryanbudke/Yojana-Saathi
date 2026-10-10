@@ -19,25 +19,25 @@ export function GlassCard({
 }: GlassCardProps) {
   const variantStyles = {
     standard:
-      "bg-white/80 backdrop-blur-xl border border-white/90 shadow-[0_12px_32px_-4px_rgba(16,42,36,0.06),0_4px_12px_-2px_rgba(16,42,36,0.03)]",
+      "bg-cream/80 backdrop-blur-xl border border-white/90 shadow-[0_12px_32px_-4px_rgba(2,44,43,0.06),0_4px_12px_-2px_rgba(2,44,43,0.03)]",
     elevated:
-      "bg-white/92 backdrop-blur-2xl border border-white shadow-[0_20px_48px_-6px_rgba(16,42,36,0.08),0_8px_20px_-3px_rgba(16,42,36,0.04)]",
+      "bg-cream/92 backdrop-blur-2xl border border-white shadow-[0_20px_48px_-6px_rgba(2,44,43,0.08),0_8px_20px_-3px_rgba(2,44,43,0.04)]",
     subtle:
-      "bg-[#E7EDE7]/50 backdrop-blur-md border border-[#E7EDE7]/80 shadow-xs",
+      "bg-[#e9dca4]/50 backdrop-blur-md border border-[#e9dca4]/80 shadow-xs",
     ghost:
-      "bg-white/40 backdrop-blur-sm border border-white/60",
+      "bg-cream/40 backdrop-blur-sm border border-white/60",
   };
 
   const glowStyles = {
     none: "",
     emerald:
-      "hover:border-[#165541]/40 hover:shadow-[0_16px_36px_-6px_rgba(22,85,65,0.18)]",
+      "hover:border-[#035352]/40 hover:shadow-[0_16px_36px_-6px_rgba(3,83,82,0.18)]",
     saffron:
-      "hover:border-[#B68A45]/40 hover:shadow-[0_16px_36px_-6px_rgba(182,138,69,0.18)]",
+      "hover:border-[#7d5a2a]/40 hover:shadow-[0_16px_36px_-6px_rgba(182,138,69,0.18)]",
     cyan:
       "hover:border-[#204f4a]/40 hover:shadow-[0_16px_36px_-6px_rgba(32,79,74,0.18)]",
     indigo:
-      "hover:border-[#165541]/40 hover:shadow-[0_16px_36px_-6px_rgba(22,85,65,0.18)]",
+      "hover:border-[#035352]/40 hover:shadow-[0_16px_36px_-6px_rgba(3,83,82,0.18)]",
   };
 
   return (

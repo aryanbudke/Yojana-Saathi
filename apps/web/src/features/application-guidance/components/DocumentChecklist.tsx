@@ -76,7 +76,7 @@ export function DocumentChecklist({ guidance }: DocumentChecklistProps) {
                 className={`p-4 rounded-2xl border transition-all duration-200 backdrop-blur-md ${
                   isReady
                     ? "bg-emerald-50/80 border-emerald-300/80 shadow-xs"
-                    : "bg-white/80 border-slate-200/70 hover:bg-white"
+                    : "bg-cream/80 border-slate-200/70 hover:bg-cream"
                 }`}
               >
                 <div className="flex items-start justify-between gap-4">

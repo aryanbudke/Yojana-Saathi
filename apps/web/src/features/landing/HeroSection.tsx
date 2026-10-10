@@ -22,7 +22,7 @@ export function HeroSection() {
           eligibility, and find the right next step — all in one simple place.
         </p>
         <div className={styles.heroActions}>
-          <Link className="button primary" href="#finder">
+          <Link className="button primary" href="/discover">
             Find my schemes
             <ArrowRight size={18} aria-hidden="true" />
           </Link>

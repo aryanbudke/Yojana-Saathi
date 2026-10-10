@@ -39,7 +39,7 @@ export function Navbar() {
 
   return (
     <header
-      className="header sticky top-0 z-40 w-full transition-all duration-200 border-b border-[#17211D]/08 bg-[#F7F5F0]/85 backdrop-blur-xl shadow-xs"
+      className="header sticky top-0 z-40 w-full transition-all duration-200 border-b border-[#022c2b]/08 bg-[#f3e8bc]/85 backdrop-blur-xl shadow-xs"
       onKeyDown={(event) => {
         if (event.key === "Escape" && mobileOpen) {
           setMobileOpen(false);
@@ -50,7 +50,7 @@ export function Navbar() {
       <div className="header-inner max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between gap-6">
         {/* Brand */}
         <Link
-          className="brand flex items-center gap-3 text-[#17211D] hover:opacity-90 transition-opacity"
+          className="brand flex items-center gap-3 text-[#022c2b] hover:opacity-90 transition-opacity"
           href="/"
           aria-label="yojana saathi home"
           onClick={close}
@@ -62,8 +62,8 @@ export function Navbar() {
         <nav
           id="main-navigation"
           className={cn(
-            "hidden md:flex items-center gap-1 px-2 py-1 rounded-full bg-white/90 backdrop-blur-md border border-[#17211D]/08 shadow-xs",
-            mobileOpen && "is-open flex flex-col md:flex-row absolute md:static top-full left-0 right-0 p-5 md:p-1 bg-white md:bg-white/90 border-b md:border-b-0 border-[#17211D]/10 shadow-xl md:shadow-xs",
+            "hidden md:flex items-center gap-1 px-2 py-1 rounded-full bg-cream/90 backdrop-blur-md border border-[#022c2b]/08 shadow-xs",
+            mobileOpen && "is-open flex flex-col md:flex-row absolute md:static top-full left-0 right-0 p-5 md:p-1 bg-cream md:bg-cream/90 border-b md:border-b-0 border-[#022c2b]/10 shadow-xl md:shadow-xs",
           )}
           aria-label="Main navigation"
         >
@@ -78,8 +78,8 @@ export function Navbar() {
                 className={cn(
                   "px-4 py-1.5 rounded-full text-sm font-semibold transition-all duration-150 relative",
                   active
-                    ? "text-[#102A24] bg-[#E7EDE7] font-bold shadow-2xs"
-                    : "text-[#68736D] hover:text-[#102A24] hover:bg-slate-50",
+                    ? "text-[#022c2b] bg-[#e9dca4] font-bold shadow-2xs"
+                    : "text-[#3d5654] hover:text-[#022c2b] hover:bg-slate-50",
                 )}
               >
                 {link.label}
@@ -87,8 +87,8 @@ export function Navbar() {
             );
           })}
           <Link
-            className="button primary nav-cta-mobile md:hidden mt-3 w-full inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full bg-[#165541] hover:bg-[#0e3d2e] text-white font-semibold shadow-sm"
-            href="/#finder"
+            className="button primary nav-cta-mobile md:hidden mt-3 w-full inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full bg-[#035352] hover:bg-[#024241] text-white font-semibold shadow-sm"
+            href="/discover"
             onClick={close}
           >
             Find my schemes
@@ -99,16 +99,16 @@ export function Navbar() {
         {/* Header Right Actions */}
         <div className="header-actions flex items-center gap-3">
           <span
-            className="header-language hidden sm:inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full bg-white/90 text-[#17211D] border border-[#17211D]/10 shadow-2xs"
+            className="header-language hidden sm:inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full bg-cream/90 text-[#022c2b] border border-[#022c2b]/10 shadow-2xs"
             aria-label="Current language: English"
           >
-            <Globe2 size={14} className="text-[#165541]" aria-hidden="true" />
+            <Globe2 size={14} className="text-[#035352]" aria-hidden="true" />
             English
             <span className="text-[10px] text-slate-400">▾</span>
           </span>
           <Link
-            className="button primary header-cta inline-flex items-center gap-2 px-5 py-2 rounded-full bg-[#165541] hover:bg-[#0e3d2e] text-white text-sm font-semibold shadow-sm hover:shadow-md transition-all hover:-translate-y-0.5"
-            href="/#finder"
+            className="button primary header-cta inline-flex items-center gap-2 px-5 py-2 rounded-full bg-[#035352] hover:bg-[#024241] text-white text-sm font-semibold shadow-sm hover:shadow-md transition-all hover:-translate-y-0.5"
+            href="/discover"
           >
             <Sparkles size={14} className="text-[#D8C5A1]" aria-hidden="true" />
             <span>Find my schemes</span>

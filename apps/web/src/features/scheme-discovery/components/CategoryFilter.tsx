@@ -32,7 +32,7 @@ export function CategoryFilter({
               "border backdrop-blur-md shadow-xs",
               isSelected
                 ? "bg-gradient-to-r from-emerald-600 to-teal-700 text-white border-emerald-400 shadow-md shadow-emerald-700/25 scale-[1.02]"
-                : "bg-white/80 text-slate-700 border-white/90 hover:bg-white hover:border-emerald-300 hover:text-emerald-900",
+                : "bg-cream/80 text-slate-700 border-white/90 hover:bg-cream hover:border-emerald-300 hover:text-emerald-900",
             )}
           >
             <Icon size={16} aria-hidden="true" className={isSelected ? "text-amber-300" : "text-emerald-700"} />

@@ -15,17 +15,17 @@ export function Badge({
 }: BadgeProps) {
   const toneClasses: Record<string, string> = {
     neutral:
-      "bg-white/80 text-[#17211D] border-[#17211D]/10 shadow-xs",
+      "bg-cream/80 text-[#022c2b] border-[#022c2b]/10 shadow-xs",
     success:
-      "bg-[#165541]/12 text-[#165541] border-[#165541]/25 shadow-xs",
+      "bg-[#035352]/12 text-[#035352] border-[#035352]/25 shadow-xs",
     emerald:
-      "bg-[#165541]/12 text-[#165541] border-[#165541]/25 shadow-xs",
+      "bg-[#035352]/12 text-[#035352] border-[#035352]/25 shadow-xs",
     warning:
-      "bg-[#B68A45]/15 text-[#644723] border-[#B68A45]/30 shadow-xs",
+      "bg-[#7d5a2a]/15 text-[#644723] border-[#7d5a2a]/30 shadow-xs",
     saffron:
-      "bg-[#B68A45]/15 text-[#644723] border-[#B68A45]/30 shadow-xs",
+      "bg-[#7d5a2a]/15 text-[#644723] border-[#7d5a2a]/30 shadow-xs",
     gold:
-      "bg-[#B68A45]/15 text-[#644723] border-[#B68A45]/30 shadow-xs",
+      "bg-[#7d5a2a]/15 text-[#644723] border-[#7d5a2a]/30 shadow-xs",
     danger:
       "bg-rose-100/90 text-rose-950 border-rose-300/80 shadow-xs",
     info:

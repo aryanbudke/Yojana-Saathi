@@ -20,7 +20,6 @@ import { useMatching } from "@/features/matching/hooks";
 import { fields, states } from "./types";
 import { example, fieldValue } from "./model";
 import Link from "next/link";
-import { categories } from "@/features/discovery/types";
 
 export function ModeNotice() {
   return isMock ? (
@@ -34,7 +33,7 @@ export function ModeNotice() {
     </div>
   ) : null;
 }
-export function ProfileComposer({ landing = false }: { landing?: boolean }) {
+export function ProfileComposer() {
   const p = useProfile();
   const matching = useMatching();
   const [busy, setBusy] = useState<"extract" | "confirm" | "clear" | null>(
@@ -62,17 +61,11 @@ export function ProfileComposer({ landing = false }: { landing?: boolean }) {
     <div className="profile-workspace">
       <GlassPanel className="composer-shell">
         <div className="section-heading">
-          <h2>
-            {landing
-              ? "Find schemes for your situation"
-              : "Tell us about your situation"}
-          </h2>
+          <h2>Tell us about your situation</h2>
           <Badge>Your profile</Badge>
         </div>
         <p className="muted composer-description">
-          {landing
-            ? "Describe your situation in plain language. We’ll help find relevant schemes."
-            : "You don’t need to know a scheme’s name. Just share a few details about yourself."}
+          You don’t need to know a scheme’s name. Just share a few details about yourself.
         </p>
         <form
           onSubmit={(e) => {
@@ -104,33 +97,6 @@ export function ProfileComposer({ landing = false }: { landing?: boolean }) {
               {p.text.length}/1000 characters
             </span>
           </div>
-          {landing && (
-            <fieldset className="finder-categories" disabled={busy !== null}>
-              <legend>
-                What support are you exploring?{" "}
-                <span className="muted">Optional</span>
-              </legend>
-              <div className="row">
-                {categories.map(({ label, value, icon: Icon }) => (
-                  <Button
-                    key={value}
-                    type="button"
-                    variant="secondary"
-                    aria-pressed={p.draft.facts.category === value}
-                    onClick={() =>
-                      p.edit(
-                        "category",
-                        p.draft.facts.category === value ? null : value,
-                      )
-                    }
-                  >
-                    <Icon size={16} aria-hidden="true" />
-                    {label}
-                  </Button>
-                ))}
-              </div>
-            </fieldset>
-          )}
           <Button
             type="submit"
             className="wide"

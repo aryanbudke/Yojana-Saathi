@@ -34,7 +34,7 @@ const groups = [
 
 export function Footer() {
   return (
-    <footer className="w-full mt-24 bg-[#102A24] text-white py-14 relative overflow-hidden">
+    <footer className="w-full mt-24 bg-[#022c2b] text-white py-14 relative overflow-hidden">
       {/* Decorative leaf motif watermark outline in bottom-right corner */}
       <div className="absolute bottom-0 right-0 w-56 h-56 pointer-events-none select-none opacity-10">
         {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -52,11 +52,11 @@ export function Footer() {
             <Link className="brand inline-block text-white" href="/" aria-label="yojana saathi home">
               <Brand />
             </Link>
-            <p className="text-[#E7EDE7]/70 text-sm max-w-sm leading-relaxed">
+            <p className="text-[#e9dca4]/70 text-sm max-w-sm leading-relaxed">
               Find government support, understand the conditions and prepare your
               next step with clarity and trust.
             </p>
-            <p className="text-xs text-[#D5DDD5] font-medium">
+            <p className="text-xs text-[#d8c98a] font-medium">
               Made for citizens across India · Available in English
             </p>
           </div>
@@ -74,14 +74,14 @@ export function Footer() {
                           href={href}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-sm text-[#E7EDE7]/70 hover:text-white transition-colors"
+                          className="text-sm text-[#e9dca4]/70 hover:text-white transition-colors"
                         >
                           {label}
                         </a>
                       ) : (
                         <Link
                           href={href}
-                          className="text-sm text-[#E7EDE7]/70 hover:text-white transition-colors"
+                          className="text-sm text-[#e9dca4]/70 hover:text-white transition-colors"
                         >
                           {label}
                         </Link>
@@ -94,9 +94,9 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="mt-12 pt-8 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#D5DDD5]">
+        <div className="mt-12 pt-8 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#d8c98a]">
           <span>© {new Date().getFullYear()} yojana saathi · Independent preliminary guidance</span>
-          <div className="max-w-xl text-center sm:text-right text-[#D5DDD5] [&_.disclaimer]:text-[#D5DDD5]">
+          <div className="max-w-xl text-center sm:text-right text-[#d8c98a] [&_.disclaimer]:text-[#d8c98a]">
             <Disclaimer />
           </div>
         </div>

@@ -22,7 +22,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className="min-h-screen flex flex-col bg-[#F7F5F0] text-[#17211D] selection:bg-[#165541] selection:text-white pb-16 md:pb-0">
+      <body className="min-h-screen flex flex-col bg-[#f3e8bc] text-[#022c2b] selection:bg-[#035352] selection:text-white pb-16 md:pb-0">
         <ProfileProvider>
           <MatchingProvider>
             <a href="#main" className="skip-link">

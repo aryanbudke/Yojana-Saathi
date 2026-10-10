@@ -113,7 +113,7 @@ export function MatchResults({ embedded = false }: MatchResultsProps) {
             </div>
 
             {!visibleMatches.length && (
-              <div className="empty p-8 text-center rounded-3xl bg-white/60 backdrop-blur-md border border-slate-200/80">
+              <div className="empty p-8 text-center rounded-3xl bg-cream/60 backdrop-blur-md border border-slate-200/80">
                 <h3 className="text-base font-bold text-slate-800 mb-2">No schemes with this status</h3>
                 <Button variant="quiet" onClick={() => setFilter("all")}>
                   Show all statuses

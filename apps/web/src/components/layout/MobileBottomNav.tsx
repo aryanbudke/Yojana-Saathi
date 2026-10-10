@@ -19,7 +19,7 @@ export function MobileBottomNav() {
 
   return (
     <nav
-      className="md:hidden fixed bottom-3 inset-x-3 z-40 bg-white/85 backdrop-blur-2xl border border-white/90 shadow-[0_8px_32px_rgba(16,80,50,0.15)] rounded-2xl px-2 py-1.5 flex items-center justify-around"
+      className="md:hidden fixed bottom-3 inset-x-3 z-40 bg-cream/85 backdrop-blur-2xl border border-white/90 shadow-[0_8px_32px_rgba(16,80,50,0.15)] rounded-2xl px-2 py-1.5 flex items-center justify-around"
       aria-label="Mobile quick dock"
     >
       {items.map((item) => {

@@ -37,7 +37,7 @@ export function Skeleton({ className = "", variant = "card", ...props }: Skeleto
   return (
     <div
       className={cn(
-        "w-full rounded-3xl p-6 bg-white/60 backdrop-blur-md border border-white/70 shadow-sm animate-pulse space-y-4",
+        "w-full rounded-3xl p-6 bg-cream/60 backdrop-blur-md border border-white/70 shadow-sm animate-pulse space-y-4",
         className,
       )}
       role="status"

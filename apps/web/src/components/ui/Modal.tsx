@@ -54,7 +54,7 @@ export function Modal({
     >
       <div
         className={cn(
-          "w-full mx-auto relative rounded-3xl bg-white/90 backdrop-blur-2xl border border-white/90 shadow-2xl p-6 sm:p-8",
+          "w-full mx-auto relative rounded-3xl bg-cream/90 backdrop-blur-2xl border border-white/90 shadow-2xl p-6 sm:p-8",
           "before:absolute before:inset-x-8 before:top-0 before:h-[1px] before:bg-gradient-to-r before:from-transparent before:via-white before:to-transparent",
           maxWClasses[maxWidth],
         )}

@@ -72,7 +72,7 @@ export function AppHeader() {
           ))}
           <Link
             className="button primary nav-cta-mobile"
-            href="/#finder"
+            href="/discover"
             onClick={close}
           >
             Find my schemes
@@ -86,7 +86,7 @@ export function AppHeader() {
           >
             <Globe2 size={16} aria-hidden="true" /> English
           </span>
-          <Link className="button primary header-cta" href="/#finder">
+          <Link className="button primary header-cta" href="/discover">
             Find my schemes
             <ArrowRight size={16} aria-hidden="true" />
           </Link>

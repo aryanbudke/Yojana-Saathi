@@ -25,7 +25,7 @@
   left: 12px;
   right: 12px;
   height: 1px;
-  background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.95) 50%, transparent 100%);
+  background: linear-gradient(90deg, transparent 0%, rgba(250, 244, 220, 0.95) 50%, transparent 100%);
   border-radius: 999px;
   pointer-events: none;
 }
@@ -51,7 +51,7 @@
 /* Glowing Border Accent Variants */
 .glass-glow-emerald:hover,
 .glass-glow-emerald:focus-within {
-  border-color: rgba(16, 185, 129, 0.5);
+  border-color: rgba(3, 83, 82, 0.5);
   box-shadow: var(--glass-shadow-lg), var(--glass-glow);
   transform: translateY(-2px);
 }
@@ -77,7 +77,7 @@
   gap: 6px;
   padding: 6px 14px;
   border-radius: var(--radius-pill);
-  background: rgba(255, 255, 255, 0.7);
+  background: rgba(250, 244, 220, 0.7);
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
   border: 1px solid rgba(255, 255, 255, 0.85);
@@ -104,7 +104,7 @@
 }
 
 .orb-emerald {
-  background: radial-gradient(circle, rgba(16, 185, 129, 0.35) 0%, rgba(5, 150, 105, 0.05) 70%, transparent 100%);
+  background: radial-gradient(circle, rgba(3, 83, 82, 0.35) 0%, rgba(5, 150, 105, 0.05) 70%, transparent 100%);
 }
 
 .orb-saffron {
