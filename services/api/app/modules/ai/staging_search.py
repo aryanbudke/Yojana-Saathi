@@ -286,7 +286,7 @@ def answer(
             "temperature": 0.2,
             "maxOutputTokens": 2048,
             "responseFormat": {
-                "text": {"mimeType": "application/json", "schema": _AnswerDraft.model_json_schema()}
+                "text": {"mimeType": "APPLICATION_JSON", "schema": _AnswerDraft.model_json_schema()}
             },
         },
     }

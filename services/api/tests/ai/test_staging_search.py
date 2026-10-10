@@ -132,7 +132,7 @@ def test_answer_keeps_only_citations_from_retrieved_records(
     assert text == "- farm-aid covers tractors"
     assert cited == ["farm-aid"]
     payload = calls[0]
-    assert payload["generationConfig"]["responseFormat"]["text"]["mimeType"] == "application/json"
+    assert payload["generationConfig"]["responseFormat"]["text"]["mimeType"] == "APPLICATION_JSON"
     system = payload["systemInstruction"]["parts"][0]["text"]
     assert "untrusted" in system and injected not in system
     user = json.loads(payload["contents"][0]["parts"][0]["text"])

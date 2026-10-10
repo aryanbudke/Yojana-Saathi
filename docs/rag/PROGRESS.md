@@ -330,7 +330,7 @@ override, frontend change, publication or remote deployment is authorized here.
 | --- | --- | --- |
 | AUTH-01 Private environment | COMPLETED | Settings/AISettings, private mode/ignore and read-only PostgreSQL schema checks |
 | AUTH-02 Authenticated retrieval | COMPLETED | Real actual-data subset and provider embeddings, normal reviewer auth |
-| AUTH-03 Grounded generation | PENDING | AUTH-02 committed; configured model and actual retrieved records |
+| AUTH-03 Grounded generation | COMPLETED | AUTH-02 committed; configured model and actual retrieved records |
 | AUTH-04 Citation/source review | PENDING | AUTH-03 committed; membership, raw-record equality and claim-support review |
 | AUTH-05 PostgreSQL integration tests | PENDING | Two existing isolated-schema tests; provider mocks explicitly distinguished |
 | AUTH-06 Full3397 indexing | PENDING | Verified quota headroom/pacing, native token guards and full transaction |
@@ -357,3 +357,14 @@ override, frontend change, publication or remote deployment is authorized here.
 - Files: owned sanitized retrieval evidence and this progress file; temporary harness outside repository, no frontend/runtime API changes.
 - Commit: `test(ai): verify authenticated actual-data subset retrieval` (resolve by title).
 - Next task: AUTH-03 generation only after this task verifies and commits.
+
+### AUTH-03 — Authenticated actual-source generation
+
+- Status: COMPLETED
+- Dependency: AUTH-02 verified/committed as `3fa5182`.
+- Scope: existing protected API, configured Gemini model and eight actual records in a temporary PostgreSQL schema; no auth/provider overrides or frontend changes.
+- Problem/fix: initial API503 was a sanitized provider400: generateContent REST responseFormat.text.mimeType expects APPLICATION_JSON, not the SDK-style application/json string. Confirmed against Google's REST reference (https://ai.google.dev/api/generate-content?hl=ja#TextResponseFormat). One shared-client field fixed; strict schema, response bounds and citation checks preserved. Caller search covers the owned route and tests.
+- Verification: request-contract assertion failed before the fix; final73 focused tests passed,2 database tests deferred to AUTH-05; Ruff lint/format and mypy pass. Actual protected HTTP ask now200 with configured generation model, a non-empty draft-framed answer and apy citation. Model acceptance and generation pass; claim/source review remains AUTH-04.
+- Files: staging_search.py, its existing request-contract test, authenticated-subset-answer.json, generation-diagnostic.json and this progress file. Secrets excluded; private config0600/ignored; no frontend diff.
+- Commit: `fix(ai): use REST JSON enum for authenticated draft answers` (resolve by title).
+- Next task: AUTH-04 citation/source support review after this commit.
