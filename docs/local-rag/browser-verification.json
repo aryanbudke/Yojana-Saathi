@@ -1,0 +1,66 @@
+{
+  "scope": "localhost website and actual8-record API sample; real Gemini/pgvector; no auth overrides",
+  "status": "passed",
+  "viewports": [
+    {
+      "width": 375,
+      "horizontal_overflow": false,
+      "minimum_control_height": 46
+    },
+    {
+      "width": 768,
+      "horizontal_overflow": false,
+      "minimum_control_height": 45.99998474121094
+    },
+    {
+      "width": 1280,
+      "horizontal_overflow": false,
+      "minimum_control_height": 45.99998474121094
+    },
+    {
+      "width": 1920,
+      "horizontal_overflow": false,
+      "minimum_control_height": 46
+    }
+  ],
+  "checks": [
+    {
+      "check": "invalid reviewer token",
+      "status": 403,
+      "passed": true
+    },
+    {
+      "check": "actual answer with retrieved citations/raw-source equality",
+      "passed": true
+    },
+    {
+      "check": "clear credentials/answer",
+      "passed": true
+    },
+    {
+      "check": "keyboard reaches token/question with visible focus",
+      "passed": true
+    }
+  ],
+  "denied_status": 403,
+  "denied_body": {
+    "error": {
+      "code": "FORBIDDEN",
+      "message": "Administrative role is required.",
+      "request_id": "06d34622-94c4-4c1b-9f6c-8826431bafa2"
+    }
+  },
+  "answer_http_status": 200,
+  "answer": "According to the unverified Atal Pension Yojana record, subscribers receive a guaranteed minimum monthly pension ranging from Rs. 1000/- to Rs. 5000/- per month (specifically Rs. 1000/-, Rs. 2000/-, Rs. 3000/-, Rs. 4000/-, or Rs. 5000/- per month) after the age of 60 years until death.",
+  "cited_slugs": [
+    "apy"
+  ],
+  "retrieved_slugs": [
+    "apy",
+    "pmjdy",
+    "ky-smsp"
+  ],
+  "a11y_violations": [],
+  "production_ready": false,
+  "full_corpus_verified": false
+}

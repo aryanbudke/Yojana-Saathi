@@ -39,6 +39,14 @@ export default async function RootLayout({
                     {m.nav.skipToContent}
                   </a>
                   <Navbar />
+                  {process.env.NODE_ENV === "development" &&
+                    process.env.RAG_DEMO_ENABLED === "1" && (
+                      <div className="bg-emerald-50 px-4 text-emerald-900">
+                        <a className="button quiet" href="/rag">
+                          Open RAG test · eight unverified sample records
+                        </a>
+                      </div>
+                    )}
                   <PageContainer ambientGlow>
                     <main id="main" className="container flex-1">
                       {children}

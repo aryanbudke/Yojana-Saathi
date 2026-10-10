@@ -8,8 +8,8 @@
   top: 0;
   z-index: 40;
   height: var(--nav-height);
-  background: rgb(243 232 188 / 72%);
-  border-bottom: 1px solid rgb(2 44 43 / 8%);
+  background: color-mix(in srgb, var(--bg) 72%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--ink) 8%, transparent);
   backdrop-filter: blur(16px) saturate(140%);
   -webkit-backdrop-filter: blur(16px) saturate(140%);
   transition:
@@ -19,9 +19,9 @@
 }
 /* Once content scrolls under the bar it firms up, so text behind it never competes. */
 .site-header[data-scrolled] {
-  background: rgb(250 244 220 / 90%);
-  border-bottom-color: rgb(2 44 43 / 12%);
-  box-shadow: 0 10px 24px -20px rgb(2 44 43 / 45%);
+  background: color-mix(in srgb, var(--surface) 90%, transparent);
+  border-bottom-color: color-mix(in srgb, var(--ink) 12%, transparent);
+  box-shadow: 0 10px 24px -20px color-mix(in srgb, var(--ink) 45%, transparent);
 }
 @supports not (backdrop-filter: blur(16px)) {
   .site-header,
@@ -44,6 +44,7 @@
 }
 .site-brand {
   justify-self: start;
+  min-height: 44px;
   color: var(--ink);
   border-radius: 12px;
 }
@@ -136,14 +137,14 @@
   font-size: 15px;
   font-weight: 600;
   white-space: nowrap;
-  box-shadow: 0 1px 2px rgb(2 44 43 / 14%);
+  box-shadow: 0 1px 2px color-mix(in srgb, var(--ink) 14%, transparent);
   transition:
     background-color 200ms var(--nav-ease),
     box-shadow 200ms var(--nav-ease);
 }
 .site-cta:hover {
   background: var(--primary-hover);
-  box-shadow: 0 8px 18px -8px rgb(3 83 82 / 55%);
+  box-shadow: 0 8px 18px -8px color-mix(in srgb, var(--primary) 55%, transparent);
 }
 .site-cta-arrow {
   transition: transform 200ms var(--nav-ease);
@@ -162,12 +163,60 @@
   transition: background-color 200ms var(--nav-ease);
 }
 .site-menu-button:hover {
-  background: rgb(2 44 43 / 6%);
+  background: color-mix(in srgb, var(--ink) 6%, transparent);
+}
+
+/* ---------- Language selector ---------- */
+.language-switcher {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  height: 44px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--ink) 12%, transparent);
+  background: color-mix(in srgb, var(--surface) 90%, transparent);
+  color: var(--ink);
+  transition: border-color 200ms var(--nav-ease, ease);
+}
+.language-switcher:hover {
+  border-color: color-mix(in srgb, var(--ink) 28%, transparent);
+}
+.language-switcher[data-pending] {
+  opacity: 0.7;
+}
+.language-switcher select {
+  appearance: none;
+  height: 100%;
+  padding: 0 32px 0 34px;
+  border: 0;
+  border-radius: inherit;
+  background: transparent;
+  color: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.language-switcher select:focus {
+  outline: none;
+}
+.language-switcher-globe,
+.language-switcher-chevron {
+  position: absolute;
+  pointer-events: none;
+  color: var(--primary);
+}
+.language-switcher-globe {
+  left: 12px;
+}
+.language-switcher-chevron {
+  right: 12px;
+  color: var(--muted);
 }
 
 /* One focus treatment for every control in the bar and drawer. */
 .site-header :is(a, button):focus-visible,
-.site-drawer :is(a, button):focus-visible {
+.site-drawer :is(a, button):focus-visible,
+.language-switcher:has(select:focus-visible) {
   outline: 2px solid var(--primary);
   outline-offset: 3px;
 }
@@ -183,7 +232,7 @@
   border: none;
   background: var(--surface);
   color: var(--ink);
-  box-shadow: -24px 0 48px -28px rgb(2 44 43 / 45%);
+  box-shadow: -24px 0 48px -28px color-mix(in srgb, var(--ink) 45%, transparent);
   transform: translateX(100%);
   transition:
     transform 260ms var(--nav-ease),
@@ -199,18 +248,18 @@
   }
 }
 .site-drawer::backdrop {
-  background: rgb(2 44 43 / 0%);
+  background: color-mix(in srgb, var(--ink) 0%, transparent);
   transition:
     background-color 260ms var(--nav-ease),
     overlay 260ms allow-discrete,
     display 260ms allow-discrete;
 }
 .site-drawer[open]::backdrop {
-  background: rgb(2 44 43 / 40%);
+  background: color-mix(in srgb, var(--ink) 40%, transparent);
 }
 @starting-style {
   .site-drawer[open]::backdrop {
-    background: rgb(2 44 43 / 0%);
+    background: color-mix(in srgb, var(--ink) 0%, transparent);
   }
 }
 .site-drawer-panel {
@@ -247,7 +296,7 @@
   justify-content: space-between;
   min-height: 56px;
   padding-inline: 12px 4px;
-  border-bottom: 1px solid rgb(2 44 43 / 8%);
+  border-bottom: 1px solid color-mix(in srgb, var(--ink) 8%, transparent);
   font-size: 18px;
   font-weight: 600;
   color: var(--ink);
@@ -341,6 +390,7 @@ html.nav-locked {
   .site-cta,
   .site-cta-arrow,
   .site-menu-button,
+  .language-switcher,
   .site-drawer,
   .site-drawer::backdrop,
   .site-drawer-link,
