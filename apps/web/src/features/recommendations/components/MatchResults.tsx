@@ -24,6 +24,7 @@ import { labelFor } from "@/lib/format";
 import { useMessages } from "@/i18n/client";
 import { format } from "@/i18n/config";
 import type { SchemeMatch } from "@/lib/api/contracts";
+import { conciseSchemeText } from "@/lib/concise-text";
 
 export interface MatchResultsProps {
   embedded?: boolean;
@@ -249,19 +250,29 @@ function MatchCardItem({ match }: { match: SchemeMatch }) {
           <span className="font-bold uppercase tracking-wider text-[11px] text-emerald-800 block mb-0.5">
             {m.match.supportAtAGlance}
           </span>
-          <p>{current?.benefit_text ?? match.benefit_text}</p>
+          <p>
+            {conciseSchemeText(
+              current?.benefit_text ?? match.benefit_text ?? "",
+            )}
+          </p>
         </div>
       )}
 
       {match.documents_text && (
-        <p className="text-xs text-slate-600">
-          <strong>{m.match.documents}:</strong> {match.documents_text}
-        </p>
+        <details className="rounded-xl border border-slate-200/80 px-4 py-3 text-xs text-slate-600">
+          <summary className="cursor-pointer font-bold text-slate-800">
+            {m.match.documents}
+          </summary>
+          <p className="mt-2 leading-relaxed">{match.documents_text}</p>
+        </details>
       )}
       {match.application_text && (
-        <p className="text-xs text-slate-600">
-          <strong>{m.match.howToApply}:</strong> {match.application_text}
-        </p>
+        <details className="rounded-xl border border-slate-200/80 px-4 py-3 text-xs text-slate-600">
+          <summary className="cursor-pointer font-bold text-slate-800">
+            {m.match.howToApply}
+          </summary>
+          <p className="mt-2 leading-relaxed">{match.application_text}</p>
+        </details>
       )}
 
       <div className="pt-2">

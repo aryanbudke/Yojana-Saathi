@@ -9,6 +9,7 @@ import type { SchemeMatch } from "@/lib/api/contracts";
 import { labelFor } from "@/lib/format";
 import { useDisplayDate, useMessages } from "@/i18n/client";
 import { format } from "@/i18n/config";
+import { conciseSchemeText } from "@/lib/concise-text";
 import { EligibilityBadge } from "./EligibilityBadge";
 import { RuleChecklist } from "./RuleChecklist";
 export function MatchCard({ match }: { match: SchemeMatch }) {
@@ -49,19 +50,25 @@ export function MatchCard({ match }: { match: SchemeMatch }) {
           {current && <p className="muted match-summary">{current.summary}</p>}
           <div className="benefit-line">
             <span>{m.match.supportAtAGlance}</span>
-            <p>{current?.benefit_text ?? match.benefit_text}</p>
+            <p>
+              {conciseSchemeText(
+                current?.benefit_text ?? match.benefit_text ?? "",
+              )}
+            </p>
           </div>
         </>
       )}
       {match.documents_text && (
-        <p className="small muted">
-          <strong>{m.match.documents}:</strong> {match.documents_text}
-        </p>
+        <details className="explanation">
+          <summary>{m.match.documents}</summary>
+          <p className="small muted">{match.documents_text}</p>
+        </details>
       )}
       {match.application_text && (
-        <p className="small muted">
-          <strong>{m.match.howToApply}:</strong> {match.application_text}
-        </p>
+        <details className="explanation">
+          <summary>{m.match.howToApply}</summary>
+          <p className="small muted">{match.application_text}</p>
+        </details>
       )}
       <RuleChecklist
         rules={[
