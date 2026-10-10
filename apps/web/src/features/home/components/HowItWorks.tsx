@@ -7,20 +7,23 @@ import {
   ScanSearch,
 } from "lucide-react";
 import { GlassCard } from "@/components/ui/GlassCard";
-import { example } from "@/features/profile/model";
+import { format } from "@/i18n/config";
+import { getMessages } from "@/i18n/server";
 
-export function HowItWorks() {
+export async function HowItWorks() {
+  const m = await getMessages();
+  const t = m.home.how;
   return (
     <section id="how-it-works" className="my-14 sm:my-20 scroll-mt-24" aria-labelledby="how-title">
       <div className="max-w-2xl mb-8 sm:mb-10">
         <p className="text-xs font-bold uppercase tracking-widest text-[#035352] mb-2">
-          A CLEARER NEXT STEP
+          {t.eyebrow}
         </p>
         <h2 id="how-title" className="text-3xl sm:text-4xl font-extrabold text-[#022c2b] tracking-tight">
-          How it works
+          {t.title}
         </h2>
         <p className="text-[#3d5654] text-base mt-1.5">
-          From your situation to the right opportunities, in three simple steps.
+          {t.lead}
         </p>
       </div>
 
@@ -43,30 +46,30 @@ export function HowItWorks() {
               </div>
 
               <h3 className="text-lg font-bold text-[#022c2b] tracking-tight">
-                Tell us about your situation
-                <span className="sr-only"> (Share your needs)</span>
+                {t.step1Title}
+                <span className="sr-only">{t.step1SrHint}</span>
               </h3>
               <p className="text-[#3d5654] text-sm mt-2 leading-relaxed">
-                Describe your background, needs and goals in plain language.
+                {t.step1Text}
               </p>
 
               <div className="my-4 p-3 rounded-xl bg-[#f3e8bc] border border-[#022c2b]/06">
                 <span className="text-[10px] font-bold uppercase tracking-wider text-slate-700 block mb-0.5">
-                  For example
+                  {t.forExample}
                 </span>
                 <blockquote className="text-xs font-medium text-[#022c2b] italic line-clamp-2">
-                  “{example}”
+                  “{m.profile.example}”
                 </blockquote>
               </div>
             </div>
 
             <div className="pt-3 border-t border-[#022c2b]/06 flex items-center justify-between">
-              <span className="text-[11px] font-bold text-[#035352]">Step 01</span>
+              <span className="text-[11px] font-bold text-[#035352]">{format(t.step, { n: "01" })}</span>
               <Link
                 href="/discover"
                 className="inline-flex items-center gap-1.5 text-xs font-bold text-[#035352] hover:text-[#024241] transition-colors"
               >
-                <span>Describe your situation</span>
+                <span>{t.step1Link}</span>
                 <ArrowRight size={14} />
               </Link>
             </div>
@@ -91,16 +94,16 @@ export function HowItWorks() {
               </div>
 
               <h3 className="text-lg font-bold text-[#022c2b] tracking-tight">
-                Get a personalised match
+                {t.step2Title}
               </h3>
               <p className="text-[#3d5654] text-sm mt-2 leading-relaxed">
-                We find relevant schemes and show key details for your review.
+                {t.step2Text}
               </p>
             </div>
 
             <div className="pt-3 border-t border-[#022c2b]/06 flex items-center justify-between mt-6">
-              <span className="text-[11px] font-bold text-[#035352]">Step 02</span>
-              <span className="text-[11px] font-medium text-[#3d5654]">AI + Rule checks</span>
+              <span className="text-[11px] font-bold text-[#035352]">{format(t.step, { n: "02" })}</span>
+              <span className="text-[11px] font-medium text-[#3d5654]">{t.step2Tag}</span>
             </div>
           </GlassCard>
         </li>
@@ -123,16 +126,16 @@ export function HowItWorks() {
               </div>
 
               <h3 className="text-lg font-bold text-[#022c2b] tracking-tight">
-                Take the next step
+                {t.step3Title}
               </h3>
               <p className="text-[#3d5654] text-sm mt-2 leading-relaxed">
-                Follow official links and prepare your application with confidence.
+                {t.step3Text}
               </p>
             </div>
 
             <div className="pt-3 border-t border-[#022c2b]/06 flex items-center justify-between mt-6">
-              <span className="text-[11px] font-bold text-[#035352]">Step 03</span>
-              <span className="text-[11px] font-medium text-[#3d5654]">Official links &amp; checklist</span>
+              <span className="text-[11px] font-bold text-[#035352]">{format(t.step, { n: "03" })}</span>
+              <span className="text-[11px] font-medium text-[#3d5654]">{t.step3Tag}</span>
             </div>
           </GlassCard>
         </li>

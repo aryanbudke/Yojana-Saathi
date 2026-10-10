@@ -12,10 +12,14 @@ import {
   Skeleton,
 } from "@/components/ui";
 import { states } from "@/features/profile/types";
+import { useMessages } from "@/i18n/client";
+import { format } from "@/i18n/config";
 import { categories, queryFromSearch } from "./types";
 import { CategoryChip } from "./CategoryChip";
 import { SchemeCard } from "./SchemeCard";
 export function Discovery() {
+  const m = useMessages();
+  const t = m.discover;
   const search = useSearchParams();
   const pathname = usePathname();
   const query = search.toString();
@@ -37,16 +41,16 @@ export function Discovery() {
     >
       <div className="section-heading">
         <div>
-          <p className="eyebrow">Browse by category</p>
-          <h2 id="browse-title">Explore schemes</h2>
+          <p className="eyebrow">{t.browseEyebrow}</p>
+          <h2 id="browse-title">{t.browseTitle}</h2>
         </div>
-        <span className="small muted">Browse without sharing a profile</span>
+        <span className="small muted">{t.browseNote}</span>
       </div>
-      <div className="category-chips" aria-label="Support categories">
+      <div className="category-chips" aria-label={t.categoriesLabel}>
         {categories.map((c) => (
           <CategoryChip
             key={c.value}
-            label={c.label}
+            label={m.categoryAudience[c.value]}
             icon={c.icon}
             selected={search.get("category") === c.value}
             onClick={() => {
@@ -76,18 +80,18 @@ export function Discovery() {
         <div className="search-input">
           <Search size={18} aria-hidden="true" />
           <label className="sr-only" htmlFor="scheme-search">
-            Search schemes
+            {t.searchLabel}
           </label>
           <Input
             id="scheme-search"
             name="q"
             maxLength={200}
             defaultValue={search.get("q") ?? ""}
-            placeholder="Search by scheme or support…"
+            placeholder={t.searchPlaceholder}
           />
         </div>
         <label className="sr-only" htmlFor="scheme-state">
-          Filter by state
+          {t.stateLabel}
         </label>
         <select
           id="scheme-state"
@@ -95,15 +99,15 @@ export function Discovery() {
           className="input"
           defaultValue={search.get("state_code") ?? ""}
         >
-          <option value="">All states + national</option>
-          {states.map(([code, label]) => (
+          <option value="">{t.allStates}</option>
+          {states.map((code) => (
             <option value={code} key={code}>
-              {label}
+              {m.states[code]}
             </option>
           ))}
         </select>
         <Button type="submit" variant="secondary">
-          Search
+          {t.search}
           <ArrowRight size={16} />
         </Button>
         {query && (
@@ -112,22 +116,25 @@ export function Discovery() {
             variant="quiet"
             onClick={() => update(new URLSearchParams())}
           >
-            Clear filters
+            {t.clearFilters}
           </Button>
         )}
       </form>
       <div aria-live="polite" className="result-count">
         {r.loading
-          ? "Finding schemes…"
+          ? t.finding
           : r.data
-            ? `${r.data.items.length} ${r.data.items.length === 1 ? "scheme" : "schemes"} on this page`
+            ? format(
+                r.data.items.length === 1 ? t.resultsOne : t.resultsOther,
+                { count: r.data.items.length },
+              )
             : ""}
       </div>
       {r.error && (
         <>
           <InlineAlert error>{r.error}</InlineAlert>
           <Button variant="secondary" onClick={r.retry}>
-            Try again
+            {m.common.tryAgain}
           </Button>
         </>
       )}
@@ -156,23 +163,20 @@ export function Discovery() {
                 );
               }}
             >
-              Next page
+              {t.nextPage}
               <ArrowRight size={16} />
             </Button>
           )}
         </>
       ) : (
         !r.error && (
-          <EmptyState title="No schemes found for these filters">
-            <p>
-              Try another category or broaden your search. National schemes are
-              included when relevant.
-            </p>
+          <EmptyState title={t.emptyTitle}>
+            <p>{t.emptyText}</p>
             <Button
               variant="quiet"
               onClick={() => update(new URLSearchParams())}
             >
-              Clear filters
+              {t.clearFilters}
             </Button>
           </EmptyState>
         )

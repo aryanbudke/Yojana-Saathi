@@ -17,13 +17,18 @@ import {
   Skeleton,
   SourceLink,
 } from "@/components/ui";
-import { displayDate, humanize } from "@/lib/format";
+import { labelFor } from "@/lib/format";
+import { useDisplayDate, useMessages } from "@/i18n/client";
+import { format } from "@/i18n/config";
 import { ModeNotice } from "@/features/profile/ProfileComposer";
 import { useMatching } from "@/features/matching/hooks";
 import { useProfile } from "@/features/profile/hooks";
 import { RuleChecklist } from "@/features/matching/RuleChecklist";
 import { EligibilityBadge } from "@/features/matching/EligibilityBadge";
 export function SchemeDetail({ id }: { id: string }) {
+  const m = useMessages();
+  const t = m.scheme;
+  const date = useDisplayDate();
   const load = useCallback(() => api.detail(id), [id]);
   const r = useResource(load);
   const matching = useMatching();
@@ -53,13 +58,11 @@ export function SchemeDetail({ id }: { id: string }) {
         <ModeNotice />
         <Link className="back-link" href="/discover#browse">
           <ArrowLeft size={16} />
-          Back to discovery
+          {t.backToDiscovery}
         </Link>
-        <InlineAlert error>
-          {r.error || "Scheme details are unavailable."}
-        </InlineAlert>
+        <InlineAlert error>{r.error || t.unavailable}</InlineAlert>
         <Button variant="secondary" onClick={r.retry}>
-          Try again
+          {m.common.tryAgain}
         </Button>
       </>
     );
@@ -79,17 +82,21 @@ export function SchemeDetail({ id }: { id: string }) {
           href={p.confirmed ? "/recommendations" : "/discover#browse"}
         >
           <ArrowLeft size={16} />
-          {p.confirmed ? "Back to my recommendations" : "Back to discovery"}
+          {p.confirmed ? t.backToRecommendations : t.backToDiscovery}
         </Link>
         <div className="row">
-          <Badge>{humanize(scheme.category)}</Badge>
-          <Badge>{humanize(scheme.government_level)} scheme</Badge>
+          <Badge>{labelFor(m.categoryNames, scheme.category)}</Badge>
+          <Badge>
+            {format(m.common.schemeLevel, {
+              level: m.governmentLevel[scheme.government_level],
+            })}
+          </Badge>
           <Badge tone={scheme.status === "active" ? "success" : "warning"}>
             {scheme.status === "active"
-              ? "Active"
+              ? m.common.active
               : scheme.status === "closed"
-                ? "Applications closed"
-                : "Application status unknown"}
+                ? m.common.applicationsClosed
+                : m.common.applicationStatusUnknown}
           </Badge>
           {match && <EligibilityBadge status={match.status} />}
         </div>
@@ -97,32 +104,33 @@ export function SchemeDetail({ id }: { id: string }) {
         <p className="muted">{scheme.summary}</p>
         <p className="verification">
           <ShieldCheck size={15} />
-          Last verified on {displayDate(scheme.last_verified_at)}
+          {format(m.common.lastVerifiedOn, {
+            date: date(scheme.last_verified_at),
+          })}
         </p>
       </header>
       {scheme.review_status !== "verified" && (
         <InlineAlert>
-          Manual verification required. This source is{" "}
-          {humanize(scheme.review_status).toLowerCase()}; check the current
-          requirements with the official authority.
+          {format(t.manualVerification, {
+            status: m.reviewStatus[scheme.review_status],
+          })}
         </InlineAlert>
       )}
       <div className="detail-layout">
         <div className="stack">
           <section className="panel">
-            <p className="eyebrow">The support</p>
-            <h2>Benefits at a glance</h2>
+            <p className="eyebrow">{t.supportEyebrow}</p>
+            <h2>{t.benefits}</h2>
             <p className="detail-copy">{scheme.benefit_text}</p>
           </section>
           <details className="panel detail-section" open>
             <summary>
               <BookOpen size={18} />
-              <h2>Eligibility & exclusions</h2>
+              <h2>{t.eligibility}</h2>
             </summary>
             <div>
               <p className="small muted">
-                Conditions come from the reviewed source. Your checked outcomes
-                appear only when available for this exact version.
+                {t.eligibilityNote}
               </p>
               {required.map((rule) => (
                 <article key={rule.rule_key} className="criteria-detail">
@@ -132,8 +140,8 @@ export function SchemeDetail({ id }: { id: string }) {
                     }
                   >
                     {rule.severity === "manual_review"
-                      ? "Manual review"
-                      : "Required condition"}
+                      ? m.ruleResults.manual_review
+                      : t.requiredCondition}
                   </Badge>
                   <p>{rule.explanation}</p>
                   <SourceLink url={rule.source.official_url}>
@@ -146,7 +154,7 @@ export function SchemeDetail({ id }: { id: string }) {
               ))}
               {exclusions.length ? (
                 <>
-                  <h3>Exclusions</h3>
+                  <h3>{t.exclusions}</h3>
                   {exclusions.map((rule) => (
                     <article key={rule.rule_key} className="criteria-detail">
                       <p>{rule.explanation}</p>
@@ -158,8 +166,7 @@ export function SchemeDetail({ id }: { id: string }) {
                 </>
               ) : (
                 <p className="small muted">
-                  No separate exclusion entries were supplied. This is not a
-                  guarantee that no exclusions apply.
+                  {t.noExclusions}
                 </p>
               )}
               {match ? (
@@ -174,11 +181,11 @@ export function SchemeDetail({ id }: { id: string }) {
                 />
               ) : (
                 <InlineAlert>
-                  Your profile has not been checked against this scheme version.{" "}
+                  {t.notCheckedBefore}{" "}
                   <Link className="text-link" href="/discover">
-                    Review your profile
+                    {t.notCheckedLink}
                   </Link>{" "}
-                  to get matching results.
+                  {t.notCheckedAfter}
                 </InlineAlert>
               )}
             </div>
@@ -186,7 +193,7 @@ export function SchemeDetail({ id }: { id: string }) {
           <details className="panel detail-section">
             <summary>
               <FileText size={18} />
-              <h2>Documents</h2>
+              <h2>{t.documents}</h2>
             </summary>
             <div>
               {scheme.required_documents.length ? (
@@ -196,8 +203,7 @@ export function SchemeDetail({ id }: { id: string }) {
                       <strong>{doc.name}</strong>
                       {doc.when_required && (
                         <p className="small muted">
-                          Conditional requirement. Confirm whether it applies to
-                          your situation.
+                          {t.conditional}
                         </p>
                       )}
                       <SourceLink url={doc.source.official_url}>
@@ -208,8 +214,7 @@ export function SchemeDetail({ id }: { id: string }) {
                 </ul>
               ) : (
                 <InlineAlert>
-                  Document requirements have not been supplied. Confirm them
-                  with the official authority.
+                  {t.noDocuments}
                 </InlineAlert>
               )}
             </div>
@@ -217,7 +222,7 @@ export function SchemeDetail({ id }: { id: string }) {
           <details className="panel detail-section" id="application-steps">
             <summary>
               <ArrowUpRight size={18} />
-              <h2>How to apply</h2>
+              <h2>{t.howToApply}</h2>
             </summary>
             <div>
               {scheme.application_steps.length ? (
@@ -234,7 +239,7 @@ export function SchemeDetail({ id }: { id: string }) {
                           </SourceLink>
                           {step.official_url && (
                             <SourceLink url={step.official_url}>
-                              Official step page
+                              {m.common.officialStepPage}
                             </SourceLink>
                           )}
                         </div>
@@ -243,52 +248,51 @@ export function SchemeDetail({ id }: { id: string }) {
                 </ol>
               ) : (
                 <InlineAlert>
-                  Verified application steps are unavailable. Please confirm the
-                  process with the official authority.
+                  {t.noSteps}
                 </InlineAlert>
               )}
               <p className="small muted">
-                Applications take place on the official portal. Yojana Saathi
-                does not submit applications.
+                {t.portalNote}
               </p>
             </div>
           </details>
         </div>
         <aside className="stack">
           <section className="panel source-panel">
-            <p className="eyebrow">Trace it to the source</p>
-            <h2>Official sources</h2>
-            <p className="small muted">
-              Check the original policy and its latest updates.
-            </p>
+            <p className="eyebrow">{t.sourcesEyebrow}</p>
+            <h2>{t.sources}</h2>
+            <p className="small muted">{t.sourcesNote}</p>
             {scheme.official_sources.map((source) => (
               <article key={source.id}>
                 <h3>{source.title}</h3>
                 <p>{source.excerpt_locator}</p>
-                <p>Checked on {displayDate(source.checked_at)}</p>
+                <p>
+                  {format(m.common.checkedOn, { date: date(source.checked_at) })}
+                </p>
                 {source.document_date && (
-                  <p>Document date: {displayDate(source.document_date)}</p>
+                  <p>
+                    {format(m.common.documentDate, {
+                      date: date(source.document_date),
+                    })}
+                  </p>
                 )}
                 <SourceLink url={source.official_url}>
-                  Read original source
+                  {t.readOriginal}
                 </SourceLink>
               </article>
             ))}
             <p className="small muted version-note">
-              Scheme version: {scheme.scheme_version_id}
+              {format(t.version, { version: scheme.scheme_version_id })}
             </p>
           </section>
           <div className="next-step-note">
-            <h3>Prepare with clarity</h3>
-            <p>
-              Keep track of requirements before you visit the official portal.
-              Never upload identity documents here.
-            </p>
+            <h3>{t.prepareTitle}</h3>
+            <p>{t.prepareText}</p>
             <Link
               href={`/schemes/${id}/apply`}
               className="button secondary wide"
             >
-              Prepare my checklist
+              {t.prepareLink}
             </Link>
           </div>
         </aside>

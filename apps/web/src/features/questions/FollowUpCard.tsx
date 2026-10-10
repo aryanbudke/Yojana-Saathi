@@ -8,9 +8,12 @@ import type { MatchesResponse, NextQuestion } from "@/lib/api/contracts";
 import { useProfile } from "@/features/profile/hooks";
 import { useMatching } from "@/features/matching/hooks";
 import { fields } from "@/features/profile/types";
-import { humanize } from "@/lib/format";
+import { labelFor } from "@/lib/format";
+import { useMessages } from "@/i18n/client";
 import { answerValue, describeChanges } from "./model";
 export function FollowUpCard({ matches }: { matches: MatchesResponse }) {
+  const m = useMessages();
+  const t = m.followUp;
   const p = useProfile();
   const matching = useMatching();
   const id = p.session?.session_id;
@@ -31,15 +34,15 @@ export function FollowUpCard({ matches }: { matches: MatchesResponse }) {
     setBusy(true);
     setError("");
     try {
-      const answer = answerValue(q, skip ? "not_sure" : value);
+      const answer = answerValue(q, skip ? "not_sure" : value, m);
       const facts = await p.applyAnswer(answer.field, answer.value);
       setLast(q);
       const next = await matching.rematch(id, facts);
-      setNotice(describeChanges(matches, next));
+      setNotice(describeChanges(matches, next, m));
       setEditing(false);
       setValue("");
     } catch (e) {
-      setError(errorMessage(e));
+      setError(errorMessage(e, m.errors));
     } finally {
       setBusy(false);
     }
@@ -52,9 +55,9 @@ export function FollowUpCard({ matches }: { matches: MatchesResponse }) {
     >
       <div className="row">
         <HelpCircle size={18} />
-        <p className="eyebrow">One helpful question</p>
+        <p className="eyebrow">{t.eyebrow}</p>
       </div>
-      <h3 id="question-title">Check a missing detail</h3>
+      <h3 id="question-title">{t.title}</h3>
       {notice && <InlineAlert>{notice}</InlineAlert>}
       {error && <InlineAlert error>{error}</InlineAlert>}
       {r.loading && !editing ? (
@@ -63,7 +66,7 @@ export function FollowUpCard({ matches }: { matches: MatchesResponse }) {
         <>
           <InlineAlert error>{r.error}</InlineAlert>
           <Button variant="secondary" onClick={r.retry}>
-            Retry question
+            {t.retry}
           </Button>
         </>
       ) : q?.question ? (
@@ -91,7 +94,7 @@ export function FollowUpCard({ matches }: { matches: MatchesResponse }) {
                         onChange={() => setValue(option)}
                         required
                       />
-                      {humanize(option)}
+                      {labelFor(m.answers, option)}
                     </label>
                   ))}
                 </div>
@@ -112,13 +115,13 @@ export function FollowUpCard({ matches }: { matches: MatchesResponse }) {
                 </>
               )}
               <details className="question-reason">
-                <summary>Why we ask this</summary>
+                <summary>{t.why}</summary>
                 <p>{q.reason}</p>
               </details>
             </fieldset>
             <div className="question-actions">
               <Button type="submit" busy={busy} disabled={!value}>
-                Update my matches
+                {t.update}
                 <ArrowRight size={15} />
               </Button>
               <Button
@@ -127,7 +130,7 @@ export function FollowUpCard({ matches }: { matches: MatchesResponse }) {
                 disabled={busy}
                 onClick={() => void submit(true)}
               >
-                Skip for now
+                {t.skip}
               </Button>
               {editing && (
                 <Button
@@ -135,21 +138,19 @@ export function FollowUpCard({ matches }: { matches: MatchesResponse }) {
                   variant="quiet"
                   onClick={() => setEditing(false)}
                 >
-                  Cancel edit
+                  {t.cancel}
                 </Button>
               )}
             </div>
           </form>
         ) : (
           <InlineAlert>
-            This question needs manual review. No sensitive information is
-            collected.
+            {t.manual}
           </InlineAlert>
         )
       ) : (
         <p className="small muted">
-          There are no further questions right now. Check any remaining unknown
-          conditions on the official source.
+          {t.none}
         </p>
       )}
       {last && !editing && (
@@ -161,7 +162,7 @@ export function FollowUpCard({ matches }: { matches: MatchesResponse }) {
             setValue("");
           }}
         >
-          Edit my previous answer
+          {t.editPrevious}
         </Button>
       )}
     </section>

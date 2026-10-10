@@ -5,7 +5,7 @@ for (const width of [320, 375, 390, 768, 1024, 1280, 1440]) {
   test(`accessible full journey at ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height: 900 });
     await page.emulateMedia({ reducedMotion: "reduce" });
-    await page.goto("/");
+    await page.goto("/discover");
     async function check() {
       await expect
         .poll(() =>
@@ -31,7 +31,7 @@ for (const width of [320, 375, 390, 768, 1024, 1280, 1440]) {
       ).toEqual([]);
     }
     await expect(
-      page.getByRole("heading", { name: "Find schemes for your situation" }),
+      page.getByRole("heading", { name: "Tell us about your situation" }),
     ).toBeVisible();
     await check();
     await page.keyboard.press("Tab");

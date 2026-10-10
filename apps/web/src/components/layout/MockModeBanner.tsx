@@ -3,8 +3,10 @@
 import React from "react";
 import { isMock } from "@/lib/api";
 import { AlertCircle } from "lucide-react";
+import { useMessages } from "@/i18n/client";
 
 export function MockModeBanner() {
+  const m = useMessages();
   if (!isMock) return null;
 
   return (
@@ -15,10 +17,10 @@ export function MockModeBanner() {
       <div className="flex items-center gap-1.5 font-bold shrink-0 text-amber-900">
         <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-ping inline-block" />
         <AlertCircle size={14} aria-hidden="true" />
-        Mock mode
+        {m.mock.label}
       </div>
       <span className="text-amber-950/85 text-xs leading-normal">
-        Synthetic contract examples. These are not real government scheme recommendations.
+        {m.mock.banner}
       </span>
     </div>
   );

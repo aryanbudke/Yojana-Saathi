@@ -1,131 +1,171 @@
 "use client";
 
-import React, { useRef, useState } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ArrowRight, Globe2, Menu, X, Sparkles } from "lucide-react";
+import { ArrowRight, ChevronRight, Menu, X } from "lucide-react";
 import { Brand } from "@/components/Brand";
-import { cn } from "@/lib/utils";
+import { useMessages } from "@/i18n/client";
+import type { Messages } from "@/i18n/messages/en";
+import { LanguageSwitcher } from "./LanguageSwitcher";
 
 interface NavLink {
   href: string;
-  label: string;
+  label: keyof Messages["nav"];
   isActive: (path: string) => boolean;
 }
 
+/** Primary destinations; the mobile bottom dock shows the same five. */
 const navLinks: NavLink[] = [
-  { href: "/", label: "Home", isActive: (p) => p === "/" },
+  { href: "/", label: "home", isActive: (p) => p === "/" },
   {
     href: "/discover",
-    label: "Discover schemes",
+    label: "discover",
     isActive: (p) =>
       p.startsWith("/discover") ||
       p.startsWith("/schemes") ||
-      p.startsWith("/recommendations"),
+      p.startsWith("/guide"),
   },
   {
-    href: "/help",
-    label: "How it works",
-    isActive: (p) => p === "/help",
+    href: "/recommendations",
+    label: "matches",
+    isActive: (p) =>
+      p.startsWith("/recommendations") || p.startsWith("/eligibility"),
   },
-  { href: "/about", label: "About", isActive: (p) => p === "/about" },
+  { href: "/profile", label: "profile", isActive: (p) => p.startsWith("/profile") },
+  { href: "/saved", label: "saved", isActive: (p) => p.startsWith("/saved") },
 ];
 
+/** The AI composer at the top of /discover: the one personalised matching flow. */
+const CTA_HREF = "/discover";
+const SCROLL_THRESHOLD_PX = 8;
+const DESKTOP_QUERY = "(min-width: 1024px)";
+
+function subscribeToScroll(onChange: () => void) {
+  window.addEventListener("scroll", onChange, { passive: true });
+  return () => window.removeEventListener("scroll", onChange);
+}
+
 export function Navbar() {
+  const m = useMessages();
   const pathname = usePathname();
-  const [mobileOpen, setMobileOpen] = useState(false);
-  const triggerRef = useRef<HTMLButtonElement>(null);
-  const close = () => setMobileOpen(false);
+  const [open, setOpen] = useState(false);
+  const drawerRef = useRef<HTMLDialogElement>(null);
+  const scrolled = useSyncExternalStore(
+    subscribeToScroll,
+    () => window.scrollY > SCROLL_THRESHOLD_PX,
+    () => false,
+  );
+
+  // The native modal dialog traps focus, makes the page inert, closes on Escape
+  // and returns focus to the menu button; we add the scroll lock.
+  useEffect(() => {
+    const drawer = drawerRef.current;
+    if (!drawer) return;
+    if (open && !drawer.open) drawer.showModal();
+    if (!open && drawer.open) drawer.close();
+    document.documentElement.classList.toggle("nav-locked", open);
+    if (!open) return;
+    const desktop = window.matchMedia(DESKTOP_QUERY);
+    const closeOnDesktop = (e: MediaQueryListEvent) => e.matches && setOpen(false);
+    desktop.addEventListener("change", closeOnDesktop);
+    return () => {
+      desktop.removeEventListener("change", closeOnDesktop);
+      document.documentElement.classList.remove("nav-locked");
+    };
+  }, [open]);
+
+  const close = () => setOpen(false);
 
   return (
-    <header
-      className="header sticky top-0 z-40 w-full transition-all duration-200 border-b border-[#022c2b]/08 bg-[#f3e8bc]/85 backdrop-blur-xl shadow-xs"
-      onKeyDown={(event) => {
-        if (event.key === "Escape" && mobileOpen) {
-          setMobileOpen(false);
-          triggerRef.current?.focus();
-        }
-      }}
-    >
-      <div className="header-inner max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between gap-6">
-        {/* Brand */}
-        <Link
-          className="brand flex items-center gap-3 text-[#022c2b] hover:opacity-90 transition-opacity"
-          href="/"
-          aria-label="yojana saathi home"
-          onClick={close}
-        >
+    <header className="site-header" data-scrolled={scrolled || undefined}>
+      <div className="site-header-inner">
+        <Link className="brand site-brand" href="/" aria-label={m.nav.homeLink}>
           <Brand />
         </Link>
 
-        {/* Desktop Nav */}
-        <nav
-          id="main-navigation"
-          className={cn(
-            "hidden md:flex items-center gap-1 px-2 py-1 rounded-full bg-cream/90 backdrop-blur-md border border-[#022c2b]/08 shadow-xs",
-            mobileOpen && "is-open flex flex-col md:flex-row absolute md:static top-full left-0 right-0 p-5 md:p-1 bg-cream md:bg-cream/90 border-b md:border-b-0 border-[#022c2b]/10 shadow-xl md:shadow-xs",
-          )}
-          aria-label="Main navigation"
-        >
+        <nav className="site-nav" aria-label={m.nav.mainNavigation}>
           {navLinks.map((link) => {
             const active = link.isActive(pathname);
             return (
               <Link
                 key={link.href}
                 href={link.href}
+                className="site-nav-link"
                 aria-current={active ? "page" : undefined}
-                onClick={close}
-                className={cn(
-                  "px-4 py-1.5 rounded-full text-sm font-semibold transition-all duration-150 relative",
-                  active
-                    ? "text-[#022c2b] bg-[#e9dca4] font-bold shadow-2xs"
-                    : "text-[#3d5654] hover:text-[#022c2b] hover:bg-slate-50",
-                )}
               >
-                {link.label}
+                {m.nav[link.label]}
               </Link>
             );
           })}
-          <Link
-            className="button primary nav-cta-mobile md:hidden mt-3 w-full inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full bg-[#035352] hover:bg-[#024241] text-white font-semibold shadow-sm"
-            href="/discover"
-            onClick={close}
-          >
-            Find my schemes
-            <ArrowRight size={16} aria-hidden="true" />
-          </Link>
         </nav>
 
-        {/* Header Right Actions */}
-        <div className="header-actions flex items-center gap-3">
-          <span
-            className="header-language hidden sm:inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full bg-cream/90 text-[#022c2b] border border-[#022c2b]/10 shadow-2xs"
-            aria-label="Current language: English"
-          >
-            <Globe2 size={14} className="text-[#035352]" aria-hidden="true" />
-            English
-            <span className="text-[10px] text-slate-400">▾</span>
-          </span>
-          <Link
-            className="button primary header-cta inline-flex items-center gap-2 px-5 py-2 rounded-full bg-[#035352] hover:bg-[#024241] text-white text-sm font-semibold shadow-sm hover:shadow-md transition-all hover:-translate-y-0.5"
-            href="/discover"
-          >
-            <Sparkles size={14} className="text-[#D8C5A1]" aria-hidden="true" />
-            <span>Find my schemes</span>
-            <ArrowRight size={15} aria-hidden="true" />
+        <div className="site-actions">
+          <LanguageSwitcher className="site-language" />
+          <Link className="site-cta" href={CTA_HREF}>
+            <span>{m.nav.findMySchemes}</span>
+            <ArrowRight size={16} aria-hidden="true" className="site-cta-arrow" />
           </Link>
           <button
-            ref={triggerRef}
-            className="menu-toggle md:hidden p-2 rounded-xl text-slate-700 hover:text-slate-900 hover:bg-slate-100/80 transition-colors"
-            aria-label={mobileOpen ? "Close navigation" : "Open navigation"}
-            aria-expanded={mobileOpen}
-            aria-controls="main-navigation"
-            onClick={() => setMobileOpen(!mobileOpen)}
+            type="button"
+            className="site-menu-button"
+            aria-label={m.nav.openNavigation}
+            aria-expanded={open}
+            aria-controls="site-drawer"
+            onClick={() => setOpen(true)}
           >
-            {mobileOpen ? <X size={22} /> : <Menu size={22} />}
+            <Menu size={22} aria-hidden="true" />
           </button>
         </div>
       </div>
+
+      <dialog
+        id="site-drawer"
+        ref={drawerRef}
+        className="site-drawer"
+        aria-label={m.nav.menu}
+        onClose={close}
+        onClick={(e) => e.target === e.currentTarget && close()}
+      >
+        <div className="site-drawer-panel">
+          <div className="site-drawer-head">
+            <span className="site-drawer-title">{m.nav.menu}</span>
+            <button
+              type="button"
+              className="site-menu-button site-drawer-close"
+              aria-label={m.nav.closeNavigation}
+              onClick={close}
+            >
+              <X size={22} aria-hidden="true" />
+            </button>
+          </div>
+          <nav aria-label={m.nav.mainNavigation}>
+            <ul className="site-drawer-links">
+              {navLinks.map((link) => {
+                const active = link.isActive(pathname);
+                return (
+                  <li key={link.href}>
+                    <Link
+                      href={link.href}
+                      className="site-drawer-link"
+                      aria-current={active ? "page" : undefined}
+                      onClick={close}
+                    >
+                      <span>{m.nav[link.label]}</span>
+                      <ChevronRight size={18} aria-hidden="true" />
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
+          </nav>
+          <LanguageSwitcher className="site-drawer-language" />
+          <Link className="site-cta site-cta-block" href={CTA_HREF} onClick={close}>
+            <span>{m.nav.findMySchemes}</span>
+            <ArrowRight size={18} aria-hidden="true" className="site-cta-arrow" />
+          </Link>
+        </div>
+      </dialog>
     </header>
   );
 }

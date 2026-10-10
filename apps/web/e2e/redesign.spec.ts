@@ -1,46 +1,94 @@
 import { test, expect } from "@playwright/test";
 
-test("sticky navigation, active route and keyboard mobile menu", async ({
+test("navbar links, active route, CTA and keyboard mobile drawer", async ({
   page,
 }) => {
-  await page.goto("/");
-  const nav = page.getByRole("navigation", { name: "Main navigation" });
-  await expect(
-    nav.getByRole("link", { name: "Home", exact: true }),
-  ).toHaveAttribute("aria-current", "page");
-  await expect(
-    page.locator(".header-actions").getByRole("link", {
-      name: "Find my schemes",
-    }),
-  ).toHaveAttribute("href", "/discover");
-  await page.goto("/discover");
-  await expect(
-    nav.getByRole("link", { name: "Discover schemes", exact: true }),
-  ).toHaveAttribute("aria-current", "page");
-  await expect(
-    nav.getByRole("link", { name: "Home", exact: true }),
-  ).not.toHaveAttribute("aria-current", "page");
-  await page.setViewportSize({ width: 390, height: 844 });
-  const menu = page.getByRole("button", { name: "Open navigation" });
-  await menu.click();
-  await expect(nav).toBeVisible();
-  await page.keyboard.press("Escape");
-  await expect(menu).toBeFocused();
-  await expect(nav).toBeHidden();
-  await menu.click();
-  await page
-    .getByRole("navigation", { name: "Main navigation" })
-    .getByRole("link", { name: "How it works" })
-    .click();
-  await expect(page).toHaveURL(/\/help$/);
-  await expect(nav).toBeHidden();
+  const destinations = ["Home", "Discover", "Matches", "Profile", "Saved"];
   await page.setViewportSize({ width: 1280, height: 720 });
-  await expect(nav.getByRole("link", { name: "How it works" })).toHaveAttribute(
+  await page.goto("/");
+  const nav = page.getByRole("banner").getByRole("navigation", {
+    name: "Main navigation",
+  });
+  await expect(nav.getByRole("link")).toHaveText(destinations);
+  await expect(nav.getByRole("link", { name: "Home" })).toHaveAttribute(
     "aria-current",
     "page",
   );
+  await expect(
+    page.locator(".site-actions").getByRole("link", { name: "Find my schemes" }),
+  ).toHaveAttribute("href", "/discover");
+
+  for (const [name, url] of [
+    ["Discover", /\/discover$/],
+    ["Matches", /\/recommendations$/],
+    ["Profile", /\/profile$/],
+    ["Saved", /\/saved$/],
+  ] as const) {
+    await nav.getByRole("link", { name }).click();
+    await expect(page).toHaveURL(url);
+    await expect(nav.locator("[aria-current]")).toHaveText(name);
+  }
+  await page
+    .getByRole("banner")
+    .getByRole("link", { name: "yojana saathi home" })
+    .click();
+  await expect(page).toHaveURL(/\/$/);
+
   await page.evaluate(() => window.scrollTo(0, 400));
-  expect((await page.locator("header.header").boundingBox())?.y).toBe(0);
+  await expect(page.locator("header.site-header")).toHaveAttribute(
+    "data-scrolled",
+    "true",
+  );
+  expect((await page.locator("header.site-header").boundingBox())?.y).toBe(0);
+
+  await page.setViewportSize({ width: 390, height: 844 });
+  const menu = page.getByRole("button", { name: "Open navigation" });
+  const drawer = page.getByRole("dialog", { name: "Menu" });
+  await menu.click();
+  await expect(drawer).toBeVisible();
+  await expect(drawer.getByRole("link")).toHaveText([
+    ...destinations,
+    "Find my schemes",
+  ]);
+  await expect
+    .poll(() =>
+      page.evaluate(() => getComputedStyle(document.documentElement).overflow),
+    )
+    .toBe("hidden");
+  await page.keyboard.press("Escape");
+  await expect(drawer).toBeHidden();
+  await expect(menu).toBeFocused();
+  await menu.click();
+  await drawer.getByRole("link", { name: "Saved" }).click();
+  await expect(page).toHaveURL(/\/saved$/);
+  await expect(drawer).toBeHidden();
+  expect(
+    await page.evaluate(() => document.documentElement.scrollWidth - innerWidth),
+  ).toBe(0);
+});
+
+test("language selector translates the page and keeps working state", async ({
+  page,
+}) => {
+  await page.goto("/discover");
+  await page.getByRole("button", { name: "Try an example" }).click();
+  const text = await page.locator("#profile-text").inputValue();
+  await page.getByRole("combobox", { name: "Language" }).selectOption("hi");
+  await expect(page.locator("html")).toHaveAttribute("lang", "hi");
+  await expect(
+    page
+      .getByRole("banner")
+      .getByRole("navigation", { name: "मुख्य नेविगेशन" })
+      .getByRole("link"),
+  ).toHaveText(["होम", "खोजें", "मिलान", "प्रोफ़ाइल", "सहेजी गई"]);
+  // A refresh, not a reload: the description typed before switching is still there.
+  await expect(page.locator("#profile-text")).toHaveValue(text);
+  await page.reload();
+  await expect(page.locator("html")).toHaveAttribute("lang", "hi");
+  await page.getByRole("combobox", { name: "भाषा" }).selectOption("kn");
+  await expect(page.locator("html")).toHaveAttribute("lang", "kn");
+  await page.getByRole("combobox", { name: "ಭಾಷೆ" }).selectOption("en");
+  await expect(page.locator("html")).toHaveAttribute("lang", "en");
 });
 
 test("primary action stays in initial laptop viewport and workspace never overflows", async ({
@@ -49,9 +97,7 @@ test("primary action stays in initial laptop viewport and workspace never overfl
   for (const width of [320, 390, 768, 1024, 1280, 1440]) {
     await page.setViewportSize({ width, height: 720 });
     await page.goto("/");
-    await expect(
-      page.getByRole("heading", { name: "Find schemes for your situation" }),
-    ).toBeVisible();
+    await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
     expect(
       await page.evaluate(
         () => document.documentElement.scrollWidth <= window.innerWidth,
@@ -72,7 +118,7 @@ test("primary action stays in initial laptop viewport and workspace never overfl
 test("recommendation status filter and clear use the actual matches", async ({
   page,
 }) => {
-  await page.goto("/");
+  await page.goto("/discover");
   await page.getByRole("button", { name: "Try an example" }).click();
   await page.getByRole("button", { name: "Find my schemes" }).click();
   await page.getByRole("button", { name: "Confirm my details" }).click();

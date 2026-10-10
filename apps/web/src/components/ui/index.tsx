@@ -7,10 +7,10 @@ export { Select } from "./Select";
 export { Modal } from "./Modal";
 export { Skeleton } from "./Skeleton";
 export { safeOfficialUrl } from "@/lib/urls";
+export { SourceLink, Disclaimer } from "./text";
 
-import { ExternalLink, Info } from "lucide-react";
+import { Info } from "lucide-react";
 import type { ReactNode } from "react";
-import { safeOfficialUrl } from "@/lib/urls";
 import { GlassCard } from "./GlassCard";
 
 export function GlassPanel({
@@ -38,42 +38,6 @@ export function InlineAlert({
       <Info size={18} className="shrink-0 mt-0.5" aria-hidden="true" />
       <div>{children}</div>
     </div>
-  );
-}
-
-export function SourceLink({
-  url,
-  children = "Official source",
-}: {
-  url: string;
-  children?: ReactNode;
-}) {
-  const safe = safeOfficialUrl(url);
-  return safe ? (
-    <a
-      className="source-link inline-flex items-center gap-1.5 text-emerald-800 hover:text-emerald-950 font-medium transition-colors"
-      href={safe}
-      target="_blank"
-      rel="noopener noreferrer"
-    >
-      {children}
-      <ExternalLink size={14} aria-hidden="true" />
-      <span className="sr-only"> (opens in a new tab)</span>
-    </a>
-  ) : (
-    <span className="source-unavailable text-xs text-slate-500">
-      Source link unavailable
-      {url.includes(".invalid") ? " · synthetic fixture" : ""}
-    </span>
-  );
-}
-
-export function Disclaimer() {
-  return (
-    <p className="disclaimer text-xs text-slate-500 leading-relaxed">
-      An independent project. This is preliminary guidance; the government
-      portal makes final decisions. We do not submit or approve applications.
-    </p>
   );
 }
 

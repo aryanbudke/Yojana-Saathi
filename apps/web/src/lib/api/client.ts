@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { containsReservedSource } from "@/lib/urls";
+import { en, type Messages } from "@/i18n/messages/en";
 import {
   answerSchema,
   detailSchema,
@@ -25,15 +26,19 @@ export class ApiError extends Error {
     this.name = "ApiError";
   }
 }
-export function errorMessage(error: unknown): string {
+/** Error text for the reader's language; backend-supplied 4xx messages pass through as sent. */
+export function errorMessage(
+  error: unknown,
+  text: Messages["errors"] = en.errors,
+): string {
   if (error instanceof ApiError) {
-    if (error.status === 429)
-      return "Too many requests. Please wait a moment, then try again. Your details are still here.";
+    if (error.status === 429) return text.rateLimited;
     if (error.status === 404 && error.code === "SESSION_EXPIRED")
-      return "Your session has expired. Review your details to start a new session.";
-    return error.message;
+      return text.sessionExpired;
+    if (error.status >= 500) return text.unavailable;
+    return text.codes[error.code] ?? error.message;
   }
-  return "We couldn’t complete that request. Your details are still here; please try again.";
+  return text.generic;
 }
 export function createLiveApi(baseUrl: string, fetcher: typeof fetch = fetch) {
   async function request<T>(

@@ -4,23 +4,25 @@ import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Home, Compass, Sparkles, User, Bookmark } from "lucide-react";
+import { useMessages } from "@/i18n/client";
 import { cn } from "@/lib/utils";
 
 export function MobileBottomNav() {
   const pathname = usePathname();
+  const m = useMessages();
 
   const items = [
-    { href: "/", label: "Home", icon: Home },
-    { href: "/discover", label: "Discover", icon: Compass },
-    { href: "/recommendations", label: "Matches", icon: Sparkles },
-    { href: "/profile", label: "Profile", icon: User },
-    { href: "/saved", label: "Saved", icon: Bookmark },
+    { href: "/", label: m.nav.home, icon: Home },
+    { href: "/discover", label: m.nav.discover, icon: Compass },
+    { href: "/recommendations", label: m.nav.matches, icon: Sparkles },
+    { href: "/profile", label: m.nav.profile, icon: User },
+    { href: "/saved", label: m.nav.saved, icon: Bookmark },
   ];
 
   return (
     <nav
       className="md:hidden fixed bottom-3 inset-x-3 z-40 bg-cream/85 backdrop-blur-2xl border border-white/90 shadow-[0_8px_32px_rgba(16,80,50,0.15)] rounded-2xl px-2 py-1.5 flex items-center justify-around"
-      aria-label="Mobile quick dock"
+      aria-label={m.mobileNav.label}
     >
       {items.map((item) => {
         const Icon = item.icon;

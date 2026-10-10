@@ -1,35 +1,21 @@
 import React from "react";
 import { BookmarkCheck, FileText, ShieldCheck, UsersRound } from "lucide-react";
 import { GlassCard } from "@/components/ui/GlassCard";
+import { getMessages } from "@/i18n/server";
 
-export function BenefitsStrip() {
-  const valueProps = [
-    {
-      icon: FileText,
-      title: "Find schemes for your situation",
-      text: "Describe your situation in plain language and get relevant schemes.",
-    },
-    {
-      icon: UsersRound,
-      title: "Clear eligibility guidance",
-      text: "Understand who can apply and what conditions apply.",
-    },
-    {
-      icon: BookmarkCheck,
-      title: "Official and trusted sources",
-      text: "Direct links to government portals and official information.",
-    },
-    {
-      icon: ShieldCheck,
-      title: "Independent and unbiased",
-      text: "We help you discover and prepare. We don't submit applications.",
-    },
-  ];
+const icons = [FileText, UsersRound, BookmarkCheck, ShieldCheck];
+
+export async function BenefitsStrip() {
+  const m = await getMessages();
+  const valueProps = m.home.benefits.items.map((item, i) => ({
+    ...item,
+    icon: icons[i],
+  }));
 
   return (
     <section className="my-10 sm:my-14" aria-labelledby="benefits-title">
       <h2 id="benefits-title" className="sr-only">
-        What yojana saathi helps with
+        {m.home.benefits.title}
       </h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
         {valueProps.map(({ icon: Icon, title, text }) => (

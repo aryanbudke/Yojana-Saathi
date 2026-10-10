@@ -376,3 +376,27 @@ Brief: complete 10-section GovTech landing page in the confirmed direction (ivor
   - Playwright E2E: 28 / 28 tests passing cleanly across all responsive breakpoints (`320px`, `375px`, `390px`, `768px`, `1024px`, `1280px`, `1440px`).
   - Accessibility: Zero axe-core WCAG A/AA contrast violations across all screen sizes.
   - Visual verification: Full-page captures at desktop (1440px) and mobile (390px) verified against the reference design.
+
+## SR-12 — Multilingual interface: English, हिन्दी, ಕನ್ನಡ
+
+- Status: COMPLETED
+- Approach: typed dictionaries with no new dependency. `src/i18n/messages/en.ts` is the source; `hi.ts` and `kn.ts` are typed `Messages`, so a missing key fails the build. The chosen language is stored in a `locale` cookie (falling back to `Accept-Language`); the server layout passes only that language's messages to the client. Switching calls `router.refresh()`, so text in progress (the profile description) survives.
+- Files: `src/i18n/*`, `src/components/layout/LanguageSwitcher.tsx`, every live page and component under `src/app`, `src/components`, `src/features`; `src/lib/format.ts` (`labelFor`, locale-aware `displayDate`); `src/lib/api/client.ts` (`errorMessage` takes translated text); `src/lib/api/use-resource.ts` (errors worded at render time).
+- Removed: unused `features/landing` components and CSS modules that depended on the old hero data.
+- Not translated by design: scheme names, rules, documents and other API content (published by the source, usually English). AI extraction still sends `locale: "en-IN"`, the only value the backend accepts.
+- Rendering: all routes are now dynamic because the layout reads the cookie. Measured 3–7 ms per route on `next start`.
+- Typography: Indic system fonts added to the stack; `html:lang(hi|kn)` relaxes heading line-height and resets letter-spacing so matras and conjuncts are not clipped.
+- Verification: `src/i18n/messages.test.ts` checks identical keys and list lengths, matching `{placeholders}` and no untranslated copies; typecheck, lint, 29/29 Vitest, 27/27 Playwright, `next build`.
+- Review needed: translations were written without a native-speaker review; have Hindi and Kannada reviewed before public launch.
+
+## SR-13 — Navigation bar redesign
+
+- Status: COMPLETED
+- N1 Inspect: the old header had three overlapping CSS layers (`globals.css` ×2, `shell.css`); the nav was a pill capsule with Home / Discover / How it works / About and a non-functional "English" label.
+- N2 Configuration: primary links are Home, Discover, Matches, Profile, Saved (changed on request from the brief's Discover / Check eligibility / Application guide), matching the mobile bottom dock. About, How it works and the new Application guide stay reachable from the footer.
+- N3 Desktop: `src/styles/navbar.css`, `.site-*` namespace. 72px translucent bar, `blur(16px)`, hairline border, text links with a sliding underline, rounded teal CTA. Colours follow the current teal / Sidecar Yellow theme rather than the brief's earlier green palette. 59 dead `.header*` selectors removed.
+- N4 Mobile (< 1024px): hamburger opens a native `<dialog>` drawer (focus trap, Escape, inert page, focus returns to the trigger) with body scroll lock. The breakpoint is 1024px, not 768px: the full bar cannot fit Kannada labels below that. The language selector stays in the bar down to 360px and moves into the drawer at 320px.
+- N5 Routes: every link uses `next/link`; active state is route-aware (scheme and guide pages highlight Discover, `/eligibility` highlights Matches). New `/guide` page lists real catalogue schemes and links each to its existing source-backed checklist at `/schemes/[id]/apply`; nothing is written by hand.
+- N6 Motion and accessibility: 200–260ms transitions, arrow nudge on the CTA, scroll-aware bar (`useSyncExternalStore`), all disabled under `prefers-reduced-motion`; visible focus outline on every control; 44px minimum targets.
+- N7 Verification: typecheck, lint, 29/29 Vitest, 27/27 Playwright (including axe at seven widths and the new navbar and language tests), `next build`; checked with no overflow at 320–1440px in all three languages.
+- Test updates: journeys that started the composer on `/` now start on `/discover`, since the home finder section was removed earlier.

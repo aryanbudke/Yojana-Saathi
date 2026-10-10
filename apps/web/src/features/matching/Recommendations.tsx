@@ -12,14 +12,18 @@ import {
 import { useResource } from "@/lib/api/use-resource";
 import { useProfile } from "@/features/profile/hooks";
 import { ModeNotice } from "@/features/profile/ProfileComposer";
-import { fields, states } from "@/features/profile/types";
+import { fields } from "@/features/profile/types";
+import { factLabel } from "@/features/profile/model";
+import { useMessages } from "@/i18n/client";
+import { format } from "@/i18n/config";
 import { useMatching } from "./hooks";
-import { verdictLabels } from "./types";
 import type { SchemeMatch } from "@/lib/api/contracts";
 import { MatchCard } from "./MatchCard";
 import { FollowUpCard } from "@/features/questions/FollowUpCard";
 import { cn } from "@/lib/classes";
 export function Recommendations({ embedded = false }: { embedded?: boolean }) {
+  const m = useMessages();
+  const t = m.recommendations;
   const [filter, setFilter] = useState<SchemeMatch["status"] | "all">("all");
   const p = useProfile();
   const matching = useMatching();
@@ -44,24 +48,20 @@ export function Recommendations({ embedded = false }: { embedded?: boolean }) {
         <>
           <ModeNotice />
           <section className="page-heading">
-            <p className="eyebrow">Your story. Your possibilities.</p>
+            <p className="eyebrow">{t.eyebrow}</p>
             <h1>
-              Let’s make your options clearer<span className="green">.</span>
+              {t.title}
+              <span className="green">.</span>
             </h1>
-            <p className="muted">
-              A shortlist with the reasons, the unknowns, and your next steps.
-            </p>
+            <p className="muted">{t.lead}</p>
           </section>
         </>
       )}
       {!sessionId ? (
-        <EmptyState title="Start with your details">
-          <p>
-            Review and confirm a profile before checking scheme conditions.
-            Profile data stays in this tab’s memory.
-          </p>
+        <EmptyState title={t.startTitle}>
+          <p>{t.startText}</p>
           <Link className="button primary" href="/discover">
-            Create my profile
+            {t.createProfile}
           </Link>
         </EmptyState>
       ) : (
@@ -81,20 +81,22 @@ export function Recommendations({ embedded = false }: { embedded?: boolean }) {
               <>
                 <InlineAlert error>{r.error}</InlineAlert>
                 <Button variant="secondary" onClick={r.retry}>
-                  Retry matching
+                  {t.retry}
                 </Button>
               </>
             ) : results?.results.length ? (
               <>
                 <div className="section-heading">
-                  <h2>Your shortlist</h2>
+                  <h2>{t.shortlist}</h2>
                   <span className="small muted">
-                    {results.results.length} scheme
-                    {results.results.length === 1 ? "" : "s"}
+                    {format(
+                      results.results.length === 1 ? t.countOne : t.countOther,
+                      { count: results.results.length },
+                    )}
                   </span>
                 </div>
                 <div className="recommendation-toolbar">
-                  <label htmlFor="match-filter">Show conditions</label>
+                  <label htmlFor="match-filter">{t.showConditions}</label>
                   <select
                     id="match-filter"
                     className="input"
@@ -103,22 +105,22 @@ export function Recommendations({ embedded = false }: { embedded?: boolean }) {
                       setFilter(e.target.value as SchemeMatch["status"] | "all")
                     }
                   >
-                    <option value="all">All statuses</option>
-                    {Object.entries(verdictLabels).map(([status, label]) => (
+                    <option value="all">{t.allStatuses}</option>
+                    {Object.entries(m.verdicts).map(([status, label]) => (
                       <option key={status} value={status}>
-                        {label.text}
+                        {label}
                       </option>
                     ))}
                   </select>
                   <span className="small muted" aria-live="polite">
-                    {visibleMatches.length} shown
+                    {format(t.shown, { count: visibleMatches.length })}
                   </span>
                 </div>
                 {!visibleMatches.length && (
                   <div className="empty">
-                    <h3>No schemes with this status</h3>
+                    <h3>{t.noStatusTitle}</h3>
                     <Button variant="quiet" onClick={() => setFilter("all")}>
-                      Show all statuses
+                      {t.showAll}
                     </Button>
                   </div>
                 )}
@@ -127,12 +129,10 @@ export function Recommendations({ embedded = false }: { embedded?: boolean }) {
                 ))}
               </>
             ) : (
-              <EmptyState title="No matches found yet">
-                <p>
-                  Try correcting your details or explore the scheme catalogue.
-                </p>
+              <EmptyState title={t.noMatchesTitle}>
+                <p>{t.noMatchesText}</p>
                 <Link className="button secondary" href="/discover">
-                  Edit profile or browse
+                  {t.editOrBrowse}
                 </Link>
               </EmptyState>
             )}
@@ -143,50 +143,34 @@ export function Recommendations({ embedded = false }: { embedded?: boolean }) {
               <>
                 <GlassPanel className="profile-snapshot">
                   <div className="section-heading">
-                    <h3>Your profile</h3>
-                    <Badge tone="success">Confirmed by you</Badge>
+                    <h3>{t.yourProfile}</h3>
+                    <Badge tone="success">{m.common.confirmedByYou}</Badge>
                   </div>
                   <dl>
-                    {fields.slice(0, 6).map((f) => {
-                      const value = p.draft.facts[f.key];
-                      return (
-                        <div key={f.key}>
-                          <dt>{f.label}</dt>
-                          <dd>
-                            {value === null
-                              ? "Unknown"
-                              : f.key === "state_code"
-                                ? (states.find(
-                                    ([code]) => code === value,
-                                  )?.[1] ?? String(value))
-                                : String(value)}
-                          </dd>
-                        </div>
-                      );
-                    })}
+                    {fields.slice(0, 6).map((f) => (
+                      <div key={f.key}>
+                        <dt>{m.fields[f.key]}</dt>
+                        <dd>{factLabel(f.key, p.draft.facts[f.key], m)}</dd>
+                      </div>
+                    ))}
                   </dl>
                   <Link
                     className="button secondary wide"
                     href="/discover"
                     onClick={matching.reset}
                   >
-                    Edit profile
+                    {t.editProfile}
                   </Link>
-                  <p className="small muted">
-                    Your corrections take priority over extracted details.
-                  </p>
+                  <p className="small muted">{t.correctionsNote}</p>
                 </GlassPanel>
                 <div className="next-step-note">
-                  <p className="eyebrow">A match is a starting point</p>
+                  <p className="eyebrow">{t.nextEyebrow}</p>
                   <h3>
-                    Read the conditions.
+                    {t.nextTitleLine1}
                     <br />
-                    Check the source.
+                    {t.nextTitleLine2}
                   </h3>
-                  <p>
-                    Only the relevant government authority can determine
-                    eligibility and approve an application.
-                  </p>
+                  <p>{t.nextText}</p>
                 </div>
               </>
             )}

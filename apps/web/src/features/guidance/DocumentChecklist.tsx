@@ -2,31 +2,24 @@
 import { useState } from "react";
 import { Badge, SectionHeading, SourceLink } from "@/components/ui";
 import type { Guidance } from "@/lib/api/contracts";
-const labels = {
-  present: "Reported present",
-  missing: "Missing",
-  unknown: "Unknown",
-  may_be_required: "May be required",
-};
+import { useMessages } from "@/i18n/client";
+import { format } from "@/i18n/config";
 export function DocumentChecklist({ guidance }: { guidance: Guidance }) {
+  const m = useMessages();
+  const t = m.checklist;
   const [checked, setChecked] = useState<Set<number>>(new Set());
   const total = guidance.documents.length;
   return (
     <section className="panel checklist">
-      <p className="eyebrow">Get your documents together</p>
-      <SectionHeading title="Your personal checklist">
-        <Badge>
-          {checked.size} / {total} marked ready
-        </Badge>
+      <p className="eyebrow">{t.eyebrow}</p>
+      <SectionHeading title={t.title}>
+        <Badge>{format(t.ready, { checked: checked.size, total })}</Badge>
       </SectionHeading>
-      <p className="small muted">
-        “I have it” is your own note. It does not verify a document or indicate
-        government approval. These notes stay in this page only.
-      </p>
+      <p className="small muted">{t.note}</p>
       <div
         className="readiness-track"
         role="progressbar"
-        aria-label="Documents marked ready by you"
+        aria-label={t.progressLabel}
         aria-valuemin={0}
         aria-valuemax={total || 1}
         aria-valuenow={checked.size}
@@ -56,7 +49,7 @@ export function DocumentChecklist({ guidance }: { guidance: Guidance }) {
                   />
                   <span>
                     <strong>{doc.name}</strong>
-                    <span className="small muted">I have it</span>
+                    <span className="small muted">{t.haveIt}</span>
                   </span>
                 </label>
                 <div className="document-note">
@@ -69,7 +62,7 @@ export function DocumentChecklist({ guidance }: { guidance: Guidance }) {
                           : "warning"
                     }
                   >
-                    {labels[doc.status]}
+                    {m.documentStatus[doc.status]}
                   </Badge>
                   {doc.note && <p>{doc.note}</p>}
                   {source ? (
@@ -78,8 +71,7 @@ export function DocumentChecklist({ guidance }: { guidance: Guidance }) {
                     </SourceLink>
                   ) : (
                     <p className="source-unavailable">
-                      Source reference unavailable. Confirm the requirement with
-                      the authority.
+                      {t.sourceUnavailable}
                     </p>
                   )}
                 </div>
@@ -89,8 +81,7 @@ export function DocumentChecklist({ guidance }: { guidance: Guidance }) {
         </ul>
       ) : (
         <p className="empty">
-          Document requirements are unavailable. Check the current official
-          requirements.
+          {t.empty}
         </p>
       )}
     </section>

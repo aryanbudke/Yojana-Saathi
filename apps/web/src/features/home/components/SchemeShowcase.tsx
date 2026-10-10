@@ -4,15 +4,18 @@ import { GlassCard } from "@/components/ui/GlassCard";
 import { Badge } from "@/components/ui/Badge";
 import { SourceLink } from "@/components/ui";
 import { showcaseSchemes } from "@/features/landing/content";
+import { getMessages } from "@/i18n/server";
 import { cn } from "@/lib/utils";
 
-export function SchemeShowcase() {
+export async function SchemeShowcase() {
+  const m = await getMessages();
+  const t = m.home.showcase;
   const offsets = ["", "sm:ml-2 lg:ml-3", "sm:ml-4 lg:ml-6"];
 
   return (
     <div
       className="relative w-full max-w-lg mx-auto lg:max-w-none pt-6 sm:pt-8 overflow-hidden sm:overflow-visible"
-      aria-label="Example schemes"
+      aria-label={t.label}
     >
       {/* Background Indian Landmark Architecture */}
       <div className="absolute top-0 right-0 w-[220px] sm:w-[260px] h-[330px] rounded-3xl overflow-hidden pointer-events-none -z-10 shadow-sm opacity-90 sm:opacity-95">
@@ -31,7 +34,7 @@ export function SchemeShowcase() {
       {/* Script note with arrow */}
       <div className="absolute top-0 right-4 sm:right-10 z-10 hidden sm:block pointer-events-none select-none">
         <span className="font-serif italic text-base sm:text-lg text-[#022c2b] tracking-wide rotate-[-3deg] inline-block font-semibold">
-          Real schemes. Real opportunities.
+          {t.note}
         </span>
         <svg
           className="w-5 h-5 text-[#022c2b]/70 ml-10 -mt-0.5"
@@ -55,6 +58,7 @@ export function SchemeShowcase() {
           ];
           const glow = glowTypes[index % glowTypes.length];
           const offsetClass = offsets[index] ?? "";
+          const text = t.schemes[scheme.key];
 
           return (
             <GlassCard
@@ -70,12 +74,12 @@ export function SchemeShowcase() {
               <div className="flex items-center justify-between gap-2 mb-1.5 flex-wrap">
                 <div className="flex items-center gap-2">
                   <span className="text-[10px] font-bold tracking-wider uppercase text-slate-600 bg-slate-100/90 px-2 py-0.5 rounded-full">
-                    Example scheme
+                    {t.exampleScheme}
                   </span>
-                  <Badge tone={glow}>{scheme.category}</Badge>
+                  <Badge tone={glow}>{text.category}</Badge>
                 </div>
                 <SourceLink url={scheme.officialUrl}>
-                  Official portal
+                  {t.officialPortal}
                 </SourceLink>
               </div>
 
@@ -91,16 +95,16 @@ export function SchemeShowcase() {
               </div>
 
               <p className="text-xs text-slate-600 line-clamp-1 mt-0.5">
-                {scheme.fullName}
+                {text.fullName}
               </p>
 
               <p className="text-[11px] font-semibold text-[#035352] flex items-center gap-1 mt-1 truncate">
                 <Landmark size={12} className="shrink-0" aria-hidden="true" />
-                <span className="truncate">{scheme.authority}</span>
+                <span className="truncate">{text.authority}</span>
               </p>
 
               <p className="text-xs text-slate-700 mt-1 leading-relaxed line-clamp-1">
-                {scheme.purpose}
+                {text.purpose}
               </p>
             </GlassCard>
           );

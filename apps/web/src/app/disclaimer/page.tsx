@@ -1,35 +1,21 @@
 import Link from "next/link";
+import { getMessages } from "@/i18n/server";
 
-export default function DisclaimerPage() {
+export default async function DisclaimerPage() {
+  const m = await getMessages();
+  const d = m.disclaimerPage;
   return (
     <article className="reading-page">
-      <h1>Preliminary guidance, clear limits.</h1>
-      <p>
-        yojana saathi is independent and is not an official government service.
-        Government portals and authorities make final eligibility and approval
-        decisions.
-      </p>
-      <h2>What a match means</h2>
-      <p>
-        “All checked conditions met” means that the available verified rules
-        passed for your confirmed profile. It is not a guarantee of eligibility
-        or approval. Unknown and manually reviewed conditions require further
-        verification.
-      </p>
-      <h2>Check current information</h2>
-      <p>
-        Criteria, benefits and application processes may change. Read the
-        scheme’s source references and verification date, and confirm current
-        requirements with the responsible authority.
-      </p>
-      <h2>Examples and application actions</h2>
-      <p>
-        Mock results are synthetic contract demonstrations. Showcase schemes are
-        examples and are not personalized matches. We do not submit forms,
-        verify identity documents or track applications on your behalf.
-      </p>
+      <h1>{d.title}</h1>
+      <p>{d.intro}</p>
+      <h2>{d.matchTitle}</h2>
+      <p>{d.matchText}</p>
+      <h2>{d.currentTitle}</h2>
+      <p>{d.currentText}</p>
+      <h2>{d.examplesTitle}</h2>
+      <p>{d.examplesText}</p>
       <Link className="button secondary" href="/help">
-        Understand the process
+        {d.cta}
       </Link>
     </article>
   );
